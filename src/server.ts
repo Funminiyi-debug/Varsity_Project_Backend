@@ -7,7 +7,11 @@ import morgan from "morgan";
 const app: Application = express();
 const port = process.env.PORT || 3001;
 app.use(cors());
-app.use(morgan("tiny"));
+app.use(
+  morgan(
+    ":method :url statusCode ===  :status :res[content-length] - :response-time ms"
+  )
+);
 app.use(express.static("public"));
 app.use(express.json());
 

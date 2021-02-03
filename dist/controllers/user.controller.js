@@ -23,13 +23,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const dummydata = require("../../dummydata")();
 const tsoa_1 = require("tsoa");
-let UserController = class UserController extends tsoa_1.Controller {
+let UsersController = class UsersController extends tsoa_1.Controller {
     getAllUsers() {
         return __awaiter(this, void 0, void 0, function* () {
             return {
                 statusCode: 200,
                 data: dummydata,
-                message: null,
+                message: "",
             };
         });
     }
@@ -45,17 +45,20 @@ let UserController = class UserController extends tsoa_1.Controller {
             return {
                 statusCode: 200,
                 data: user,
-                message: null,
+                message: undefined,
             };
         });
     }
 };
 __decorate([
-    tsoa_1.Get("/"),
+    tsoa_1.Get("/")
+    // to put other responses
+    ,
+    tsoa_1.Response("400", "Bad Data"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
-], UserController.prototype, "getAllUsers", null);
+], UsersController.prototype, "getAllUsers", null);
 __decorate([
     tsoa_1.SuccessResponse("201", "Created"),
     tsoa_1.Post("/"),
@@ -63,15 +66,16 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
-], UserController.prototype, "createUser", null);
+], UsersController.prototype, "createUser", null);
 __decorate([
     tsoa_1.Get("{id}"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
-], UserController.prototype, "getUser", null);
-UserController = __decorate([
-    tsoa_1.Route("users")
-], UserController);
-exports.default = UserController;
+], UsersController.prototype, "getUser", null);
+UsersController = __decorate([
+    tsoa_1.Route("users"),
+    tsoa_1.Tags("User")
+], UsersController);
+exports.default = UsersController;
 //# sourceMappingURL=user.controller.js.map

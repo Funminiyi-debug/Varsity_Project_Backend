@@ -9,20 +9,29 @@ import {
   Query,
   Header,
   Path,
+  Tags,
   SuccessResponse,
   Controller,
+  Response,
 } from "tsoa";
 
 import { DataResponse, UserCreationRequest } from "../interfaces/DataResponse";
+interface ErrorResponseModel {
+  title: string;
+  status: number;
+}
 
 @Route("users")
-export default class UserController extends Controller {
+@Tags("User")
+export default class UsersController extends Controller {
   @Get("/")
+  // to put other responses
+  @Response<ErrorResponseModel>("400", "Bad Data")
   public async getAllUsers(): Promise<DataResponse> {
     return {
       statusCode: 200,
       data: dummydata,
-      message: null,
+      message: "",
     };
   }
 
@@ -37,11 +46,11 @@ export default class UserController extends Controller {
 
   @Get("{id}")
   public async getUser(id: number): Promise<DataResponse> {
-    const user = dummydata.filter((result) => result.userId == id);
+    const user = dummydata.filter((result: any) => result.userId == id);
     return {
       statusCode: 200,
       data: user,
-      message: null,
+      message: undefined,
     };
   }
 }
