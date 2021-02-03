@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Comment from "./Comment";
+import AppFile from "./AppFile";
 
 const PostSchema = new mongoose.Schema(
   {
@@ -9,6 +10,7 @@ const PostSchema = new mongoose.Schema(
     likes: { type: Number, default: 0 },
     comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
     shares: { type: Number, default: 0 },
+    images: [{ type: mongoose.Schema.Types.ObjectId, ref: "AppFile" }],
   },
   {
     timestamps: true,
@@ -22,5 +24,9 @@ PostSchema.virtual("noOfComments").get(function () {
 // cascade delete
 PostSchema.pre("remove", function (next) {
   Comment.remove({ postid: this._id }).exec();
+  AppFile.remove({ postid: this._id }).exec();
   next();
 });
+
+const Post = mongoose.model("Post", PostSchema);
+export default Post;
