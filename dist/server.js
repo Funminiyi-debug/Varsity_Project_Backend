@@ -11,7 +11,7 @@ const morgan_1 = __importDefault(require("morgan"));
 const app = express_1.default();
 const port = process.env.PORT || 3001;
 app.use(cors_1.default());
-app.use(morgan_1.default("tiny"));
+app.use(morgan_1.default(":method :url statusCode ===  :status :res[content-length] - :response-time ms"));
 app.use(express_1.default.static("public"));
 app.use(express_1.default.json());
 app.use("/docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(undefined, {

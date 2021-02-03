@@ -11,14 +11,11 @@ const passport = require("passport");
 const port = process.env.PORT || 3001;
 require("../config/passport");
 app.use(cors());
-app.use(morgan("tiny"));
-/**app.use(function(req, res, next){
-  const AdminInfo = {
-    name: 'dammy'
-  }
-
-  global.admin = AdminInfo 
-};*/
+app.use(
+  morgan(
+    ":method :url statusCode ===  :status :res[content-length] - :response-time ms"
+  )
+);
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
 //COOKIE CONFIG
@@ -40,6 +37,8 @@ const auth = require("./routes/auth");
 // PASSPORT CONFIG
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(express.static("public"));
+app.use(express.json());
 
 app.use(
   "/docs",

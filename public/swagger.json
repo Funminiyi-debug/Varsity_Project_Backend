@@ -12,7 +12,10 @@
 						"type": "number",
 						"format": "double"
 					},
-					"data": {},
+					"data": {
+						"items": {},
+						"type": "array"
+					},
 					"message": {
 						"type": "string"
 					}
@@ -20,6 +23,23 @@
 				"required": [
 					"statusCode",
 					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ErrorResponseModel": {
+				"properties": {
+					"title": {
+						"type": "string"
+					},
+					"status": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"title",
+					"status"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -89,8 +109,21 @@
 								}
 							}
 						}
+					},
+					"400": {
+						"description": "Bad Data",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseModel"
+								}
+							}
+						}
 					}
 				},
+				"tags": [
+					"User"
+				],
 				"security": [],
 				"parameters": []
 			},
@@ -101,6 +134,9 @@
 						"description": "Created"
 					}
 				},
+				"tags": [
+					"User"
+				],
 				"security": [],
 				"parameters": [],
 				"requestBody": {
@@ -130,6 +166,9 @@
 						}
 					}
 				},
+				"tags": [
+					"User"
+				],
 				"security": [],
 				"parameters": [
 					{
