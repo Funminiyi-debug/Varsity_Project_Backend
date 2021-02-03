@@ -2,14 +2,19 @@ import UserController from "../controllers/user.controller";
 import express, { Request, Response } from "express";
 import handleResponse from "../utils/response";
 import { DataResponse } from "../interfaces/DataResponse";
+const middleWare = require("../../middlewares/auth");
 
 const router = express();
 const Users = new UserController();
 //geting all users
-router.get("/users", async (req: Request, res: Response) => {
-  const { ...response }: DataResponse = await Users.getAllUsers();
-  return handleResponse(res, response);
-});
+router.get(
+  "/users",
+  middleWare.ensureAuth,
+  async (req: Request, res: Response) => {
+    const { ...response }: DataResponse = await Users.getAllUsers();
+    return handleResponse(res, response);
+  }
+);
 
 //geting single user
 router.get("/users/:id", async (req: Request, res: Response) => {
