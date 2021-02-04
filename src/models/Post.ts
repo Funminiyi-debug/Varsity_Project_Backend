@@ -1,16 +1,51 @@
 import mongoose from "mongoose";
 import Comment from "./Comment";
 import AppFile from "./AppFile";
+import { optionalWithLength, requiredIf } from "./modelValidators";
+import PostType from "../enums/PostType";
 
 const PostSchema = new mongoose.Schema(
   {
-    title: { type: String, required: true, minlength: 5, maxlength: 300 },
-    post: { type: String, required: true, minlength: 10 },
+    // post type
+    title: {
+      type: String,
+      required: requiredIf(PostType.Regular),
+      validate: optionalWithLength(3, 300),
+    },
+    body: {
+      type: String,
+      required: requiredIf(PostType.Regular),
+      validate: optionalWithLength(3, 300),
+    },
+    // end of post type
     author: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     likes: { type: Number, default: 0 },
     comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
     shares: { type: Number, default: 0 },
     images: [{ type: mongoose.Schema.Types.ObjectId, ref: "AppFile" }],
+
+    // for polls
+    postType: {
+      type: String,
+      enum: [PostType.Regular, PostType.Poll],
+      required: true,
+    },
+    question: {
+      type: String,
+      required: requiredIf(PostType.Poll),
+      validate: optionalWithLength(5, 300),
+    },
+
+    options: [
+      {
+        type: String,
+        required: requiredIf(PostType.Poll),
+        votes: { type: Number, default: 0 },
+      },
+    ],
+
+    pollExpiryDate: { type: Date, required: requiredIf(PostType.Poll) },
+    // end of poll
   },
   {
     timestamps: true,
@@ -29,4 +64,5 @@ PostSchema.pre("remove", function (next) {
 });
 
 const Post = mongoose.model("Post", PostSchema);
+
 export default Post;
