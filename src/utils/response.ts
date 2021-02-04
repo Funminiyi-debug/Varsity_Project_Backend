@@ -6,7 +6,8 @@ export default function handleResponse(res, results) {
 
   switch (statusCode) {
     case 200:
-      204;
+    case 201:
+    case 204:
       break;
     case 400:
       isError = true;
@@ -37,22 +38,21 @@ export default function handleResponse(res, results) {
   }
 
   const resObj = {
-    error: false,
+    success: true,
     message: "",
-    data: [],
+    payload: [],
     statusCode: 0,
   };
 
-  resObj.data = data;
+  resObj.payload = data;
 
   if (isError) {
-    resObj.error = isError;
+    resObj.success = false;
     resObj.message = newMessage;
   } else {
-    delete resObj.error;
     delete resObj.message;
   }
 
   resObj.statusCode = statusCode;
-  return res.json(resObj);
+  return res.status(statusCode).json(resObj);
 }

@@ -31,7 +31,6 @@ export default class UsersController extends Controller {
     return {
       statusCode: 200,
       data: dummydata,
-      message: "",
     };
   }
 
@@ -50,7 +49,6 @@ export default class UsersController extends Controller {
     return {
       statusCode: 200,
       data: user,
-      message: undefined,
     };
   }
 }

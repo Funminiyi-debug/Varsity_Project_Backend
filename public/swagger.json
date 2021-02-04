@@ -21,8 +21,7 @@
 					}
 				},
 				"required": [
-					"statusCode",
-					"data"
+					"statusCode"
 				],
 				"type": "object",
 				"additionalProperties": false
