@@ -5,10 +5,13 @@ import swaggerUi from "swagger-ui-express";
 import morgan from "morgan";
 import bodyparser from "body-parser";
 import cookieSession from "cookie-session";
+import dotenv from "dotenv";
 //import session from "express-session";
 const app: Application = express();
 const passport = require("passport");
-const port = process.env.PORT || 3001;
+
+dotenv.config();
+const port = process.env.PORT;
 require("../config/passport");
 app.use(cors());
 app.use(

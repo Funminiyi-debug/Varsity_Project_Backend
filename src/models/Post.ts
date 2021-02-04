@@ -2,11 +2,7 @@ import mongoose from "mongoose";
 import Comment from "./Comment";
 import AppFile from "./AppFile";
 import { optionalWithLength, requiredIf } from "./modelValidators";
-
-enum PostType {
-  Regular = "Regular",
-  Poll = "Poll",
-}
+import PostType from "../enums/PostType";
 
 const PostSchema = new mongoose.Schema(
   {
@@ -16,7 +12,7 @@ const PostSchema = new mongoose.Schema(
       required: requiredIf(PostType.Regular),
       validate: optionalWithLength(3, 300),
     },
-    post: {
+    body: {
       type: String,
       required: requiredIf(PostType.Regular),
       validate: optionalWithLength(3, 300),
@@ -29,7 +25,11 @@ const PostSchema = new mongoose.Schema(
     images: [{ type: mongoose.Schema.Types.ObjectId, ref: "AppFile" }],
 
     // for polls
-    postType: { type: String, enum: [PostType.Regular, PostType.Poll] },
+    postType: {
+      type: String,
+      enum: [PostType.Regular, PostType.Poll],
+      required: true,
+    },
     question: {
       type: String,
       required: requiredIf(PostType.Poll),
@@ -43,6 +43,8 @@ const PostSchema = new mongoose.Schema(
         votes: { type: Number, default: 0 },
       },
     ],
+
+    pollExpiryDate: { type: Date, required: requiredIf(PostType.Poll) },
     // end of poll
   },
   {
