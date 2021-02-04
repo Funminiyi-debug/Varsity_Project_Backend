@@ -13,7 +13,7 @@ const FeedbackSchema = new mongoose.Schema(
         FeedbackStatus.Indifferent,
       ],
     },
-    author: { type: Schema.Types.ObjectId, required: true },
+    author: { type: Schema.Types.ObjectId, required: true, ref: "User" },
     likes: { type: Number, default: 0 },
     replies: [{ type: Schema.Types.ObjectId, ref: "Feedback" }],
     productId: { type: Schema.Types.ObjectId, ref: "Product" },

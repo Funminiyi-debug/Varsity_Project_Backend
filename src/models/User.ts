@@ -2,6 +2,9 @@ import mongoose from "mongoose";
 import Post from "./Post";
 import Comment from "./Comment";
 import AppFile from "./AppFile";
+import Service from "./Service";
+import Product from "./Product";
+import Feedback from "./Feedback";
 
 const UserShema = new mongoose.Schema(
   {
@@ -33,6 +36,9 @@ UserShema.pre("remove", function (next) {
   Comment.remove({ postid: this._id }).exec();
   Post.remove({ author: this._id }).exec();
   AppFile.remove({ postid: this._id }).exec();
+  Product.remove({ author: this._id }).exec();
+  Service.remove({ author: this._id }).exec();
+  Feedback.remove({ author: this._id }).exec();
 
   next();
 });
