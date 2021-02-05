@@ -2,7 +2,7 @@ import { string } from "joi";
 
 export interface DataResponse {
   statusCode: number;
-  data: Array<any>;
+  data?: Array<any>;
   message?: string;
 }
 

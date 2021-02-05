@@ -1,17 +1,18 @@
 const express = require("express");
 const passport = require("passport");
 const router = express.Router();
-const middleWare = require("../../middlewares/auth");
+import middleWare from "../middlewares/auth";
 
 router.get(
   "/google",
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
+router.get("/facebook", passport.authenticate("facebook"));
+
 // @desc    welcome user
 // @route   GET /auth/welcome
 router.get("/welcome", middleWare.ensureAuth, (req, res) => {
-  console.log(req.session.user);
   res.send(`welcome ${req.session.user.displayName}`);
 });
 
@@ -19,9 +20,22 @@ router.get("/welcome", middleWare.ensureAuth, (req, res) => {
 // @route   GET /auth/google/callback
 router.get(
   "/google/callback",
-  passport.authenticate("google", { failureRedirect: "/", session: false }),
+  passport.authenticate("google", {
+    failureRedirect: "/login",
+    session: false,
+  }),
   (req, res) => {
     //const token = req.user.token;
+    req.session.user = req.user;
+    res.redirect("/auth/welcome");
+  }
+);
+
+router.get(
+  "/facebook/callback",
+  passport.authenticate("facebook", { failureRedirect: "/login" }),
+  function (req, res) {
+    // Successful authentication, redirect home.
     req.session.user = req.user;
     res.redirect("/auth/welcome");
   }
