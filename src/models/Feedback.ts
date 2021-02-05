@@ -19,6 +19,7 @@ const FeedbackSchema = new mongoose.Schema(
     productId: { type: Schema.Types.ObjectId, ref: "Product" },
     serviceId: { type: Schema.Types.ObjectId, ref: "Service" },
     feedbackId: { type: Schema.Types.ObjectId, ref: "Feedback" },
+    feedbacks: [{ type: Schema.Types.ObjectId, ref: "Feedback" }],
   },
   {
     timestamps: true,

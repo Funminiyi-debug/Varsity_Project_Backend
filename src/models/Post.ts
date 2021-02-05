@@ -4,6 +4,10 @@ import AppFile from "./AppFile";
 import { optionalWithLength, requiredIf } from "./modelValidators";
 import PostType from "../enums/PostType";
 
+const OptionsSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  votes: { type: Number, default: 0 },
+});
 const PostSchema = new mongoose.Schema(
   {
     // post type
@@ -35,14 +39,8 @@ const PostSchema = new mongoose.Schema(
       required: requiredIf(PostType.Poll),
       validate: optionalWithLength(5, 300),
     },
-
-    options: [
-      {
-        type: String,
-        required: requiredIf(PostType.Poll),
-        votes: { type: Number, default: 0 },
-      },
-    ],
+    sector: { type: String, required: true },
+    options: [OptionsSchema],
 
     pollExpiryDate: { type: Date, required: requiredIf(PostType.Poll) },
     // end of poll

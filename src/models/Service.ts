@@ -19,7 +19,13 @@ const ServiceSchema = new mongoose.Schema(
 
     adStatus: {
       type: String,
-      enum: [AdStatus.Active, AdStatus.InReview, AdStatus.Hidden],
+      enum: [
+        AdStatus.Active,
+        AdStatus.InReview,
+        AdStatus.Hidden,
+        AdStatus.Declined,
+        AdStatus.Draft,
+      ],
       default: AdStatus.Active,
     },
     categoryId: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
