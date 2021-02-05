@@ -5,6 +5,7 @@ import AppFile from "./AppFile";
 import Service from "./Service";
 import Product from "./Product";
 import Feedback from "./Feedback";
+import VerificationStatus from "../enums/VerificationStatus";
 
 const UserShema = new mongoose.Schema(
   {
@@ -27,6 +28,16 @@ const UserShema = new mongoose.Schema(
     phone: {
       type: String,
       required: true,
+    },
+    verificationStatus: {
+      type: String,
+      required: true,
+      enum: [
+        VerificationStatus.NotVerified,
+        VerificationStatus.Verified,
+        VerificationStatus.Restricted,
+      ],
+      default: VerificationStatus.NotVerified,
     },
   },
   { timestamps: true }
