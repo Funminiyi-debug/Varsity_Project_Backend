@@ -16,10 +16,7 @@ import {
 } from "tsoa";
 
 import { DataResponse, UserCreationRequest } from "../interfaces/DataResponse";
-interface ErrorResponseModel {
-  title: string;
-  status: number;
-}
+import ErrorResponseModel from "../interfaces/ErrorResponseModel";
 
 @Route("users")
 @Tags("User")

@@ -11,9 +11,8 @@ abstract class BaseRepository<TEntity>
   constructor(db: Db, collectionName: string) {
     this._collection = db.collection(collectionName);
   }
-
-  findAll(): Promise<TEntity[]> {
-    throw new Error("Method not implemented.");
+  async findAll(): Promise<any> {
+    const results = await this._collection.find();
   }
   findOne(): Promise<TEntity> {
     throw new Error("Method not implemented.");
@@ -21,22 +20,22 @@ abstract class BaseRepository<TEntity>
   findByCondition(conditions: object): Promise<TEntity[]> {
     throw new Error("Method not implemented.");
   }
-  createOne(): Promise<boolean> {
+  createOne(entity: TEntity): Promise<boolean> {
     throw new Error("Method not implemented.");
   }
-  createMany(): Promise<boolean> {
+  createMany(entities: TEntity[]): Promise<boolean> {
     throw new Error("Method not implemented.");
   }
-  update(): Promise<boolean> {
+  update(entity: TEntity): Promise<boolean> {
     throw new Error("Method not implemented.");
   }
-  updateMany(): Promise<boolean> {
+  updateMany(entities: TEntity[]): Promise<boolean> {
     throw new Error("Method not implemented.");
   }
-  delete(): Promise<boolean> {
+  delete(id: String): Promise<boolean> {
     throw new Error("Method not implemented.");
   }
-  deleteMany(): Promise<boolean> {
+  deleteMany(ids: String[]): Promise<boolean> {
     throw new Error("Method not implemented.");
   }
 }

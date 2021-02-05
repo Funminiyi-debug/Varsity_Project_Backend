@@ -5,7 +5,7 @@ import handleResponse from "../utils/response";
 //import middleWare = require("../middlewares/auth");
 const middleWare = require("../middlewares/auth");
 
-const router = express();
+const router = express.Router();
 const Users = new UserController();
 //geting all users
 router.get("/users", async (req: Request, res: Response) => {
@@ -23,7 +23,7 @@ router.get("/users/:id", async (req: Request, res: Response) => {
 
 router.post("/users", async (req: Request, res: Response) => {
   const data = await Users.createUser(req.body);
-  res.status(201).send({ sucess: "ok", data: data });
+  res.status(201).json({ sucess: "ok", data: data });
 });
 
 export default router;

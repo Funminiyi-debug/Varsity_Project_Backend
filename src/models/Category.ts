@@ -4,8 +4,8 @@ import Product from "./Product";
 import Service from "./Service";
 import SubCategory from "./SubCategory";
 
-function requiredIf(type) {
-  return [this.categoryType == type, `type of ${type} is required`];
+function requiredIf(model, type) {
+  return [model == type, `type of ${type} is required`];
 }
 
 const CategorySchema = new mongoose.Schema({
@@ -13,7 +13,10 @@ const CategorySchema = new mongoose.Schema({
   subcategory: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      required: requiredIf(CategoryType.Product),
+      required: function requiredIf() {
+        // return [model == type, `type of ${type} is required`];
+        this.categoryType == CategoryType.Product;
+      },
       ref: "SubCategory",
     },
   ],
@@ -21,7 +24,10 @@ const CategorySchema = new mongoose.Schema({
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Service",
-      required: requiredIf(CategoryType.Services),
+      required: function requiredIf() {
+        // return [model == type, `type of ${type} is required`];
+        this.categoryType == CategoryType.Services;
+      },
     },
   ],
   categoryType: {
