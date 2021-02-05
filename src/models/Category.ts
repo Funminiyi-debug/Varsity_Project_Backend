@@ -14,7 +14,6 @@ const CategorySchema = new mongoose.Schema({
     {
       type: mongoose.Schema.Types.ObjectId,
       required: function requiredIf() {
-        // return [model == type, `type of ${type} is required`];
         this.categoryType == CategoryType.Product;
       },
       ref: "SubCategory",
@@ -25,7 +24,6 @@ const CategorySchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: "Service",
       required: function requiredIf() {
-        // return [model == type, `type of ${type} is required`];
         this.categoryType == CategoryType.Services;
       },
     },

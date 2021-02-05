@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import Comment from "./Comment";
 import AppFile from "./AppFile";
-import { optionalWithLength, requiredIf } from "./modelValidators";
+import { optionalWithLength } from "./modelValidators";
 import PostType from "../enums/PostType";
 
 const OptionsSchema = new mongoose.Schema({
@@ -13,12 +13,16 @@ const PostSchema = new mongoose.Schema(
     // post type
     title: {
       type: String,
-      required: requiredIf(PostType.Regular),
+      required: function () {
+        this.postType == PostType.Regular;
+      },
       validate: optionalWithLength(3, 300),
     },
     body: {
       type: String,
-      required: requiredIf(PostType.Regular),
+      required: function () {
+        this.postType == PostType.Regular;
+      },
       validate: optionalWithLength(3, 300),
     },
     // end of post type
@@ -36,13 +40,20 @@ const PostSchema = new mongoose.Schema(
     },
     question: {
       type: String,
-      required: requiredIf(PostType.Poll),
+      required: function () {
+        this.postType = PostType.Poll;
+      },
       validate: optionalWithLength(5, 300),
     },
     sector: { type: String, required: true },
     options: [OptionsSchema],
 
-    pollExpiryDate: { type: Date, required: requiredIf(PostType.Poll) },
+    pollExpiryDate: {
+      type: Date,
+      required: function () {
+        this.postType = PostType.Poll;
+      },
+    },
     // end of poll
   },
   {
