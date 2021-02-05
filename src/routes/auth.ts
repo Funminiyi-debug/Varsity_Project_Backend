@@ -1,7 +1,7 @@
-const express = require("express");
-const passport = require("passport");
-const router = express.Router();
+import passport from "passport";
 import middleWare from "../middlewares/auth";
+const express = require("express");
+const router = express.Router();
 
 router.get(
   "/google",
@@ -10,10 +10,33 @@ router.get(
 
 router.get("/facebook", passport.authenticate("facebook"));
 
+router.post(
+  "/sendsms",
+  passport.authenticate("sendSms", { failureRedirect: "/auth/failed" }),
+  function (req, res) {
+    req.session.user = req.user;
+    res.redirect("/auth/success");
+  }
+);
+
+router.post(
+  "/validsmscode",
+  passport.authenticate("validateSmsCode", { failureRedirect: "/auth/failed" }),
+  function (req, res) {
+    req.session.user = req.user;
+    res.redirect("/auth/success");
+  }
+);
+
 // @desc    welcome user
 // @route   GET /auth/welcome
-router.get("/welcome", middleWare.ensureAuth, (req, res) => {
-  res.send(`welcome ${req.session.user.displayName}`);
+router.get("/success", (req, res) => {
+  //console.log(req.session.user);
+  res.send("sucessfull");
+});
+
+router.get("/failed", (req, res) => {
+  res.send("failed");
 });
 
 // @desc    Google auth callback
@@ -21,23 +44,23 @@ router.get("/welcome", middleWare.ensureAuth, (req, res) => {
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    failureRedirect: "/login",
+    failureRedirect: "/auth/failed",
     session: false,
   }),
   (req, res) => {
     //const token = req.user.token;
     req.session.user = req.user;
-    res.redirect("/auth/welcome");
+    res.redirect("/auth/success");
   }
 );
 
 router.get(
   "/facebook/callback",
-  passport.authenticate("facebook", { failureRedirect: "/login" }),
+  passport.authenticate("facebook", { failureRedirect: "/auth/failed" }),
   function (req, res) {
     // Successful authentication, redirect home.
     req.session.user = req.user;
-    res.redirect("/auth/welcome");
+    res.redirect("/auth/success");
   }
 );
 

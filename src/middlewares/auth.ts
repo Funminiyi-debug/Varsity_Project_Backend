@@ -1,10 +1,10 @@
 import handleResponse from "../utils/response";
 export default {
   ensureAuth: function (req, res, next) {
-    if (req.session.user) {
+    if (req.session.user.verified) {
       return next();
     } else {
-      handleResponse(res, {
+      return handleResponse(res, {
         statusCode: 403,
         message: "forbidden page... login first ",
       });
@@ -15,10 +15,9 @@ export default {
     if (!req.isAuthenticated()) {
       return next();
     } else {
-      handleResponse(res, {
+      return handleResponse(res, {
         statusCode: 200,
       });
-      res.status(200).json({ msg: "continue" });
     }
   },
 };

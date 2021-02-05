@@ -1,9 +1,8 @@
 import UserController from "../controllers/user.controller";
 import express, { Request, Response } from "express";
-import { DataResponse } from "../interfaces/DataResponse";
+import { DataResponse } from "../Interfaces/DataResponse";
 import handleResponse from "../utils/response";
-//import middleWare = require("../middlewares/auth");
-const middleWare = require("../middlewares/auth");
+import middleWare = require("../middlewares/auth");
 
 const router = express();
 const Users = new UserController();

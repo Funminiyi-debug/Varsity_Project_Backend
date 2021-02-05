@@ -15,7 +15,7 @@ import {
   Response,
 } from "tsoa";
 
-import { DataResponse, UserCreationRequest } from "../interfaces/DataResponse";
+import { DataResponse, UserCreationRequest } from "../Interfaces/DataResponse";
 interface ErrorResponseModel {
   title: string;
   status: number;

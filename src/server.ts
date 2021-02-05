@@ -6,8 +6,11 @@ import morgan from "morgan";
 import bodyparser from "body-parser";
 import cookieSession from "cookie-session";
 import passport from "passport";
+import passportConfig from "./config/passport";
+//import * as dotenv from "dotenv";
 require("dotenv").config();
-require("../config/passport")(passport);
+passportConfig(passport);
+//dotenv.config();
 
 const app: Application = express();
 const port = process.env.PORT || 3001;
