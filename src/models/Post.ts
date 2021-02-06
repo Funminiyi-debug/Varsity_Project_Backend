@@ -14,14 +14,14 @@ const PostSchema = new mongoose.Schema(
     title: {
       type: String,
       required: function () {
-        return this.postType == PostType.Regular;
+        this.postType == PostType.Regular;
       },
       validate: optionalWithLength(3, 300),
     },
     body: {
       type: String,
       required: function () {
-        return this.postType == PostType.Regular;
+        this.postType == PostType.Regular;
       },
       validate: optionalWithLength(3, 300),
     },
@@ -41,7 +41,7 @@ const PostSchema = new mongoose.Schema(
     question: {
       type: String,
       required: function () {
-        return this.postType == PostType.Poll;
+        this.postType = PostType.Poll;
       },
       validate: optionalWithLength(5, 300),
     },
@@ -51,7 +51,7 @@ const PostSchema = new mongoose.Schema(
     pollExpiryDate: {
       type: Date,
       required: function () {
-        return this.postType == PostType.Regular;
+        this.postType = PostType.Poll;
       },
     },
     // end of poll

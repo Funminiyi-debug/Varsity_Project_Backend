@@ -1,12 +1,15 @@
 import ICategory from "../Interfaces/ICategory";
 import Category from "../models/Category";
-import { Types } from "mongoose";
+import { Types, Document } from "mongoose";
 
 export default class CategoryService {
   constructor() {}
 
-  public async getCategories(): Promise<any> {
-    return await Category.find({});
+  public async getCategories(): Promise<Document<any>[]> {
+    const results: Document<any>[] = await Category.find({})
+      .populate("SubCategory")
+      .populate("Service");
+    return results;
   }
 
   public async getCategory(id: string): Promise<any> {
