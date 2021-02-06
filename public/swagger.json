@@ -28,17 +28,20 @@
 			},
 			"ErrorResponseModel": {
 				"properties": {
-					"title": {
+					"message": {
 						"type": "string"
 					},
-					"status": {
-						"type": "number",
-						"format": "double"
+					"success": {
+						"type": "boolean",
+						"enum": [
+							"false"
+						],
+						"nullable": false
 					}
 				},
 				"required": [
-					"title",
-					"status"
+					"message",
+					"success"
 				],
 				"type": "object",
 				"additionalProperties": false
