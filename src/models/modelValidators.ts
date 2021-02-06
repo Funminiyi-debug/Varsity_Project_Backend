@@ -17,8 +17,4 @@ const optionalWithLength = (minlength: number, maxlength: number) => {
   };
 };
 
-function requiredIf(field) {
-  return [this.postType == field, `type of ${field} is required`];
-}
-
-export { optionalWithLength, requiredIf };
+export { optionalWithLength };

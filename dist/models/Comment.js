@@ -10,7 +10,7 @@ const CommentSchema = new mongoose_1.default.Schema({
     comment: { type: String, required: true },
     author: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "User" },
     likes: { type: Number, default: 0 },
-    commentid: { type: mongoose_1.default.Schema.Types.ObjectId },
+    commentid: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "Comment" },
     comments: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: "Comment" }],
     shares: { type: Number, default: 0 },
     images: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: "AppFile" }],

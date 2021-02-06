@@ -26,7 +26,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const user_controller_1 = __importDefault(require("../controllers/user.controller"));
 const express_1 = __importDefault(require("express"));
 const response_1 = __importDefault(require("../utils/response"));
-const router = express_1.default();
+const router = express_1.default.Router();
 const Users = new user_controller_1.default();
 //geting all users
 router.get("/users", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -40,7 +40,7 @@ router.get("/users/:id", (req, res) => __awaiter(void 0, void 0, void 0, functio
 }));
 router.post("/users", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const data = yield Users.createUser(req.body);
-    res.status(201).send({ sucess: "ok", data: data });
+    res.status(201).json({ sucess: "ok", data: data });
 }));
 exports.default = router;
 //# sourceMappingURL=user.route.js.map

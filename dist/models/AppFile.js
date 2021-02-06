@@ -5,7 +5,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const AppFileSchema = new mongoose_1.default.Schema({
-    postid: { type: mongoose_1.default.Schema.Types.ObjectId },
+    postid: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "Post" },
+    productId: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "Product" },
+    serviceId: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "Service" },
     name: { type: String, required: true },
     data: { type: Buffer },
     mimetype: { type: String },

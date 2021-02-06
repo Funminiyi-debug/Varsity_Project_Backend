@@ -23,13 +23,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const dummydata = require("../../dummydata")();
 const tsoa_1 = require("tsoa");
+// import ErrorResponseModel from "../interfaces/ErrorResponseModel";
 let UsersController = class UsersController extends tsoa_1.Controller {
     getAllUsers() {
         return __awaiter(this, void 0, void 0, function* () {
             return {
                 statusCode: 200,
                 data: dummydata,
-                message: "",
             };
         });
     }
@@ -45,7 +45,6 @@ let UsersController = class UsersController extends tsoa_1.Controller {
             return {
                 statusCode: 200,
                 data: user,
-                message: undefined,
             };
         });
     }

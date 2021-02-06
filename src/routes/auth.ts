@@ -1,4 +1,5 @@
 import passport from "passport";
+import VerificationStatus from "../enums/VerificationStatus";
 import middleWare from "../middlewares/auth";
 const express = require("express");
 const router = express.Router();
@@ -8,7 +9,10 @@ router.get(
   passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
-router.get("/facebook", passport.authenticate("facebook"));
+router.get(
+  "/facebook",
+  passport.authenticate("facebook", { authType: "rerequest", scope: ["email"] })
+);
 
 router.post(
   "/sendsms",
@@ -49,14 +53,30 @@ router.get(
   }),
   (req, res) => {
     //const token = req.user.token;
-    req.session.user = req.user;
-    res.redirect("/auth/success");
+    if (req.user.verificationStatus == VerificationStatus.Verified) {
+      req.session.user = req.user;
+      return res
+        .status(200)
+        .json({ success: true, message: "You are logged In" });
+    }
+
+    if (req.user.verificationStatus == VerificationStatus.NotVerified) {
+      return res.status(201).json({
+        message: "User Created, Please conplete registration",
+        success: true,
+      });
+    }
+    return res
+      .status(403)
+      .json({ success: false, message: "User is restricted" });
   }
 );
 
 router.get(
   "/facebook/callback",
-  passport.authenticate("facebook", { failureRedirect: "/auth/failed" }),
+  passport.authenticate("facebook", {
+    failureRedirect: "/auth/failed",
+  }),
   function (req, res) {
     // Successful authentication, redirect home.
     req.session.user = req.user;
