@@ -3,9 +3,12 @@ import CategoriesController from "../controllers/category.controller";
 import { DataResponse } from "../Interfaces/DataResponse";
 import CategoryService from "../services/CategoryService";
 import handleResponse from "../utils/response";
-
+import { container } from "../containerDI";
+import Types from "../types";
 const router = express.Router();
-const categoryController = new CategoriesController(new CategoryService());
+const categoryService = container.get<CategoryService>(Types.ICategoryService);
+
+const categoryController = new CategoriesController(categoryService);
 
 router.get("/", async (req: Request, res: Response) => {
   const response: DataResponse = await categoryController.getCategories();

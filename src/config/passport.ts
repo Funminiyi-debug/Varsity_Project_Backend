@@ -1,12 +1,12 @@
 import passportSms from "passport-custom";
 import passportFinalAuth from "passport-custom";
+import { Get } from "tsoa";
 import GoogleStrategy from "passport-google-oauth20";
 import FacebookStrategy from "passport-facebook";
 import User from "../models/User";
 import client from "twilio";
 import { generateRandomNumber } from "../utils/helperFunction";
 import { createBuilderStatusReporter } from "typescript";
-import IUser from "../Interfaces/IUser";
 import { Document } from "mongoose";
 import VerificationStatus from "../enums/VerificationStatus";
 
@@ -14,6 +14,7 @@ const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 
 export default function (passport) {
+  // @Get("/auth/google")
   passport.use(
     new GoogleStrategy.Strategy(
       {
@@ -83,8 +84,8 @@ export default function (passport) {
       },
       async (accessToken, refreshToken, profile, cb) => {
         console.log(profile);
-        return cb(null, profile);
-        /**const newUser = {
+        // return cb(null, profile);
+        const newUser = {
           facebookId: profile.id,
           displayName: profile.displayName,
           firstName: profile.displayName.split(" ")[2],
@@ -98,7 +99,7 @@ export default function (passport) {
 
         try {
           let user: any = await User.findOne({
-            $or: [{ facebookId }, { email }, { firstName}, { lastName}],
+            $or: [{ facebookId }, { email }, { firstName }, { lastName }],
           });
 
           if (user) {
@@ -120,7 +121,7 @@ export default function (passport) {
         } catch (err) {
           console.error(err);
           cb(err, null);
-        }*/
+        }
       }
     )
   );

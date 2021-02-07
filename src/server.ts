@@ -2,6 +2,7 @@ import express, { Application } from "express";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
 import morgan from "morgan";
+import "reflect-metadata";
 import bodyparser from "body-parser";
 import cookieSession from "cookie-session";
 import passport from "passport";
@@ -10,13 +11,14 @@ import "dotenv/config";
 import user from "./routes/user.route";
 import category from "./routes/category.route";
 import databaseConnection from "./config/db";
+import { container } from "./containerDI";
+import { InversifyExpressServer } from "inversify-express-utils";
+
 passportConfig(passport);
 databaseConnection();
 
 const app: Application = express();
 const port = process.env.PORT || 3001;
-
-// PASSPORT CONFIG
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -60,7 +62,19 @@ const auth = require("./routes/auth");
 app.use("/", user);
 app.use("/auth", auth);
 app.use("/categories", category);
+// PASSPORT CONFIG
 
+// const server = new InversifyExpressServer(
+//   container,
+//   null,
+//   { rootPath: "/api" },
+//   app
+// );
+
+// server.setConfig((app) => {
+
+// });
+// server.build().
 app.listen(port, () => {
   console.log(`subscriber connected to ${port}`);
 });

@@ -1,20 +1,31 @@
+import { inject, injectable } from "inversify";
 import { Controller, Route, Tags, Get, SuccessResponse, Response } from "tsoa";
 import { DataResponse } from "../Interfaces/DataResponse";
 import ErrorResponseModel from "../Interfaces/ErrorResponseModel";
-import CategoryService from "../services/CategoryService";
+import { ICategoryService } from "../services/ICategoryService";
+import {
+  BaseHttpController,
+  controller,
+  httpGet,
+  HttpResponseMessage,
+  interfaces,
+} from "inversify-express-utils";
+import Types from "../types";
+import express from "express";
 
 @Route("/categories")
 @Tags("Category")
-export default class CategoriesController extends Controller {
+@controller("/categories")
+class CategoriesController {
   /**
    *
    */
-  private cs: CategoryService;
-  constructor(cs: CategoryService) {
-    super();
-    this.cs = cs;
+
+  constructor(@inject(Types.ICategoryService) private cs: ICategoryService) {
+    // super();
   }
   @Get("/")
+  @httpGet("/")
   @SuccessResponse("200", "OK")
   public async getCategories(): Promise<DataResponse> {
     const results = await this.cs.getCategories();
@@ -22,11 +33,13 @@ export default class CategoriesController extends Controller {
       statusCode: 200,
       data: results,
     };
-
+    // return res.status(200).json({ response });
+    // return this.ok<DataResponse>(response);
     return response;
   }
 
   @Get("{id}")
+  @httpGet("{id}")
   @SuccessResponse("200", "OK")
   @Response<ErrorResponseModel>("404", "Not Found")
   public async getCategory(id: string): Promise<DataResponse> {
@@ -46,3 +59,5 @@ export default class CategoriesController extends Controller {
     return response;
   }
 }
+
+export default CategoriesController;

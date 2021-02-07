@@ -1,4 +1,5 @@
 import passport from "passport";
+import { Route, Get } from "tsoa";
 import VerificationStatus from "../enums/VerificationStatus";
 import middleWare from "../middlewares/auth";
 const express = require("express");
