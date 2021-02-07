@@ -36,10 +36,13 @@ const UserShema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    gender: {
+    profilePics: {
       type: String,
     },
     phone: {
+      type: String,
+    },
+    phoneCode: {
       type: String,
     },
     token: {
