@@ -27,19 +27,17 @@ export default function (passport) {
           displayName: profile.displayName,
           firstName: profile.name.givenName,
           lastName: profile.name.familyName,
-          image: profile.photos[0].value,
+          profilePics: profile.photos[0].value,
           token: accessToken,
           email: profile.emails[0].value,
         };
 
-        const { googleId, firstName, email, lastName } = newUser;
+        const { googleId, email } = newUser;
 
         //return cb(null, profile);
         try {
           let user: any = await User.findOne({
             $or: [{ googleId: googleId }, { email: email }],
-            firstName,
-            lastName,
           });
 
           if (user) {
@@ -56,6 +54,7 @@ export default function (passport) {
           } else {
             user = await User.create(newUser);
             user.verificationStatus = VerificationStatus.NotVerified;
+            //user.save();
             cb(null, user);
           }
         } catch (err) {
@@ -82,23 +81,23 @@ export default function (passport) {
         ],
       },
       async (accessToken, refreshToken, profile, cb) => {
-        console.log(profile);
-        return cb(null, profile);
-        /**const newUser = {
+        const newUser = {
           facebookId: profile.id,
           displayName: profile.displayName,
-          firstName: profile.displayName.split(" ")[2],
-          lastName: profile.displayName.split(" ")[0],
+          firstName: profile.name.givenName,
+          lastName: profile.name.familyName,
           image: profile.photos[0].value,
           token: accessToken,
           email: profile.emails[0].value,
         };
 
-        const { facebookId, firstName, email, lastName } = newUser;
+        const { facebookId, email } = newUser;
+
+        if (!email) return cb(null, newUser);
 
         try {
           let user: any = await User.findOne({
-            $or: [{ facebookId }, { email }, { firstName}, { lastName}],
+            $or: [{ facebookId }, { email }],
           });
 
           if (user) {
@@ -115,30 +114,36 @@ export default function (passport) {
           } else {
             user = await User.create(newUser);
             user.verificationStatus = VerificationStatus.NotVerified;
+            //user.save();
             cb(null, user);
           }
         } catch (err) {
           console.error(err);
           cb(err, null);
-        }*/
+        }
       }
     )
   );
 
   passport.use(
     "sendSms",
-    new passportSms.Strategy(function (req, cb) {
+    new passportSms.Strategy(function async(req, cb) {
       return cb(null, req.body);
-
       //used when phone number verified @ twillo
+      const code = generateRandomNumber();
+      const { payload, phone } = req.body;
+      User.findOneAndUpdate(
+        payload,
+        { phone: phone, phoneCode: code },
+        { new: true }
+      );
       client(accountSid, authToken)
         .messages.create({
-          body: generateRandomNumber(),
+          body: code,
           from: "+12565673518",
           to: req.body.phoneNumber,
         })
         .then((message) => {
-          //db check and update user
           return cb(null, { ...req.body, messageid: message.sid });
         })
         .catch((err) => cb(err, null));
@@ -148,7 +153,12 @@ export default function (passport) {
   passport.use(
     "validateSmsCode",
     new passportFinalAuth.Strategy(function (req, cb) {
-      return cb(null, { ...req.body });
+      return cb(null, req.body);
+      let user: any = User.findOne(req.body.payload);
+      if (user) {
+        if (req.body.phoneCode === user.phoneCode) return cb(null, req.body);
+        else cb("enter the correct code", null);
+      }
     })
   );
 
