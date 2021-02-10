@@ -1,12 +1,6 @@
-<<<<<<< HEAD
 import passportSmsAuth from "passport-custom";
 import passportSmsCodeAuth from "passport-custom";
 import passportUsernameAuth from "passport-custom";
-=======
-import passportSms from "passport-custom";
-import passportSmsAuth from "passport-custom";
-import { Get } from "tsoa";
->>>>>>> c0fb4b6d0e7b7390424860420e3b9006a94f306d
 import GoogleStrategy from "passport-google-oauth20";
 import FacebookStrategy from "passport-facebook";
 import TokenRefreshStrategy from "passport-custom";
@@ -14,11 +8,6 @@ import helper from "./jwtHelper";
 import User from "../models/User";
 import client, { jwt } from "twilio";
 import { generateRandomNumber } from "../utils/helperFunction";
-<<<<<<< HEAD
-=======
-import { createBuilderStatusReporter } from "typescript";
-import { Document } from "mongoose";
->>>>>>> c0fb4b6d0e7b7390424860420e3b9006a94f306d
 import VerificationStatus from "../enums/VerificationStatus";
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
@@ -157,7 +146,6 @@ export default function (passport) {
 
   passport.use(
     "sendSms",
-<<<<<<< HEAD
     new passportSmsAuth.Strategy(async function (req, cb) {
       const code = generateRandomNumber();
       const authHeader = req.headers.authorization;
@@ -192,41 +180,11 @@ export default function (passport) {
           }
         }
       });
-=======
-    new passportSms.Strategy(async function (req, cb) {
-      return cb("fdsgfygdsyf", null);
-      //used when phone number verified @ twillo
-      const code = generateRandomNumber();
-      const { payload, phone } = req.body;
-      const { googleId, facebookId } = payload;
-
-      try {
-        await User.findOneAndUpdate(
-          { $or: [{ googleId }, { facebookId }] },
-          { phone: phone, phoneCode: code },
-          { new: true }
-        );
-      } catch (error) {
-        console.log(error);
-        return cb(error, null);
-      }
-      client(accountSid, authToken)
-        .messages.create({
-          body: code,
-          from: "+12565673518",
-          to: req.body.phoneNumber,
-        })
-        .then((message) => {
-          return cb(null, { ...req.body, messageid: message.sid });
-        })
-        .catch((err) => cb(err, null));
->>>>>>> c0fb4b6d0e7b7390424860420e3b9006a94f306d
     })
   );
 
   passport.use(
     "validateSmsCode",
-<<<<<<< HEAD
     new passportSmsCodeAuth.Strategy(async function (req, cb) {
       const authHeader = req.headers.authorization;
       let token: any;
@@ -287,15 +245,6 @@ export default function (passport) {
           }
         }
       });
-=======
-    new passportSmsAuth.Strategy(function (req, cb) {
-      return cb(null, req.body);
-      let user: any = User.findOne(req.body.payload);
-      if (user) {
-        if (req.body.phoneCode === user.phoneCode) return cb(null, req.body);
-        else cb("enter the correct code", null);
-      }
->>>>>>> c0fb4b6d0e7b7390424860420e3b9006a94f306d
     })
   );
 
@@ -308,3 +257,4 @@ export default function (passport) {
     done(null, user);
   });
 }
+
