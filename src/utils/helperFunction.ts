@@ -5,3 +5,10 @@ export function generateRandomNumber(numLenght = 4) {
     .map((i) => chars[(Math.random() * chars.length) | 0])
     .join("");
 }
+
+export function generateToken() {
+  const key = [...Array(30)]
+    .map((n) => ((Math.random() * 36) | 0).toString(36))
+    .join("");
+  return key;
+}

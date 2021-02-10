@@ -37,7 +37,7 @@ const Sample$ = new Schema(
   { timestamps: true }
 );
 
-const Sample = mongoose.model("Sample", Sample$);
+const Sample = mongoose.model("User", Sample$);
 const DO = async () => {
   const sample = new Sample({
     name: "sample nae",

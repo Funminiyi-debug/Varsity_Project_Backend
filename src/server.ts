@@ -11,12 +11,12 @@ import "dotenv/config";
 import user from "./routes/user.route";
 import category from "./routes/category.route";
 import databaseConnection from "./config/db";
-
+const app: Application = express();
+const port = process.env.PORT || 3001;
 passportConfig(passport);
 databaseConnection();
 
-const app: Application = express();
-const port = process.env.PORT || 3001;
+// PASSPORT CONFIG
 app.use(passport.initialize());
 app.use(passport.session());
 
