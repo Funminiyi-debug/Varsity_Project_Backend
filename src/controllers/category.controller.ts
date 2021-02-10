@@ -106,6 +106,13 @@ class CategoriesController extends Controller {
       };
     }
 
+    if (results == undefined) {
+      this.response = {
+        statusCode: 500,
+        message: "Something happened",
+      };
+    }
+
     this.response = {
       statusCode: 204,
     };

@@ -44,7 +44,12 @@ export default class CategoryService implements ICategoryService {
     id: string,
     entity: ICategory
   ): Promise<Document<any>> {
-    return await Category.findByIdAndUpdate(id, entity, { new: true });
+    try {
+      return await Category.findByIdAndUpdate(id, entity, { new: true });
+    } catch (error) {
+      console.log(error);
+      return undefined;
+    }
   }
 
   public async deleteCategory(entity: ICategory): Promise<Document<any>> {
