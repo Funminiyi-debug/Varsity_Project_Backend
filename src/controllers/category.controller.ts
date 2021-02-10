@@ -9,6 +9,7 @@ import {
   Post,
   Body,
   Path,
+  Put,
 } from "tsoa";
 import { DataResponse } from "../interfaces/DataResponse";
 import ErrorResponseModel from "../interfaces/ErrorResponseModel";
@@ -89,7 +90,7 @@ class CategoriesController extends Controller {
     }
   }
 
-  @Post("{id}")
+  @Put("{id}")
   @SuccessResponse("204", "Updated")
   @Response<ErrorResponseModel>("400", "Bad Data")
   @Response<ErrorResponseModel>("404", "Not Found")

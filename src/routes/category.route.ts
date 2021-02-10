@@ -31,7 +31,7 @@ router.post("/", async (req: Request, res: Response) => {
   return handleResponse(res, response);
 });
 
-router.post("/:id", async (req: Request, res: Response) => {
+router.put("/:id", async (req: Request, res: Response) => {
   const response: DataResponse = await categoryController.updateCategory(
     req.params.id,
     req.body
