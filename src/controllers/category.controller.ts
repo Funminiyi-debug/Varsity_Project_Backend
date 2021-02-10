@@ -7,10 +7,11 @@ import {
   SuccessResponse,
   Response,
   Post,
+  Body,
 } from "tsoa";
 import { DataResponse } from "../interfaces/DataResponse";
 import ErrorResponseModel from "../interfaces/ErrorResponseModel";
-import { ICategoryService } from "../services/ICategoryService";
+import { ICategoryService } from "../services/Icategory.service";
 import Types from "../types";
 import express, { response } from "express";
 import ICategory from "../interfaces/ICategory";
@@ -22,18 +23,23 @@ class CategoriesController extends Controller {
   constructor(@inject(Types.ICategoryService) private cs: ICategoryService) {
     super();
   }
+  response: DataResponse = {
+    statusCode: 500,
+    data: [],
+  };
+
   @Get("/")
   // @httpGet("/")
   @SuccessResponse("200", "OK")
   public async getCategories(): Promise<DataResponse> {
     const results = await this.cs.getCategories();
-    const response: DataResponse = {
+
+    this.response = {
       statusCode: 200,
       data: results,
     };
-    // return res.status(200).json({ response });
-    // return this.ok<DataResponse>(response);
-    return response;
+
+    return this.response;
   }
 
   @Get("{id}")
@@ -42,40 +48,45 @@ class CategoriesController extends Controller {
   @Response<ErrorResponseModel>("404", "Not Found")
   public async getCategory(id: string): Promise<DataResponse> {
     const results = await this.cs.getCategory(id);
-    const response: DataResponse = {
-      statusCode: 500,
-      data: [],
-    };
+
     if (results.length > 0) {
-      response.statusCode = 200;
-      response.data = results;
+      this.response.statusCode = 200;
+      this.response.data = results;
     } else {
-      response.statusCode = 404;
-      response.data = null;
+      this.response.statusCode = 404;
+      this.response.message = "Category not found";
     }
 
-    return response;
+    return this.response;
   }
 
-  /**@Post("/")
+  @Post("/")
   @SuccessResponse("201", "Created")
-  public async createCategory(category: ICategory): Promise<DataResponse> {
+  @Response<ErrorResponseModel>("400", "Bad Data")
+  @Response<ErrorResponseModel>("409", "Category already exists")
+  public async createCategory(
+    @Body() category: ICategory
+  ): Promise<DataResponse> {
     console.log("from user", category);
-    const response: DataResponse = {
-      statusCode: 500,
-      data: [],
-    };
+
     try {
       const results = await this.cs.createCategory(category);
-      console.log("from db");
-      response.statusCode = 201;
-      response.data = results;
-      return response;
+      console.log("from db", results);
+      if (results == null) {
+        this.response.statusCode = 409;
+        this.response.message = "Category already exists";
+        return this.response;
+      }
+      this.response.statusCode = 201;
+      this.response.data = results;
+      return this.response;
     } catch (error) {
       console.log(error);
-      return response;
+      this.response.statusCode = 500;
+      this.response.message = error.message;
+      return this.response;
     }
-  }*/
+  }
 }
 
 export default CategoriesController;

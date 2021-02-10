@@ -1,7 +1,7 @@
 import { Container } from "inversify";
-import CategoryService from "./services/CategoryService";
-import ProductService from "./services/ProductService";
-import { ICategoryService } from "./services/ICategoryService";
+import CategoryService from "./services/category.service";
+import ProductService from "./services/product.service";
+import { ICategoryService } from "./services/Icategory.service";
 import Types from "./types";
 
 const container = new Container();

@@ -80,6 +80,32 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"CategoryType": {
+				"enum": [
+					"Product",
+					"Services"
+				],
+				"type": "string"
+			},
+			"ICategory": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"categoryType": {
+						"$ref": "#/components/schemas/CategoryType"
+					}
+				},
+				"required": [
+					"name",
+					"categoryType"
+				],
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {}
@@ -202,6 +228,56 @@
 				],
 				"security": [],
 				"parameters": []
+			},
+			"post": {
+				"operationId": "CreateCategory",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DataResponse"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Data",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseModel"
+								}
+							}
+						}
+					},
+					"409": {
+						"description": "Category already exists",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseModel"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Category"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ICategory"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/categories/{id}": {
