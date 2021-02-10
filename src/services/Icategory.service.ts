@@ -10,7 +10,7 @@ export interface ICategoryService {
 
   createCategory(entity: ICategory): Promise<Document<any>>;
 
-  updateCategory(entity: ICategory): Promise<Document<any>>;
+  updateCategory(id: string, entity: ICategory): Promise<Document<any>>;
 
   deleteCategory(entity: ICategory): Promise<Document<any>>;
 }

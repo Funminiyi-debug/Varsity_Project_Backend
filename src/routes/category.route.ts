@@ -2,7 +2,7 @@ import express, { Request, Response } from "express";
 import CategoriesController from "../controllers/category.controller";
 import { DataResponse } from "../interfaces/DataResponse";
 import CategoryService from "../services/category.service";
-import { handleResponse } from "../helpers/handleResponse";
+import { handleResponse } from "../utils/handleResponse";
 import { container } from "../containerDI";
 import Types from "../types";
 const router = express.Router();
@@ -25,6 +25,15 @@ router.get("/:id", async (req: Request, res: Response) => {
 
 router.post("/", async (req: Request, res: Response) => {
   const response: DataResponse = await categoryController.createCategory(
+    req.body
+  );
+
+  return handleResponse(res, response);
+});
+
+router.post("/:id", async (req: Request, res: Response) => {
+  const response: DataResponse = await categoryController.updateCategory(
+    req.params.id,
     req.body
   );
 

@@ -8,6 +8,7 @@ import {
   Response,
   Post,
   Body,
+  Path,
 } from "tsoa";
 import { DataResponse } from "../interfaces/DataResponse";
 import ErrorResponseModel from "../interfaces/ErrorResponseModel";
@@ -15,6 +16,7 @@ import { ICategoryService } from "../services/Icategory.service";
 import Types from "../types";
 import express, { response } from "express";
 import ICategory from "../interfaces/ICategory";
+import { Params } from "@decorators/express";
 
 @Route("/categories")
 @Tags("Category")
@@ -71,7 +73,6 @@ class CategoriesController extends Controller {
 
     try {
       const results = await this.cs.createCategory(category);
-      console.log("from db", results);
       if (results == null) {
         this.response.statusCode = 409;
         this.response.message = "Category already exists";
@@ -86,6 +87,29 @@ class CategoriesController extends Controller {
       this.response.message = error.message;
       return this.response;
     }
+  }
+
+  @Post("{id}")
+  @SuccessResponse("204", "Updated")
+  @Response<ErrorResponseModel>("400", "Bad Data")
+  @Response<ErrorResponseModel>("404", "Not Found")
+  public async updateCategory(
+    @Path() id: string,
+    @Body() category: ICategory
+  ): Promise<DataResponse> {
+    const results = await this.cs.updateCategory(id, category);
+
+    if (results == null) {
+      this.response = {
+        statusCode: 404,
+        message: "Category not found",
+      };
+    }
+
+    this.response = {
+      statusCode: 204,
+    };
+    return this.response;
   }
 }
 
