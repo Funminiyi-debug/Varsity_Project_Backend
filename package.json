@@ -9,7 +9,7 @@
     "dev": "concurrently \"npm run devStart\" \"nodemon -x tsoa spec\"",
     "start": "tsc && node dist/server.js",
     "prebuild": "npm run swagger",
-    "devStart": "nodemon --watch src/**/*.ts  --exec ts-node ./src/server.ts",
+    "devStart": "nodemon --watch src/**/*.ts --ignore src/populatedb/* --exec ts-node ./src/server.ts",
     "swagger": "tsoa spec"
   },
   "dependencies": {
@@ -17,6 +17,7 @@
     "@types/cors": "^2.8.9",
     "@types/mongoose": "^5.10.3",
     "@types/morgan": "^1.9.2",
+    "axios": "^0.21.1",
     "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
     "cookie-session": "^1.4.0",

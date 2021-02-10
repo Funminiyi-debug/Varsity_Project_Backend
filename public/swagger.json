@@ -84,7 +84,7 @@
 			"CategoryType": {
 				"enum": [
 					"Product",
-					"Services"
+					"Service"
 				],
 				"type": "string"
 			},
@@ -320,7 +320,7 @@
 					}
 				]
 			},
-			"post": {
+			"put": {
 				"operationId": "UpdateCategory",
 				"responses": {
 					"204": {
