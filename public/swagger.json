@@ -12,10 +12,7 @@
 						"type": "number",
 						"format": "double"
 					},
-					"data": {
-						"items": {},
-						"type": "array"
-					},
+					"data": {},
 					"message": {
 						"type": "string"
 					}

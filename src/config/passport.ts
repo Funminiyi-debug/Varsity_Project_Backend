@@ -1,5 +1,5 @@
 import passportSms from "passport-custom";
-import passportFinalAuth from "passport-custom";
+import passportSmsAuth from "passport-custom";
 import { Get } from "tsoa";
 import GoogleStrategy from "passport-google-oauth20";
 import FacebookStrategy from "passport-facebook";
@@ -23,6 +23,9 @@ export default function (passport) {
         callbackURL: "/auth/google/callback",
       },
       async (accessToken, refreshToken, profile, cb) => {
+        console.log("my token", accessToken);
+        console.log("my refresh token", refreshToken);
+
         const newUser = {
           googleId: profile.id,
           displayName: profile.displayName,
@@ -48,6 +51,7 @@ export default function (passport) {
                 { token: newUser.token },
                 { new: true }
               );
+
               cb(null, user);
             } else {
               cb(null, user);
@@ -55,7 +59,7 @@ export default function (passport) {
           } else {
             user = await User.create(newUser);
             user.verificationStatus = VerificationStatus.NotVerified;
-            //user.save();
+            user.save();
             cb(null, user);
           }
         } catch (err) {
@@ -82,11 +86,6 @@ export default function (passport) {
         ],
       },
       async (accessToken, refreshToken, profile, cb) => {
-<<<<<<< HEAD
-        console.log(profile);
-        // return cb(null, profile);
-=======
->>>>>>> 487a3037dab9b8b309448396edabcdd180d3c3c8
         const newUser = {
           facebookId: profile.id,
           displayName: profile.displayName,
@@ -103,11 +102,7 @@ export default function (passport) {
 
         try {
           let user: any = await User.findOne({
-<<<<<<< HEAD
-            $or: [{ facebookId }, { email }, { firstName }, { lastName }],
-=======
             $or: [{ facebookId }, { email }],
->>>>>>> 487a3037dab9b8b309448396edabcdd180d3c3c8
           });
 
           if (user) {
@@ -124,7 +119,7 @@ export default function (passport) {
           } else {
             user = await User.create(newUser);
             user.verificationStatus = VerificationStatus.NotVerified;
-            //user.save();
+            user.save();
             cb(null, user);
           }
         } catch (err) {
@@ -137,16 +132,23 @@ export default function (passport) {
 
   passport.use(
     "sendSms",
-    new passportSms.Strategy(function async(req, cb) {
-      return cb(null, req.body);
+    new passportSms.Strategy(async function (req, cb) {
+      return cb("fdsgfygdsyf", null);
       //used when phone number verified @ twillo
       const code = generateRandomNumber();
       const { payload, phone } = req.body;
-      User.findOneAndUpdate(
-        payload,
-        { phone: phone, phoneCode: code },
-        { new: true }
-      );
+      const { googleId, facebookId } = payload;
+
+      try {
+        await User.findOneAndUpdate(
+          { $or: [{ googleId }, { facebookId }] },
+          { phone: phone, phoneCode: code },
+          { new: true }
+        );
+      } catch (error) {
+        console.log(error);
+        return cb(error, null);
+      }
       client(accountSid, authToken)
         .messages.create({
           body: code,
@@ -162,7 +164,7 @@ export default function (passport) {
 
   passport.use(
     "validateSmsCode",
-    new passportFinalAuth.Strategy(function (req, cb) {
+    new passportSmsAuth.Strategy(function (req, cb) {
       return cb(null, req.body);
       let user: any = User.findOne(req.body.payload);
       if (user) {

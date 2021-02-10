@@ -1,31 +1,29 @@
 import { inject, injectable } from "inversify";
-import { Controller, Route, Tags, Get, SuccessResponse, Response } from "tsoa";
-import { DataResponse } from "../Interfaces/DataResponse";
-import ErrorResponseModel from "../Interfaces/ErrorResponseModel";
-import { ICategoryService } from "../services/ICategoryService";
 import {
-  BaseHttpController,
-  controller,
-  httpGet,
-  HttpResponseMessage,
-  interfaces,
-} from "inversify-express-utils";
+  Controller,
+  Route,
+  Tags,
+  Get,
+  SuccessResponse,
+  Response,
+  Post,
+} from "tsoa";
+import { DataResponse } from "../interfaces/DataResponse";
+import ErrorResponseModel from "../interfaces/ErrorResponseModel";
+import { ICategoryService } from "../services/ICategoryService";
 import Types from "../types";
-import express from "express";
+import express, { response } from "express";
+import ICategory from "../interfaces/ICategory";
 
 @Route("/categories")
 @Tags("Category")
-@controller("/categories")
-class CategoriesController {
-  /**
-   *
-   */
-
+// @controller("/categories")
+class CategoriesController extends Controller {
   constructor(@inject(Types.ICategoryService) private cs: ICategoryService) {
-    // super();
+    super();
   }
   @Get("/")
-  @httpGet("/")
+  // @httpGet("/")
   @SuccessResponse("200", "OK")
   public async getCategories(): Promise<DataResponse> {
     const results = await this.cs.getCategories();
@@ -39,7 +37,7 @@ class CategoriesController {
   }
 
   @Get("{id}")
-  @httpGet("{id}")
+  // @httpGet("{id}")
   @SuccessResponse("200", "OK")
   @Response<ErrorResponseModel>("404", "Not Found")
   public async getCategory(id: string): Promise<DataResponse> {
@@ -58,6 +56,26 @@ class CategoriesController {
 
     return response;
   }
+
+  /**@Post("/")
+  @SuccessResponse("201", "Created")
+  public async createCategory(category: ICategory): Promise<DataResponse> {
+    console.log("from user", category);
+    const response: DataResponse = {
+      statusCode: 500,
+      data: [],
+    };
+    try {
+      const results = await this.cs.createCategory(category);
+      console.log("from db");
+      response.statusCode = 201;
+      response.data = results;
+      return response;
+    } catch (error) {
+      console.log(error);
+      return response;
+    }
+  }*/
 }
 
 export default CategoriesController;

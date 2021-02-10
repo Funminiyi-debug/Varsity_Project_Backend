@@ -1,6 +1,6 @@
 import UserController from "../controllers/user.controller";
 import express, { Request, Response } from "express";
-import { DataResponse } from "../Interfaces/DataResponse";
+import { DataResponse } from "../interfaces/DataResponse";
 import handleResponse from "../utils/response";
 import middleWare = require("../middlewares/auth");
 

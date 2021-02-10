@@ -11,8 +11,6 @@ import "dotenv/config";
 import user from "./routes/user.route";
 import category from "./routes/category.route";
 import databaseConnection from "./config/db";
-import { container } from "./containerDI";
-import { InversifyExpressServer } from "inversify-express-utils";
 
 passportConfig(passport);
 databaseConnection();

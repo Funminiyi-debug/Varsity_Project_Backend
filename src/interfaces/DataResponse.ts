@@ -1,6 +1,6 @@
 export interface DataResponse {
   statusCode: number;
-  data?: Array<any>;
+  data?: any;
   message?: string;
 }
 

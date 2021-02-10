@@ -105,7 +105,7 @@ router.get(
 // @desc    welcome user
 // @route   GET /auth/welcome
 router.get("/success", (req, res) => {
-  res.send("sucessfull");
+  res.status(200).json({ message: "sucessfull" });
 });
 
 router.get("/failed", (req, res) => {
@@ -115,7 +115,6 @@ router.get("/failed", (req, res) => {
 // @desc    Logout user
 // @route   /auth/logout
 router.get("/logout", (req, res) => {
-  req.logout();
   req.session = null;
   res.send({ msg: "logged out" });
 });

@@ -32,6 +32,7 @@ export default class CategoryService implements ICategoryService {
 
   public async createCategory(entity: ICategory): Promise<Document<any>> {
     const category = new Category(entity);
+
     return await category.save();
   }
 

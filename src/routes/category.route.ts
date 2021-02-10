@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import CategoriesController from "../controllers/category.controller";
-import { DataResponse } from "../Interfaces/DataResponse";
+import { DataResponse } from "../interfaces/DataResponse";
 import CategoryService from "../services/CategoryService";
 import handleResponse from "../utils/response";
 import { container } from "../containerDI";
