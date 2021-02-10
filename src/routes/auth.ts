@@ -16,8 +16,17 @@ router.get(
 
 router.post(
   "/sendsms",
+  middleWare.authMiddleware,
   passport.authenticate("sendSms", { failureRedirect: "/auth/failed" }),
   function (req, res) {
+    console.log(req.user);
+    if (req.user.error)
+      return res.status(400).json({
+        success: false,
+        payload: req.user.payload,
+        phoneCode: req.user.phoneCode,
+        message: "Wrong phone number, Try again...",
+      });
     return res.status(200).json({
       success: true,
       payload: req.user.payload,
@@ -28,13 +37,39 @@ router.post(
 
 router.post(
   "/validsmscode",
+  middleWare.authMiddleware,
   passport.authenticate("validateSmsCode", { failureRedirect: "/auth/failed" }),
   function (req, res) {
-    req.session.user = req.user;
+    console.log(req.user);
+    if (req.user.error)
+      return res.status(400).json({
+        success: false,
+        payload: req.user.payload,
+        message: "Invalid code entered...",
+      });
     return res.status(200).json({
       success: true,
       payload: req.user.payload,
       message: "Code verified,  username next",
+    });
+  }
+);
+
+router.post(
+  "/username",
+  middleWare.authMiddleware,
+  passport.authenticate("usernameAuth", { failureRedirect: "/auth/failed" }),
+  function (req, res) {
+    if (req.user.error)
+      return res.status(400).json({
+        success: false,
+        payload: req.user.payload,
+        message: "Username Unavailable.",
+      });
+    return res.status(200).json({
+      success: true,
+      payload: req.user.payload,
+      message: "Registration Completed",
     });
   }
 );
@@ -48,18 +83,18 @@ router.get(
     session: false,
   }),
   (req, res) => {
-    //const token = req.user.token;
-    if (req.user.verificationStatus == VerificationStatus.Verified) {
+    const { verificationStatus, token } = req.user;
+    if (verificationStatus == VerificationStatus.Verified) {
       req.session.user = req.user;
       return res.status(200).json({
         success: true,
-        payload: { googleId: req.user.googleId },
+        payload: { token },
         message: "You are logged In",
       });
-    } else if (req.user.verificationStatus == VerificationStatus.NotVerified) {
+    } else if (verificationStatus == VerificationStatus.NotVerified) {
       return res.status(201).json({
         success: true,
-        payload: { googleId: req.user.googleId },
+        payload: { token },
         message: "User Created, Phone registration next",
       });
     } else
@@ -75,23 +110,24 @@ router.get(
     failureRedirect: "/auth/failed",
   }),
   function (req, res) {
+    const { verificationStatus, token } = req.user;
     if (!req.user.email)
       return res.status(401).json({
         success: true,
         message: "verify your email account on facebook",
       });
 
-    if (req.user.verificationStatus == VerificationStatus.Verified) {
+    if (verificationStatus == VerificationStatus.Verified) {
       req.session.user = req.user;
       return res.status(200).json({
         success: true,
-        payload: { facebookId: req.user.facebookId },
+        payload: { token },
         message: "You are logged In",
       });
-    } else if (req.user.verificationStatus == VerificationStatus.NotVerified) {
+    } else if (verificationStatus == VerificationStatus.NotVerified) {
       return res.status(201).json({
         success: true,
-        payload: { facebookId: req.user.facebookId },
+        payload: { token },
         message: "User Created, Phone registration next",
       });
     } else
@@ -103,12 +139,16 @@ router.get(
 
 // @desc    welcome user
 // @route   GET /auth/welcome
-router.get("/success", (req, res) => {
-  res.send("sucessfull");
-});
+router.get(
+  "/welcome",
+  [middleWare.authMiddleware, middleWare.ensureAuth],
+  (req, res) => {
+    res.send("welcome" + req.session.user.userName);
+  }
+);
 
 router.get("/failed", (req, res) => {
-  res.status(400).send(req.err);
+  res.status(500).json({ success: false });
 });
 
 // @desc    Logout user

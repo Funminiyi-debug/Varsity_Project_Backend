@@ -1,23 +1,59 @@
 import handleResponse from "../utils/response";
+import helper from "../config/jwtHelper";
 export default {
-  ensureAuth: function (req, res, next) {
-    if (req.session.user.verified) {
-      return next();
-    } else {
-      return handleResponse(res, {
-        statusCode: 403,
-        message: "forbidden page... login first ",
+  ensureAuth: (req, res, next) => {
+    if (req.session.user.verificationStatus === "Verified") {
+      next();
+    } else if (req.session.user.verificationStatus === "NotVerified") {
+      return res.status(401).json({
+        success: false,
+        message: "Registration Not Completed",
       });
-      //res.status(403).json({ msg: "forbidden page... login first " });
+    } else {
+      return res.status(401).json({
+        success: false,
+        message: "User Restricted from using App",
+      });
     }
   },
-  ensureGuest: function (req, res, next) {
-    if (!req.isAuthenticated()) {
-      return next();
-    } else {
-      return handleResponse(res, {
-        statusCode: 200,
+  authMiddleware: (req, res, next) => {
+    // read the token from header or url
+    //const token = req.headers["x-access-token"] || req.query.token;
+    const authHeader = req.headers.authorization;
+    let token: any;
+    if (authHeader) token = authHeader.split(" ")[1];
+    // token does not exist
+    if (!token) {
+      return res.status(403).json({
+        success: false,
+        message: "not logged in",
       });
     }
+
+    // create a promise that decodes the token
+    const p = new Promise((resolve, reject) => {
+      helper.verify(
+        token,
+        //req.app.get("varsity api intensify"),
+        (err, decoded) => {
+          if (err) reject(err);
+          resolve(decoded);
+        }
+      );
+    });
+
+    // if it has failed to verify, it will return an error message
+    const onError = (error) => {
+      res.status(403).json({
+        success: false,
+        message: error.message,
+      });
+    };
+
+    // process the promise
+    p.then((decoded) => {
+      req.decoded = decoded;
+      next();
+    }).catch(onError);
   },
 };

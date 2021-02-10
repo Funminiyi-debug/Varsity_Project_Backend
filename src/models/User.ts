@@ -15,7 +15,7 @@ const UserShema = new mongoose.Schema(
     },
     facebookId: {
       type: String,
-      requierd: true,
+      required: true,
     },
     lastName: {
       type: String,
