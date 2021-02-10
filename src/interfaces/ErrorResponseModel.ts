@@ -1,6 +1,6 @@
 interface ErrorResponseModel {
-  title: string;
-  status: number;
+  message: string;
+  success: false;
 }
 
 export default ErrorResponseModel;

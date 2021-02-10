@@ -1,6 +1,4 @@
-import mongoose, { Document, Types } from "mongoose";
 import VerificationStatus from "../enums/VerificationStatus";
-// import CategoryType from "../enums/CategoryType";
 interface IUser {
   _id?: string;
   name: string;

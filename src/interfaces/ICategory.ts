@@ -3,8 +3,6 @@ import CategoryType from "../enums/CategoryType";
 interface ICategory {
   _id?: string;
   name: string;
-  subcategory: string[];
-  services: string[];
   categoryType: CategoryType;
 }
 

@@ -14,10 +14,9 @@ import {
   Controller,
   Response,
 } from "tsoa";
-import { DataResponse, UserCreationRequest } from "../Interfaces/DataResponse";
+import { DataResponse, UserCreationRequest } from "../interfaces/DataResponse";
 
-import ErrorResponseModel from "../Interfaces/ErrorResponseModel";
-// import ErrorResponseModel from "../interfaces/ErrorResponseModel";
+import ErrorResponseModel from "../interfaces/ErrorResponseModel";
 
 @Route("users")
 @Tags("User")

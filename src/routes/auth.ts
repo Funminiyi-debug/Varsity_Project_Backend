@@ -1,4 +1,5 @@
 import passport from "passport";
+import { Route, Get } from "tsoa";
 import VerificationStatus from "../enums/VerificationStatus";
 import middleWare from "../middlewares/auth";
 const express = require("express");
@@ -146,6 +147,9 @@ router.get(
     res.send("welcome" + req.session.user.userName);
   }
 );
+router.get("/success", (req, res) => {
+  res.status(200).json({ message: "sucessfull" });
+});
 
 router.get("/failed", (req, res) => {
   res.status(500).json({ success: false });
@@ -154,7 +158,6 @@ router.get("/failed", (req, res) => {
 // @desc    Logout user
 // @route   /auth/logout
 router.get("/logout", (req, res) => {
-  req.logout();
   req.session = null;
   res.send({ msg: "logged out" });
 });

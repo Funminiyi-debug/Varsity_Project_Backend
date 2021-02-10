@@ -12,10 +12,7 @@
 						"type": "number",
 						"format": "double"
 					},
-					"data": {
-						"items": {},
-						"type": "array"
-					},
+					"data": {},
 					"message": {
 						"type": "string"
 					}
@@ -28,17 +25,20 @@
 			},
 			"ErrorResponseModel": {
 				"properties": {
-					"title": {
+					"message": {
 						"type": "string"
 					},
-					"status": {
-						"type": "number",
-						"format": "double"
+					"success": {
+						"type": "boolean",
+						"enum": [
+							"false"
+						],
+						"nullable": false
 					}
 				},
 				"required": [
-					"title",
-					"status"
+					"message",
+					"success"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -77,6 +77,32 @@
 					"email",
 					"name",
 					"phoneNumbers"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CategoryType": {
+				"enum": [
+					"Product",
+					"Services"
+				],
+				"type": "string"
+			},
+			"ICategory": {
+				"properties": {
+					"_id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"categoryType": {
+						"$ref": "#/components/schemas/CategoryType"
+					}
+				},
+				"required": [
+					"name",
+					"categoryType"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -202,6 +228,56 @@
 				],
 				"security": [],
 				"parameters": []
+			},
+			"post": {
+				"operationId": "CreateCategory",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DataResponse"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Data",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseModel"
+								}
+							}
+						}
+					},
+					"409": {
+						"description": "Category already exists",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseModel"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Category"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ICategory"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/categories/{id}": {
@@ -243,6 +319,65 @@
 						}
 					}
 				]
+			},
+			"post": {
+				"operationId": "UpdateCategory",
+				"responses": {
+					"204": {
+						"description": "Updated",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DataResponse"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Data",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseModel"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseModel"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Category"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ICategory"
+							}
+						}
+					}
+				}
 			}
 		}
 	},
