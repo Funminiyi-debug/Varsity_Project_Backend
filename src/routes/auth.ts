@@ -17,9 +17,10 @@ router.get(
 
 router.post(
   "/sendsms",
-  middleWare.authMiddleware,
+  [middleWare.authMiddleware, middleWare.ensureSmsAuth],
   passport.authenticate("sendSms", { failureRedirect: "/auth/failed" }),
   function (req, res) {
+    req.session.user = req.user.data;
     console.log(req.user);
     if (req.user.error)
       return res.status(400).json({
@@ -38,10 +39,11 @@ router.post(
 
 router.post(
   "/validsmscode",
-  middleWare.authMiddleware,
+  [middleWare.authMiddleware, middleWare.ensureSmsCodeAuth],
   passport.authenticate("validateSmsCode", { failureRedirect: "/auth/failed" }),
   function (req, res) {
     console.log(req.user);
+    req.session.user = req.user.data;
     if (req.user.error)
       return res.status(400).json({
         success: false,
@@ -58,9 +60,11 @@ router.post(
 
 router.post(
   "/username",
-  middleWare.authMiddleware,
+  [middleWare.authMiddleware, middleWare.ensureVerifyCodeAuth],
   passport.authenticate("usernameAuth", { failureRedirect: "/auth/failed" }),
   function (req, res) {
+    console.log(req.user);
+    req.session.user = req.user.data;
     if (req.user.error)
       return res.status(400).json({
         success: false,
@@ -84,9 +88,9 @@ router.get(
     session: false,
   }),
   (req, res) => {
-    const { verificationStatus, token } = req.user;
+    req.session.user = req.user.data;
+    const { verificationStatus, token } = req.user.data;
     if (verificationStatus == VerificationStatus.Verified) {
-      req.session.user = req.user;
       return res.status(200).json({
         success: true,
         payload: { token },
@@ -111,15 +115,15 @@ router.get(
     failureRedirect: "/auth/failed",
   }),
   function (req, res) {
-    const { verificationStatus, token } = req.user;
-    if (!req.user.email)
+    req.session.user = req.user.data;
+    const { verificationStatus, token } = req.user.data;
+    if (!req.user.data.email)
       return res.status(401).json({
         success: true,
         message: "verify your email account on facebook",
       });
 
     if (verificationStatus == VerificationStatus.Verified) {
-      req.session.user = req.user;
       return res.status(200).json({
         success: true,
         payload: { token },
@@ -144,12 +148,9 @@ router.get(
   "/welcome",
   [middleWare.authMiddleware, middleWare.ensureAuth],
   (req, res) => {
-    res.send("welcome" + req.session.user.userName);
+    res.send(`welcome ${req.session.user.userName}`);
   }
 );
-router.get("/success", (req, res) => {
-  res.status(200).json({ message: "sucessfull" });
-});
 
 router.get("/failed", (req, res) => {
   res.status(500).json({ success: false });
@@ -158,7 +159,7 @@ router.get("/failed", (req, res) => {
 // @desc    Logout user
 // @route   /auth/logout
 router.get("/logout", (req, res) => {
-  req.session = null;
+  req.session.user = null;
   res.send({ msg: "logged out" });
 });
 

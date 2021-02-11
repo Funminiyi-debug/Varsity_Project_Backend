@@ -2,6 +2,7 @@ import handleResponse from "../utils/response";
 import helper from "../config/jwtHelper";
 export default {
   ensureAuth: (req, res, next) => {
+    console.log(req.session.user);
     if (req.session.user.verificationStatus === "Verified") {
       next();
     } else if (req.session.user.verificationStatus === "NotVerified") {
@@ -13,6 +14,39 @@ export default {
       return res.status(401).json({
         success: false,
         message: "User Restricted from using App",
+      });
+    }
+  },
+  ensureSmsAuth: (req, res, next) => {
+    console.log(req.session.user);
+    if (req.session.user) {
+      next();
+    } else {
+      return res.status(401).json({
+        success: false,
+        message: "User Not yet Created by Google or Facebook",
+      });
+    }
+  },
+  ensureVerifyCodeAuth: (req, res, next) => {
+    console.log(req.session.user);
+    if (req.session.user.verifyCode) {
+      next();
+    } else {
+      return res.status(401).json({
+        success: false,
+        message: "User hasn't verified code yet",
+      });
+    }
+  },
+  ensureSmsCodeAuth: (req, res, next) => {
+    console.log(req.session.user);
+    if (req.session.user.phoneCode) {
+      next();
+    } else {
+      return res.status(401).json({
+        success: false,
+        message: "Please go back to phone registration Stage",
       });
     }
   },
@@ -44,6 +78,7 @@ export default {
 
     // if it has failed to verify, it will return an error message
     const onError = (error) => {
+      req.session.user = null;
       res.status(403).json({
         success: false,
         message: error.message,
