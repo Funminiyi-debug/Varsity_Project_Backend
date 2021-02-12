@@ -3,7 +3,6 @@ import passportSmsCodeAuth from "passport-custom";
 import passportUsernameAuth from "passport-custom";
 import GoogleStrategy from "passport-google-oauth20";
 import FacebookStrategy from "passport-facebook";
-import TokenRefreshStrategy from "passport-custom";
 import helper from "./jwtHelper";
 import User from "../models/User";
 import client, { jwt } from "twilio";
@@ -23,9 +22,6 @@ export default function (passport) {
         callbackURL: "/auth/google/callback",
       },
       async (accessToken, refreshToken, profile, cb) => {
-        console.log("my token", accessToken);
-        console.log("my refresh token", refreshToken);
-
         const newUser = {
           googleId: profile.id,
           displayName: profile.displayName,
@@ -45,7 +41,6 @@ export default function (passport) {
 
         newUser.token = jwtAccessToken;
 
-        //return cb(null, profile);
         try {
           let user: any = await User.findOne({
             $or: [{ googleId: googleId }, { email: email }],
@@ -59,15 +54,15 @@ export default function (passport) {
                 { new: true }
               );
 
-              cb(null, user);
+              cb(null, { data: user });
             } else {
-              cb(null, user);
+              cb(null, { data: user });
             }
           } else {
             user = await User.create(newUser);
             user.verificationStatus = VerificationStatus.NotVerified;
             user.save();
-            cb(null, user);
+            cb(null, { data: user });
           }
         } catch (err) {
           console.error(err);
@@ -104,6 +99,8 @@ export default function (passport) {
         };
 
         const { facebookId, email, displayName } = newUser;
+        console.log(email);
+        if (!email) return cb(null, { data: newUser });
 
         const jwtAccessToken = helper.sign({
           email,
@@ -111,8 +108,6 @@ export default function (passport) {
         });
 
         newUser.token = jwtAccessToken;
-
-        if (!email) return cb(null, newUser);
 
         try {
           let user: any = await User.findOne({
@@ -126,15 +121,15 @@ export default function (passport) {
                 { token: newUser.token },
                 { new: true }
               );
-              cb(null, user);
+              cb(null, { data: user });
             } else {
-              cb(null, user);
+              cb(null, { data: user });
             }
           } else {
             user = await User.create(newUser);
             user.verificationStatus = VerificationStatus.NotVerified;
             user.save();
-            cb(null, user);
+            cb(null, { data: user });
           }
         } catch (err) {
           console.error(err);
@@ -157,21 +152,28 @@ export default function (passport) {
           const { email } = decoded;
 
           try {
-            var user = await User.findOneAndUpdate(
-              email,
-              { phone: phoneNumber, phoneCode: code },
-              { new: true }
-            );
-            client(accountSid, authToken)
-              .messages.create({
-                body: code,
-                from: "+12565673518",
-                to: phoneNumber,
-              })
-              .then((message) => {
-                return cb(null, { user, messageid: message.sid });
-              })
-              .catch((err) => cb(null, { user, phoneCode: code, error: true }));
+            let user: any = await User.findOne({ email });
+
+            if (user) {
+              user = await User.findOneAndUpdate(
+                email,
+                { phone: phoneNumber, phoneCode: code },
+                { new: true }
+              );
+
+              client(accountSid, authToken)
+                .messages.create({
+                  body: code,
+                  from: "+12565673518",
+                  to: phoneNumber,
+                })
+                .then((message) => {
+                  return cb(null, { data: user, messageid: message.sid });
+                })
+                .catch((err) =>
+                  cb(null, { data: user, phoneCode: code, error: true })
+                );
+            }
             //phoneCode shouldnt be sent, just for testing
           } catch (error) {
             return cb(error, null);
@@ -194,8 +196,14 @@ export default function (passport) {
           try {
             let user: any = await User.findOne({ email });
             if (user) {
-              if (phoneCode === user.phoneCode) return cb(null, user);
-              else cb(null, { ...user, error: true });
+              if (phoneCode === user.phoneCode) {
+                user = await User.findOneAndUpdate(
+                  email,
+                  { verifyCode: true },
+                  { new: true }
+                );
+                return cb(null, { data: user });
+              } else cb(null, { data: user, error: true });
             }
           } catch (err) {
             console.error(err);
@@ -217,12 +225,20 @@ export default function (passport) {
           const { username } = req.body;
           const { email } = decoded;
           try {
+<<<<<<< HEAD
             let user: any = await User.findOne(email);
+=======
+            let user: any = await User.findOne({ email });
+>>>>>>> 413ee3b3ac780eda7b0bf8964b1915aad6fd0e7e
             if (user) {
               if (user.userName === username) {
-                return cb(null, { ...user, error: true });
+                return cb(null, { data: user, error: true });
               } else {
+<<<<<<< HEAD
                 await User.findOneAndUpdate(
+=======
+                let newUser = await User.findOneAndUpdate(
+>>>>>>> 413ee3b3ac780eda7b0bf8964b1915aad6fd0e7e
                   email,
                   {
                     userName: username,
@@ -230,7 +246,7 @@ export default function (passport) {
                   },
                   { new: true }
                 );
-                return cb(null, user);
+                return cb(null, { data: newUser });
               }
             }
           } catch (err) {
@@ -246,8 +262,8 @@ export default function (passport) {
     done(null, user);
   });
 
-  passport.deserializeUser((/**id*/ user, done) => {
-    //User.findById(id, (err, user) => done(err, user));
+  passport.deserializeUser((user, done) => {
     done(null, user);
   });
 }
+

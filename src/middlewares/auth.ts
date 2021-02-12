@@ -17,6 +17,39 @@ export default {
       });
     }
   },
+  ensureSmsAuth: (req, res, next) => {
+    console.log(req.session.user);
+    if (req.session.user) {
+      next();
+    } else {
+      return res.status(401).json({
+        success: false,
+        message: "User Not yet Created by Google or Facebook",
+      });
+    }
+  },
+  ensureVerifyCodeAuth: (req, res, next) => {
+    console.log(req.session.user);
+    if (req.session.user.verifyCode) {
+      next();
+    } else {
+      return res.status(401).json({
+        success: false,
+        message: "User hasn't verified code yet",
+      });
+    }
+  },
+  ensureSmsCodeAuth: (req, res, next) => {
+    console.log(req.session.user);
+    if (req.session.user.phoneCode) {
+      next();
+    } else {
+      return res.status(401).json({
+        success: false,
+        message: "Please go back to phone registration Stage",
+      });
+    }
+  },
   authMiddleware: (req, res, next) => {
     // read the token from header or url
     //const token = req.headers["x-access-token"] || req.query.token;
@@ -45,6 +78,7 @@ export default {
 
     // if it has failed to verify, it will return an error message
     const onError = (error) => {
+      req.session.user = null;
       res.status(403).json({
         success: false,
         message: error.message,
