@@ -26,7 +26,7 @@ router.post(
         success: false,
         payload: req.user.payload,
         phoneCode: req.user.phoneCode,
-        message: "Wrong phone number, Try again...",
+        message: "Check number and Try again...",
       });
     return res.status(200).json({
       success: true,
@@ -37,7 +37,7 @@ router.post(
 );
 
 router.post(
-  "/validsmscode",
+  "/validatesmscode",
   middleWare.authMiddleware,
   passport.authenticate("validateSmsCode", { failureRedirect: "/auth/failed" }),
   function (req, res) {
@@ -84,9 +84,9 @@ router.get(
     session: false,
   }),
   (req, res) => {
+    req.session.user = req.user;
     const { verificationStatus, token } = req.user;
     if (verificationStatus == VerificationStatus.Verified) {
-      req.session.user = req.user;
       return res.status(200).json({
         success: true,
         payload: { token },
@@ -111,6 +111,7 @@ router.get(
     failureRedirect: "/auth/failed",
   }),
   function (req, res) {
+    req.session.user = req.user;
     const { verificationStatus, token } = req.user;
     if (!req.user.email)
       return res.status(401).json({
@@ -119,7 +120,6 @@ router.get(
       });
 
     if (verificationStatus == VerificationStatus.Verified) {
-      req.session.user = req.user;
       return res.status(200).json({
         success: true,
         payload: { token },

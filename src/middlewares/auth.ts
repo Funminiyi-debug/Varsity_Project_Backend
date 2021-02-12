@@ -2,6 +2,7 @@ import handleResponse from "../utils/response";
 import helper from "../config/jwtHelper";
 export default {
   ensureAuth: (req, res, next) => {
+    console.log(req.session.user);
     if (req.session.user.verificationStatus === "Verified") {
       next();
     } else if (req.session.user.verificationStatus === "NotVerified") {

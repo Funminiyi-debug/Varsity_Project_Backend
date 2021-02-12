@@ -11,11 +11,9 @@ const UserShema = new mongoose.Schema(
   {
     googleId: {
       type: String,
-      required: true,
     },
     facebookId: {
       type: String,
-      required: true,
     },
     lastName: {
       type: String,
