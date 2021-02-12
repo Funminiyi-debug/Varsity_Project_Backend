@@ -88,13 +88,8 @@ router.get(
     session: false,
   }),
   (req, res) => {
-<<<<<<< HEAD
-    req.session.user = req.user;
-    const { verificationStatus, token } = req.user;
-=======
     req.session.user = req.user.data;
     const { verificationStatus, token } = req.user.data;
->>>>>>> 413ee3b3ac780eda7b0bf8964b1915aad6fd0e7e
     if (verificationStatus == VerificationStatus.Verified) {
       return res.status(200).json({
         success: true,
@@ -120,15 +115,9 @@ router.get(
     failureRedirect: "/auth/failed",
   }),
   function (req, res) {
-<<<<<<< HEAD
-    req.session.user = req.user;
-    const { verificationStatus, token } = req.user;
-    if (!req.user.email)
-=======
     req.session.user = req.user.data;
     const { verificationStatus, token } = req.user.data;
     if (!req.user.data.email)
->>>>>>> 413ee3b3ac780eda7b0bf8964b1915aad6fd0e7e
       return res.status(401).json({
         success: true,
         message: "verify your email account on facebook",
