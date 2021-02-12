@@ -5,14 +5,15 @@ import { injectable, inject } from "inversify";
 import ProductService from "./product.service";
 import Types from "../types";
 import { ICategoryService } from "./icategory.service";
+import { IProductService } from "./iproduct.service";
 
 @injectable()
 export default class CategoryService implements ICategoryService {
   constructor(
-    @inject(Types.IProductService) private productService: ProductService
+    @inject(Types.IProductService) private productService: IProductService
   ) {}
 
-  public async getCategories(): Promise<any> {
+  public async getCategories(): Promise<Document<any>[]> {
     const results: Document<any>[] = await Category.find({})
       .populate("SubCategory")
       .populate("Service");

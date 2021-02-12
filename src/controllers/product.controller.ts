@@ -18,12 +18,14 @@ import Types from "../types";
 import express, { response } from "express";
 import ICategory from "../interfaces/ICategory";
 import { Params } from "@decorators/express";
+import { IProductService } from "../services/iproduct.service";
+import IProduct from "../interfaces/IProduct";
 
 @Route("/categories")
 @Tags("Category")
 // @controller("/categories")
 class ProductsController extends Controller {
-  constructor(@inject(Types.ICategoryService) private cs: ICategoryService) {
+  constructor(@inject(Types.IProductService) private ps: IProductService) {
     super();
   }
   response: DataResponse = {
@@ -34,8 +36,8 @@ class ProductsController extends Controller {
   @Get("/")
   // @httpGet("/")
   @SuccessResponse("200", "OK")
-  public async getCategories(): Promise<DataResponse> {
-    const results = await this.cs.getCategories();
+  public async getProducts(): Promise<DataResponse> {
+    const results = await this.ps.getProducts();
 
     this.response = {
       statusCode: 200,
@@ -49,8 +51,8 @@ class ProductsController extends Controller {
   // @httpGet("{id}")
   @SuccessResponse("200", "OK")
   @Response<ErrorResponseModel>("404", "Not Found")
-  public async getCategory(id: string): Promise<DataResponse> {
-    const results = await this.cs.getCategory(id);
+  public async getProduct(id: string): Promise<DataResponse> {
+    const results = await this.ps.getProduct(id);
 
     if (results.length > 0) {
       this.response.statusCode = 200;
@@ -66,17 +68,15 @@ class ProductsController extends Controller {
   @Post("/")
   @SuccessResponse("201", "Created")
   @Response<ErrorResponseModel>("400", "Bad Data")
-  @Response<ErrorResponseModel>("409", "Category already exists")
-  public async createCategory(
-    @Body() category: ICategory
-  ): Promise<DataResponse> {
-    console.log("from user", category);
+  @Response<ErrorResponseModel>("409", "product already exists")
+  public async createProduct(@Body() product: IProduct): Promise<DataResponse> {
+    console.log("from user", product);
 
     try {
-      const results = await this.cs.createCategory(category);
+      const results = await this.ps.createProduct(product);
       if (results == null) {
         this.response.statusCode = 409;
-        this.response.message = "Category already exists";
+        this.response.message = "product already exists";
         return this.response;
       }
       this.response.statusCode = 201;
@@ -94,16 +94,16 @@ class ProductsController extends Controller {
   @SuccessResponse("204", "Updated")
   @Response<ErrorResponseModel>("400", "Bad Data")
   @Response<ErrorResponseModel>("404", "Not Found")
-  public async updateCategory(
+  public async updateProduct(
     @Path() id: string,
-    @Body() category: ICategory
+    @Body() product: IProduct
   ): Promise<DataResponse> {
-    const results = await this.cs.updateCategory(id, category);
+    const results = await this.ps.updateProduct(id, product);
 
     if (results == null) {
       this.response = {
         statusCode: 404,
-        message: "Category not found",
+        message: "Product not found",
       };
     }
 
