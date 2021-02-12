@@ -8,6 +8,7 @@ import cookieSession from "cookie-session";
 import passport from "passport";
 import passportConfig from "./config/passport";
 import "dotenv/config";
+import auth from "./routes/auth";
 import user from "./routes/user.route";
 import category from "./routes/category.route";
 import databaseConnection from "./config/db";
@@ -56,9 +57,8 @@ app.get("/", (req, res) => {
   res.send("working");
 });
 
-const auth = require("./routes/auth");
-app.use("/", user);
 app.use("/auth", auth);
+app.use("/", user);
 app.use("/categories", category);
 // PASSPORT CONFIG
 

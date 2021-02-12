@@ -37,6 +37,7 @@ export default class UsersController extends Controller {
     @Body() requestBody: UserCreationRequest
   ): Promise<void> {
     this.setStatus(201);
+    console.log(requestBody);
     return Promise.resolve();
   }
 

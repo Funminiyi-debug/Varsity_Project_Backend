@@ -23,6 +23,26 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"AuthResponse": {
+				"properties": {
+					"statusCode": {
+						"type": "number",
+						"format": "double"
+					},
+					"token": {
+						"type": "string"
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"statusCode",
+					"token"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"ErrorResponseModel": {
 				"properties": {
 					"message": {
@@ -39,6 +59,42 @@
 				"required": [
 					"message",
 					"success"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SmsRequest": {
+				"properties": {
+					"phoneNumber": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"phoneNumber"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SmsCodeRequest": {
+				"properties": {
+					"phoneCode": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"phoneCode"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Username": {
+				"properties": {
+					"username": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"username"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -121,6 +177,224 @@
 	},
 	"openapi": "3.0.0",
 	"paths": {
+		"/auth/{method}": {
+			"get": {
+				"operationId": "Login",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DataResponse"
+								}
+							}
+						}
+					},
+					"201": {
+						"description": "User Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AuthResponse"
+								}
+							}
+						}
+					},
+					"403": {
+						"description": "Account is Restricted",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseModel"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Server Error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseModel"
+								}
+							}
+						}
+					},
+					"200 response": {
+						"description": "Logged In",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AuthResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Authentication"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "method",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/auth/sendsms": {
+			"post": {
+				"operationId": "SendSms",
+				"responses": {
+					"400": {
+						"description": "Check Number and Try Again",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseModel"
+								}
+							}
+						}
+					},
+					"200 response": {
+						"description": "SMS sent",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DataResponse"
+								}
+							}
+						},
+						"headers": {
+							"DataResponse": {
+								"schema": {
+									"$ref": "#/components/schemas/DataResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Authentication"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SmsRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/validatesmscode": {
+			"post": {
+				"operationId": "SendSmsCode",
+				"responses": {
+					"400": {
+						"description": "Code verified,  username next",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseModel"
+								}
+							}
+						}
+					},
+					"200 response": {
+						"description": "Invalid code entered...",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DataResponse"
+								}
+							}
+						},
+						"headers": {
+							"DataResponse": {
+								"schema": {
+									"$ref": "#/components/schemas/DataResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Authentication"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SmsCodeRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/username": {
+			"post": {
+				"operationId": "ChangeUsername",
+				"responses": {
+					"400": {
+						"description": "Username Unavailable",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseModel"
+								}
+							}
+						}
+					},
+					"200 response": {
+						"description": "Registration Completed",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DataResponse"
+								}
+							}
+						},
+						"headers": {
+							"DataResponse": {
+								"schema": {
+									"$ref": "#/components/schemas/DataResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Authentication"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Username"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/users": {
 			"get": {
 				"operationId": "GetAllUsers",

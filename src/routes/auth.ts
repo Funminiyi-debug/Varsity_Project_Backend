@@ -1,9 +1,12 @@
 import passport from "passport";
 import { Route, Get } from "tsoa";
+import express, { Response } from "express";
+import AuthController from "../controllers/auth.controller";
 import VerificationStatus from "../enums/VerificationStatus";
 import middleWare from "../middlewares/auth";
-const express = require("express");
+import { handleResponse } from "../utils/handleResponse";
 const router = express.Router();
+const authController = new AuthController();
 
 router.get(
   "/google",
@@ -19,42 +22,42 @@ router.post(
   "/sendsms",
   [middleWare.authMiddleware, middleWare.ensureSmsAuth],
   passport.authenticate("sendSms", { failureRedirect: "/auth/failed" }),
-  function (req, res) {
+  async function (req: any, res: Response) {
+    // let response = await authController.sendSms(req.user);
     req.session.user = req.user.data;
     console.log(req.user);
-    if (req.user.error)
+    if (req.user.error) {
       return res.status(400).json({
         success: false,
-        payload: req.user.payload,
-        phoneCode: req.user.phoneCode,
         message: "Check number and Try again...",
       });
-    return res.status(200).json({
-      success: true,
-      payload: req.user.payload,
-      message: "SMS sent, Code validation next",
-    });
+    } else {
+      return res.status(200).json({
+        success: true,
+        message: "SMS sent, Code validation next",
+      });
+    }
   }
 );
 
 router.post(
-  "/validsmscode",
+  "/validatesmscode",
   [middleWare.authMiddleware, middleWare.ensureSmsCodeAuth],
   passport.authenticate("validateSmsCode", { failureRedirect: "/auth/failed" }),
-  function (req, res) {
+  async function (req: any, res: Response) {
     console.log(req.user);
     req.session.user = req.user.data;
-    if (req.user.error)
+    if (req.user.error) {
       return res.status(400).json({
         success: false,
-        payload: req.user.payload,
         message: "Invalid code entered...",
       });
-    return res.status(200).json({
-      success: true,
-      payload: req.user.payload,
-      message: "Code verified,  username next",
-    });
+    } else {
+      return res.status(200).json({
+        success: false,
+        message: "Code verified,  username next",
+      });
+    }
   }
 );
 
@@ -62,20 +65,20 @@ router.post(
   "/username",
   [middleWare.authMiddleware, middleWare.ensureVerifyCodeAuth],
   passport.authenticate("usernameAuth", { failureRedirect: "/auth/failed" }),
-  function (req, res) {
+  async function (req: any, res: Response) {
     console.log(req.user);
     req.session.user = req.user.data;
-    if (req.user.error)
+    if (req.user.error) {
       return res.status(400).json({
         success: false,
-        payload: req.user.payload,
-        message: "Username Unavailable.",
+        message: "Username Unavailable",
       });
-    return res.status(200).json({
-      success: true,
-      payload: req.user.payload,
-      message: "Registration Completed",
-    });
+    } else {
+      return res.status(200).json({
+        success: false,
+        message: "Registration Completed",
+      });
+    }
   }
 );
 
@@ -87,25 +90,10 @@ router.get(
     failureRedirect: "/auth/failed",
     session: false,
   }),
-  (req, res) => {
+  async (req: any, res: Response) => {
     req.session.user = req.user.data;
-    const { verificationStatus, token } = req.user.data;
-    if (verificationStatus == VerificationStatus.Verified) {
-      return res.status(200).json({
-        success: true,
-        payload: { token },
-        message: "You are logged In",
-      });
-    } else if (verificationStatus == VerificationStatus.NotVerified) {
-      return res.status(201).json({
-        success: true,
-        payload: { token },
-        message: "User Created, Phone registration next",
-      });
-    } else
-      return res
-        .status(403)
-        .json({ success: false, message: "User is restricted" });
+    let response = await authController.login(req.user.data);
+    return handleResponse(res, response);
   }
 );
 
@@ -114,31 +102,10 @@ router.get(
   passport.authenticate("facebook", {
     failureRedirect: "/auth/failed",
   }),
-  function (req, res) {
+  async function (req: any, res: Response) {
     req.session.user = req.user.data;
-    const { verificationStatus, token } = req.user.data;
-    if (!req.user.data.email)
-      return res.status(401).json({
-        success: true,
-        message: "verify your email account on facebook",
-      });
-
-    if (verificationStatus == VerificationStatus.Verified) {
-      return res.status(200).json({
-        success: true,
-        payload: { token },
-        message: "You are logged In",
-      });
-    } else if (verificationStatus == VerificationStatus.NotVerified) {
-      return res.status(201).json({
-        success: true,
-        payload: { token },
-        message: "User Created, Phone registration next",
-      });
-    } else
-      return res
-        .status(403)
-        .json({ success: false, message: "User is restricted" });
+    let response = await authController.login(req.user.data);
+    return handleResponse(res, response);
   }
 );
 
@@ -158,9 +125,9 @@ router.get("/failed", (req, res) => {
 
 // @desc    Logout user
 // @route   /auth/logout
-router.get("/logout", (req, res) => {
+router.get("/logout", (req: any, res: Response) => {
   req.session.user = null;
   res.send({ msg: "logged out" });
 });
 
-module.exports = router;
+export default router;
