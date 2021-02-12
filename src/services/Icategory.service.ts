@@ -12,5 +12,5 @@ export interface ICategoryService {
 
   updateCategory(id: string, entity: ICategory): Promise<Document<any>>;
 
-  deleteCategory(entity: ICategory): Promise<Document<any>>;
+  deleteCategory(id: string): Promise<Document<any>>;
 }

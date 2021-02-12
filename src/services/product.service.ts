@@ -8,68 +8,46 @@ import Product from "../models/Product";
 
 @injectable()
 export default class ProductService implements IProductService {
-  results: Document<any>[] = [];
-  result: Document<any> = null;
   constructor() {}
   async getProducts(): Promise<Document<any>[]> {
-    try {
-      this.results = await Product.find({})
-        .populate("User")
-        .populate("subcategory")
-        .populate("AppFile")
-        .populate("Feedback");
-    } catch (error) {
-      this.results = undefined;
-      console.log(error);
-    }
-
-    return this.results;
+    return await Product.find({})
+      .populate("User")
+      .populate("subcategory")
+      .populate("AppFile")
+      .populate("Feedback");
   }
+
+  // get product
   async getProduct(id: string): Promise<Document<any>[]> {
-    try {
-      this.results = await Product.find({ _id: id });
-    } catch (error) {
-      this.results = undefined;
-      console.log(error);
-    }
-    return this.results;
+    return await Product.find({ _id: id });
   }
-  async getProductsByCondition(query: IProduct): Promise<Document<any>[]> {
-    try {
-      this.results = await Product.find(query);
-    } catch (error) {
-      this.results = undefined;
-      console.log(error);
-    }
-    return this.results;
-  }
-  async createProduct(entity: IProduct): Promise<Document<any>> {
-    try {
-      const product = await new Product(entity);
-      this.result = await product.save();
-    } catch (error) {
-      this.result = undefined;
-      console.log(error);
-    }
 
-    return this.result;
+  // search for product
+  async getProductsByCondition(query: IProduct): Promise<Document<any>[]> {
+    return await Product.find(query);
   }
-  async updateProduct(id: string, entity: IProduct): Promise<Document<any>> {
-    try {
-      this.result = await Product.findByIdAndUpdate(id, entity, { new: true });
-    } catch (error) {
-      this.result = undefined;
-      console.log(error);
-    }
-    return this.result;
+  // create product
+  async createProduct(entity: IProduct, userEmail): Promise<Document<any>> {
+    const exists = await Product.find({
+      name: entity.title,
+      author: entity.author,
+    });
+    if (exists.length > 0) return null;
+    const product = new Product(entity);
+    return await product.save();
   }
-  async deleteProduct(entity: IProduct): Promise<Document<any>> {
-    try {
-      this.result = await Product.findByIdAndDelete(entity._id);
-    } catch (error) {
-      this.result = undefined;
-      console.log(error);
-    }
-    return this.result;
+
+  // update product
+  async updateProduct(
+    id: string,
+    entity: IProduct,
+    userEmail
+  ): Promise<Document<any>> {
+    return await Product.findByIdAndUpdate(id, entity, { new: true });
+  }
+
+  // delete product
+  async deleteProduct(id: string, userEmail): Promise<Document<any>> {
+    return await Product.findByIdAndDelete(id);
   }
 }

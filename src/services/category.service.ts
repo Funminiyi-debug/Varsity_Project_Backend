@@ -2,7 +2,6 @@ import Category from "../models/Category";
 import { Document } from "mongoose";
 import ICategory from "../interfaces/ICategory";
 import { injectable, inject } from "inversify";
-import ProductService from "./product.service";
 import Types from "../types";
 import { ICategoryService } from "./icategory.service";
 import { IProductService } from "./iproduct.service";
@@ -14,11 +13,8 @@ export default class CategoryService implements ICategoryService {
   ) {}
 
   public async getCategories(): Promise<Document<any>[]> {
-    const results: Document<any>[] = await Category.find({})
-      .populate("SubCategory")
-      .populate("Service");
+    return await Category.find({}).populate("SubCategory").populate("Service");
     // const results = this.productService.getData();
-    return results;
   }
 
   public async getCategory(id: string): Promise<Document<any>[]> {
@@ -36,24 +32,23 @@ export default class CategoryService implements ICategoryService {
     if (exists.length > 0) {
       return null;
     }
-    const category = new Category(entity);
 
+    const category = new Category(entity);
     return await category.save();
+    // return await Category.create({
+    //   name: entity.name,
+    //   categoryType: entity.categoryType,
+    // });
   }
 
   public async updateCategory(
     id: string,
     entity: ICategory
   ): Promise<Document<any>> {
-    try {
-      return await Category.findByIdAndUpdate(id, entity, { new: true });
-    } catch (error) {
-      console.log(error);
-      return undefined;
-    }
+    return await Category.findByIdAndUpdate(id, entity, { new: true });
   }
 
-  public async deleteCategory(entity: ICategory): Promise<Document<any>> {
-    return Category.findByIdAndDelete(entity._id);
+  public async deleteCategory(id: string): Promise<Document<any>> {
+    return await Category.findByIdAndDelete(id);
   }
 }

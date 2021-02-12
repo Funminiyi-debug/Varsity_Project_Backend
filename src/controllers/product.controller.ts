@@ -6,6 +6,7 @@ import {
   Get,
   SuccessResponse,
   Response,
+  Request,
   Post,
   Body,
   Path,
@@ -13,16 +14,13 @@ import {
 } from "tsoa";
 import { DataResponse } from "../interfaces/DataResponse";
 import ErrorResponseModel from "../interfaces/ErrorResponseModel";
-import { ICategoryService } from "../services/icategory.service";
 import Types from "../types";
-import express, { response } from "express";
-import ICategory from "../interfaces/ICategory";
-import { Params } from "@decorators/express";
+import express from "express";
 import { IProductService } from "../services/iproduct.service";
 import IProduct from "../interfaces/IProduct";
 
-@Route("/categories")
-@Tags("Category")
+@Route("/products")
+@Tags("Product")
 // @controller("/categories")
 class ProductsController extends Controller {
   constructor(@inject(Types.IProductService) private ps: IProductService) {
@@ -52,41 +50,70 @@ class ProductsController extends Controller {
   @SuccessResponse("200", "OK")
   @Response<ErrorResponseModel>("404", "Not Found")
   public async getProduct(id: string): Promise<DataResponse> {
-    const results = await this.ps.getProduct(id);
+    try {
+      const results = await this.ps.getProduct(id);
 
-    if (results.length > 0) {
-      this.response.statusCode = 200;
-      this.response.data = results;
-    } else {
-      this.response.statusCode = 404;
-      this.response.message = "Category not found";
+      if (results.length > 0) {
+        return {
+          statusCode: 200,
+          data: results,
+        };
+      } else {
+        return {
+          statusCode: 404,
+          message: "Product not found",
+        };
+      }
+    } catch (error) {
+      console.log(error.message);
+      if (error.message.search("Cast") != -1) {
+        return {
+          statusCode: 404,
+          message: "Not Found",
+        };
+      }
+      return {
+        statusCode: 500,
+        message: error.message,
+      };
     }
-
-    return this.response;
   }
 
   @Post("/")
   @SuccessResponse("201", "Created")
   @Response<ErrorResponseModel>("400", "Bad Data")
   @Response<ErrorResponseModel>("409", "product already exists")
-  public async createProduct(@Body() product: IProduct): Promise<DataResponse> {
+  public async createProduct(
+    @Body() product: IProduct,
+    @Request() req
+  ): Promise<DataResponse> {
     console.log("from user", product);
 
+    if (!product.title || !product.price || product.images.length == 0) {
+      return {
+        statusCode: 400,
+        message: "Ensure all required fields are filled",
+      };
+    }
     try {
-      const results = await this.ps.createProduct(product);
+      const results = await this.ps.createProduct(product, req.session.user);
       if (results == null) {
-        this.response.statusCode = 409;
-        this.response.message = "product already exists";
-        return this.response;
+        return {
+          statusCode: 409,
+          message: "product already exists",
+        };
       }
-      this.response.statusCode = 201;
-      this.response.data = results;
-      return this.response;
+
+      return {
+        statusCode: 201,
+        data: results,
+      };
     } catch (error) {
       console.log(error);
-      this.response.statusCode = 500;
-      this.response.message = error.message;
-      return this.response;
+      return {
+        statusCode: 500,
+        message: error.message,
+      };
     }
   }
 
@@ -96,28 +123,37 @@ class ProductsController extends Controller {
   @Response<ErrorResponseModel>("404", "Not Found")
   public async updateProduct(
     @Path() id: string,
-    @Body() product: IProduct
+    @Body() product: IProduct,
+    @Request() req: express.Request
   ): Promise<DataResponse> {
-    const results = await this.ps.updateProduct(id, product);
+    const email = "";
+    try {
+      const results = await this.ps.updateProduct(id, product, email);
 
-    if (results == null) {
+      if (results == null) {
+        this.response = {
+          statusCode: 404,
+          message: "Product not found",
+        };
+      }
+
       this.response = {
-        statusCode: 404,
-        message: "Product not found",
+        statusCode: 204,
       };
-    }
+      return this.response;
+    } catch (error) {
+      if (error.message.search("Cast") != -1) {
+        return {
+          statusCode: 404,
+          message: "Not Found",
+        };
+      }
 
-    if (results == undefined) {
-      this.response = {
+      return {
         statusCode: 500,
         message: "Something happened",
       };
     }
-
-    this.response = {
-      statusCode: 204,
-    };
-    return this.response;
   }
 }
 
