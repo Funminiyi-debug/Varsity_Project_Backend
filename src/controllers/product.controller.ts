@@ -22,7 +22,7 @@ import { Params } from "@decorators/express";
 @Route("/categories")
 @Tags("Category")
 // @controller("/categories")
-class CategoriesController extends Controller {
+class ProductsController extends Controller {
   constructor(@inject(Types.ICategoryService) private cs: ICategoryService) {
     super();
   }
@@ -121,4 +121,4 @@ class CategoriesController extends Controller {
   }
 }
 
-export default CategoriesController;
+export default ProductsController;

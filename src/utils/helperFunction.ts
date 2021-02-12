@@ -12,4 +12,3 @@ export function generateToken() {
     .join("");
   return key;
 }
-console.log(generateToken());

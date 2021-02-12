@@ -2,14 +2,14 @@ import Category from "../models/Category";
 import { Document } from "mongoose";
 import ICategory from "../interfaces/ICategory";
 import { injectable, inject } from "inversify";
-import { ICategoryService } from "./Icategory.service";
 import ProductService from "./product.service";
 import Types from "../types";
+import { ICategoryService } from "./icategory.service";
 
 @injectable()
 export default class CategoryService implements ICategoryService {
   constructor(
-    @inject(Types.ProductService) private productService: ProductService
+    @inject(Types.IProductService) private productService: ProductService
   ) {}
 
   public async getCategories(): Promise<any> {
