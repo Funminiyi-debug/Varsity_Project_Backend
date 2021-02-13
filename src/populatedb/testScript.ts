@@ -1,26 +1,10 @@
 // import mongoose from "mongoose";
 // import databaseConnection from "../config/db";
-const mongoose = require("mongoose");
-// const database = require("../config/db");
-
-// const mongoose = require("mongoose");
-
+const connectDb = require("./connectDb.ts");
 const dotenv = require("dotenv");
-// =====================beginning of db
-const connectDb = async () => {
-  dotenv.config();
-  const variable = "mongodb://localhost:27017/varsity";
-  try {
-    const connection = await mongoose.connect(variable, {
-      useUnifiedTopology: true,
-      useCreateIndex: true,
-      useNewUrlParser: true,
-    });
-    console.log(`DB connected successfully to ${connection.connection.host}`);
-  } catch (err) {
-    console.log(err);
-  }
-};
+dotenv.config({ path: "../../.env" });
+
+const mongoose = require("mongoose");
 
 // =====================================end of db
 // import "dotenv/config";

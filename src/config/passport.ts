@@ -225,12 +225,20 @@ export default function (passport) {
           const { username } = req.body;
           const { email } = decoded;
           try {
+<<<<<<< HEAD
+            let user: any = await User.findOne(email);
+=======
             let user: any = await User.findOne({ email });
+>>>>>>> 413ee3b3ac780eda7b0bf8964b1915aad6fd0e7e
             if (user) {
               if (user.userName === username) {
                 return cb(null, { data: user, error: true });
               } else {
+<<<<<<< HEAD
+                await User.findOneAndUpdate(
+=======
                 let newUser = await User.findOneAndUpdate(
+>>>>>>> 413ee3b3ac780eda7b0bf8964b1915aad6fd0e7e
                   email,
                   {
                     userName: username,

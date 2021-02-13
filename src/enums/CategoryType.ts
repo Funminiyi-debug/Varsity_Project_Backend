@@ -1,6 +1,6 @@
 enum CategoryType {
   Product = "Product",
-  Services = "Services",
+  Services = "Service",
 }
 
 export default CategoryType;
