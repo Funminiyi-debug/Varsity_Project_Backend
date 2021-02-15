@@ -13,6 +13,7 @@ import categoryModule from "./routes/category.route";
 import productModule from "./routes/product.route";
 import authModule from "./routes/auth.route";
 import userModule from "./routes/user.route";
+import redisMiddleware from "./middlewares/redis";
 const app: Application = express();
 const port = process.env.PORT || 3001;
 passportConfig(passport);
@@ -53,6 +54,9 @@ app.use(
     },
   })
 );
+// REDIS
+app.use(redisMiddleware);
+
 app.use((req, res, next) => {
   const authHeader = req.headers.authorization;
   let token: any;
@@ -60,6 +64,7 @@ app.use((req, res, next) => {
   res.locals.token = token;
   next();
 });
+
 app.get("/", (req, res) => {
   res.send("working");
 });
@@ -80,7 +85,7 @@ app.use("/products", productModule);
 // server.setConfig((app) => {
 
 // });
-// server.build().
+// server.build()
 app.listen(port, () => {
   console.log(`subscriber connected to ${port}`);
 });

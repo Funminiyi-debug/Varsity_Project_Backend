@@ -5,6 +5,7 @@ import { injectable, inject } from "inversify";
 import Types from "../types";
 import { ICategoryService } from "./icategory.service";
 import { IProductService } from "./iproduct.service";
+import cacheClient from "../config/redis";
 
 @injectable()
 export default class CategoryService implements ICategoryService {
