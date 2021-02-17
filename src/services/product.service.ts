@@ -1,19 +1,28 @@
 import { Document } from "mongoose";
 import { inject, injectable } from "inversify";
-import { IProductService, IUserService } from "./interfaces";
+import {
+  IProductService,
+  IUserService,
+  IFeedbackService,
+  IAppFileService,
+} from "./interfaces";
 import IProduct from "../interfaces/IProduct";
 import Product from "../models/Product";
 import Types from "../types";
 
 @injectable()
 export default class ProductService implements IProductService {
-  constructor(@inject(Types.IUserService) private userService: IUserService) {}
+  constructor(
+    @inject(Types.IUserService) private userService: IUserService,
+    @inject(Types.IFeedbackService) private feedbackService: IFeedbackService,
+    @inject(Types.IAppFileService) private appFileService: IAppFileService
+  ) {}
   async getProducts(): Promise<Document<any>[]> {
     return await Product.find({})
       .populate("author")
       .populate("subcategory")
       .populate("images")
-      .populate("feedbacks");
+      .populate("Feedback");
   }
 
   // get product
@@ -34,6 +43,8 @@ export default class ProductService implements IProductService {
       author: entity.author,
     });
     if (exists.length > 0) return null;
+
+    // const saveImages = this.appFileService.
 
     const product = new Product(entity);
     return await product.save();

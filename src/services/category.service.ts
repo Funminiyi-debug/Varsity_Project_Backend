@@ -1,6 +1,6 @@
 import Category from "../models/Category";
 import { Document } from "mongoose";
-import ICategory from "../interfaces/ICategory";
+import ICategory from "../interfaces/entities/ICategory";
 import { injectable, inject } from "inversify";
 import Types from "../types";
 import { ICategoryService, IProductService } from "./interfaces";

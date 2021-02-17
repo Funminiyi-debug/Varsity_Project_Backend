@@ -1,16 +1,16 @@
 import { Document } from "mongoose";
-import ICategory from "../../interfaces/ICategory";
+import IAppFile from "../../interfaces/entities/ICategory";
 
 export default interface IAppFileService {
-  getCategories(): Promise<Document<any>[]>;
+  getAppFiles(): Promise<Document<any>[]>;
 
-  getCategory(id: string): Promise<Document<any>[]>;
+  getAppFile(id: string): Promise<Document<any>[]>;
 
-  getCategoryByCondition(query: ICategory): Promise<Document<any>[]>;
+  getAppFileByCondition(query: IAppFile): Promise<Document<any>[]>;
 
-  createCategory(entity: ICategory): Promise<Document<any>>;
+  createAppFiles(entity: IAppFile): Promise<Document<any>>;
 
-  updateCategory(id: string, entity: ICategory): Promise<Document<any>>;
+  updateAppFile(id: string, entity: IAppFile): Promise<Document<any>>;
 
-  deleteCategory(id: string): Promise<Document<any>>;
+  deleteAppFile(id: string): Promise<Document<any>>;
 }

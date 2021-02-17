@@ -1,16 +1,18 @@
 import { Document } from "mongoose";
-import ICategory from "../../interfaces/ICategory";
+import { ISubcategory } from "../../interfaces/entities";
 
 export default interface ISubcategoryService {
-  getCategories(): Promise<Document<any>[]>;
+  getSubcategories(): Promise<Document<any>[]>;
 
-  getCategory(id: string): Promise<Document<any>[]>;
+  getSubcategory(id: string): Promise<Document<any>[]>;
 
-  getCategoryByCondition(query: ICategory): Promise<Document<any>[]>;
+  getSubcategoryByCondition(query: ISubcategory): Promise<Document<any>[]>;
 
-  createCategory(entity: ICategory): Promise<Document<any>>;
+  createSubcategory(entity: ISubcategory): Promise<Document<any>>;
 
-  updateCategory(id: string, entity: ICategory): Promise<Document<any>>;
+  updateSubcategory(id: string, entity: ISubcategory): Promise<Document<any>>;
 
-  deleteCategory(id: string): Promise<Document<any>>;
+  deleteSubcategory(id: string): Promise<Document<any>>;
+
+  addProductToSubcategory(id: string, productid: string): Promise<boolean>;
 }

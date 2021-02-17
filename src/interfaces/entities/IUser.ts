@@ -1,4 +1,5 @@
-import VerificationStatus from "../enums/VerificationStatus";
+import VerificationStatus from "../../enums/VerificationStatus";
+
 interface IUser {
   _id?: string;
   name: string;

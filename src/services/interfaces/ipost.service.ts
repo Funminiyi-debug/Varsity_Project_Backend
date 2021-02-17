@@ -1,5 +1,5 @@
 import { Document } from "mongoose";
-import ICategory from "../../interfaces/ICategory";
+import ICategory from "../../interfaces/entities/ICategory";
 
 export default interface IPostService {
   getCategories(): Promise<Document<any>[]>;
