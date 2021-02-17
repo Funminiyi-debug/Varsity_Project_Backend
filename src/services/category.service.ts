@@ -3,9 +3,7 @@ import { Document } from "mongoose";
 import ICategory from "../interfaces/ICategory";
 import { injectable, inject } from "inversify";
 import Types from "../types";
-import { ICategoryService } from "./icategory.service";
-import { IProductService } from "./iproduct.service";
-import cacheClient from "../config/redis";
+import { ICategoryService, IProductService } from "./interfaces";
 
 @injectable()
 export default class CategoryService implements ICategoryService {
@@ -14,18 +12,22 @@ export default class CategoryService implements ICategoryService {
   ) {}
 
   public async getCategories(): Promise<Document<any>[]> {
-    return await Category.find({}).populate("SubCategory").populate("Service");
+    return await Category.find({}).populate("subcategory").populate("services");
     // const results = this.productService.getData();
   }
 
   public async getCategory(id: string): Promise<Document<any>[]> {
-    return await Category.find({ _id: id });
+    return await Category.find({ _id: id })
+      .populate("subcategory")
+      .populate("services");
   }
 
   public async getCategoryByCondition(
     query: ICategory
   ): Promise<Document<any>[]> {
-    return await Category.find(query);
+    return await Category.find(query)
+      .populate("subcategory")
+      .populate("services");
   }
 
   public async createCategory(entity: ICategory): Promise<Document<any>> {

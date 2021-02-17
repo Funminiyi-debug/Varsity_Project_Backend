@@ -14,6 +14,7 @@ import productModule from "./routes/product.route";
 import authModule from "./routes/auth.route";
 import userModule from "./routes/user.route";
 import redisMiddleware from "./middlewares/redis";
+import authMiddleware from "./middlewares/auth";
 const app: Application = express();
 const port = process.env.PORT || 3001;
 passportConfig(passport);
@@ -55,15 +56,8 @@ app.use(
   })
 );
 // REDIS
+app.use(authMiddleware.authMiddleware);
 app.use(redisMiddleware);
-
-app.use((req, res, next) => {
-  const authHeader = req.headers.authorization;
-  let token: any;
-  if (authHeader) token = authHeader.split(" ")[1];
-  res.locals.token = token;
-  next();
-});
 
 app.get("/", (req, res) => {
   res.send("working");

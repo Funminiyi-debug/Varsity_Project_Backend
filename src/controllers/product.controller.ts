@@ -11,6 +11,8 @@ import {
   Body,
   Path,
   Put,
+  Hidden,
+  Query,
 } from "tsoa";
 import { DataResponse } from "../interfaces/DataResponse";
 import ErrorResponseModel from "../interfaces/ErrorResponseModel";
@@ -85,18 +87,17 @@ class ProductsController extends Controller {
   @Response<ErrorResponseModel>("409", "product already exists")
   public async createProduct(
     @Body() product: IProduct,
-    @Request() req
+    @Request() res
   ): Promise<DataResponse> {
-    console.log("from user", product);
-
     if (!product.title || !product.price || product.images.length == 0) {
       return {
         statusCode: 400,
         message: "Ensure all required fields are filled",
       };
     }
+
     try {
-      const results = await this.ps.createProduct(product, req.session.user);
+      const results = await this.ps.createProduct(product, res.locals.email);
       if (results == null) {
         return {
           statusCode: 409,

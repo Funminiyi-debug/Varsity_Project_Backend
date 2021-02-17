@@ -1,15 +1,14 @@
 import { Document } from "mongoose";
-import ICategory from "../interfaces/ICategory";
-import IProduct from "../interfaces/IProduct";
+import IProduct from "../../interfaces/IProduct";
 
-export interface IProductService {
+export default interface IProductService {
   getProducts(): Promise<Document<any>[]>;
 
   getProduct(id: string): Promise<Document<any>[]>;
 
   getProductsByCondition(query: IProduct): Promise<Document<any>[]>;
 
-  createProduct(entity: IProduct, userEmail: string): Promise<Document<any>>;
+  createProduct(entity: IProduct, email: string): Promise<Document<any>>;
 
   updateProduct(
     id: string,

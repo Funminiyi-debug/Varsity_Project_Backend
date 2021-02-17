@@ -10,24 +10,22 @@ function requiredIf(model, type) {
 
 const CategorySchema = new mongoose.Schema({
   name: { type: String, required: true },
-  subcategory: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      required: function requiredIf() {
-        this.categoryType == CategoryType.Product;
-      },
-      ref: "SubCategory",
+  subcategory: {
+    type: [mongoose.Schema.Types.ObjectId],
+    required: function requiredIf() {
+      this.categoryType == CategoryType.Product;
     },
-  ],
-  services: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Service",
-      required: function requiredIf() {
-        this.categoryType == CategoryType.Services;
-      },
+    ref: "SubCategory",
+  },
+
+  services: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: "Service",
+    required: function requiredIf() {
+      this.categoryType == CategoryType.Services;
     },
-  ],
+  },
+
   categoryType: {
     type: String,
     enum: [CategoryType.Product, CategoryType.Services],
