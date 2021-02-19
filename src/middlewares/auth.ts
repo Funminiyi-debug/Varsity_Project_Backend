@@ -1,5 +1,8 @@
 import handleResponse from "../utils/response";
 import helper from "../config/jwtHelper";
+import globals from "node-global-storage";
+import TokenContent from "../interfaces/TokenContent";
+
 export default {
   ensureAuth: (req, res, next) => {
     console.log(req.session.user);
@@ -73,7 +76,7 @@ export default {
     if (authHeader) token = authHeader.split(" ")[1];
     // token does not exist
     if (!token) {
-      return res.status(403).json({
+      return res.status(401).json({
         success: false,
         message: "not logged in",
       });
@@ -101,8 +104,8 @@ export default {
     };
 
     // process the promise
-    p.then((decoded) => {
-      req.decoded = decoded;
+    p.then((decoded: TokenContent) => {
+      res.locals.email = decoded.email;
       next();
     }).catch(onError);
   },

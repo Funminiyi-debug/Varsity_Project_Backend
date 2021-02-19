@@ -1,7 +1,15 @@
 const Types = {
   IUserService: Symbol("IUserService"),
   ICategoryService: Symbol("ICategoryService"),
-  ProductService: Symbol("ProductService"),
+  IProductService: Symbol("IProductService"),
+  IUserService: Symbol("IUserService"),
+  IAppFileService: Symbol("IAppFileService"),
+  INotificationService: Symbol("INotificationService"),
+  ISubcategoryService: Symbol("ISubcategoryService"),
+  IFeedbackService: Symbol("IFeedbackService"),
+  ICommentService: Symbol("ICommentService"),
+  IPostService: Symbol("IPostService"),
+  IServiceService: Symbol("IServiceService"),
 };
 
 export default Types;

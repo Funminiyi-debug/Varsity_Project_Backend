@@ -1,32 +1,18 @@
-import User from "../models/User";
 import { Document } from "mongoose";
-import ICategory from "../interfaces/ICategory";
-import { injectable, inject } from "inversify";
-import { IUserService } from "./Iuser.service";
-import Types from "../types";
 import IUser from "../interfaces/IUser";
+import User from "../models/User";
+import { IUserService } from "./interfaces";
 
-@injectable()
 export default class UserService implements IUserService {
-  public async getUsers(): Promise<any> {
-    const results: Document<any>[] = await User.find({});
-    return results;
+  async getUserByCondition(query: IUser): Promise<Document<any>[]> {
+    return await User.find(query);
   }
 
-  public async getUser(id: string): Promise<Document<any>[]> {
-    return await User.find({ _id: id });
-  }
-
-  public async updateUser(id: string, entity: IUser): Promise<Document<any>> {
-    try {
-      return await User.findByIdAndUpdate(id, entity, { new: true });
-    } catch (error) {
-      console.log(error);
-      return undefined;
+  async getByEmail(email: string): Promise<Document<IUser>> {
+    const user = await User.findOne({ email });
+    if (user) {
+      return user;
     }
-  }
-
-  public async deleteUser(entity: IUser): Promise<Document<any>> {
-    return User.findByIdAndDelete(entity._id);
+    return null;
   }
 }

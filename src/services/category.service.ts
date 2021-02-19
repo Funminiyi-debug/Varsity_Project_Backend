@@ -2,33 +2,32 @@ import Category from "../models/Category";
 import { Document } from "mongoose";
 import ICategory from "../interfaces/ICategory";
 import { injectable, inject } from "inversify";
-import { ICategoryService } from "./Icategory.service";
-import ProductService from "./product.service";
 import Types from "../types";
+import { ICategoryService, IProductService } from "./interfaces";
 
 @injectable()
 export default class CategoryService implements ICategoryService {
   constructor(
-    @inject(Types.ProductService) private productService: ProductService
+    @inject(Types.IProductService) private productService: IProductService
   ) {}
 
-  public async getCategories(): Promise<any> {
-    const results: Document<any>[] = await Category.find({})
-      .populate("subcategory")
-      .populate("service");
+  public async getCategories(): Promise<Document<any>[]> {
+    return await Category.find({}).populate("subcategory").populate("services");
     // const results = this.productService.getData();
-
-    return results;
   }
 
   public async getCategory(id: string): Promise<Document<any>[]> {
-    return await Category.find({ _id: id });
+    return await Category.find({ _id: id })
+      .populate("subcategory")
+      .populate("services");
   }
 
   public async getCategoryByCondition(
     query: ICategory
   ): Promise<Document<any>[]> {
-    return await Category.find(query);
+    return await Category.find(query)
+      .populate("subcategory")
+      .populate("services");
   }
 
   public async createCategory(entity: ICategory): Promise<Document<any>> {
@@ -36,24 +35,23 @@ export default class CategoryService implements ICategoryService {
     if (exists.length > 0) {
       return null;
     }
-    const category = new Category(entity);
 
+    const category = new Category(entity);
     return await category.save();
+    // return await Category.create({
+    //   name: entity.name,
+    //   categoryType: entity.categoryType,
+    // });
   }
 
   public async updateCategory(
     id: string,
     entity: ICategory
   ): Promise<Document<any>> {
-    try {
-      return await Category.findByIdAndUpdate(id, entity, { new: true });
-    } catch (error) {
-      console.log(error);
-      return undefined;
-    }
+    return await Category.findByIdAndUpdate(id, entity, { new: true });
   }
 
-  public async deleteCategory(entity: ICategory): Promise<Document<any>> {
-    return Category.findByIdAndDelete(entity._id);
+  public async deleteCategory(id: string): Promise<Document<any>> {
+    return await Category.findByIdAndDelete(id);
   }
 }

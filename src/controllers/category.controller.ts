@@ -13,7 +13,7 @@ import {
 } from "tsoa";
 import { DataResponse } from "../interfaces/DataResponse";
 import ErrorResponseModel from "../interfaces/ErrorResponseModel";
-import { ICategoryService } from "../services/Icategory.service";
+import { ICategoryService } from "../services/interfaces/icategory.service";
 import Types from "../types";
 import express, { response } from "express";
 import ICategory from "../interfaces/ICategory";
@@ -73,21 +73,33 @@ class CategoriesController extends Controller {
     console.log("from user", category);
 
     try {
+      if (!category.name || !category.categoryType) {
+        return {
+          statusCode: 400,
+          message: "Please fill all fields",
+        };
+      }
       const results = await this.cs.createCategory(category);
       if (results == null) {
-        this.response.statusCode = 409;
-        this.response.message = "Category already exists";
+        this.response = {
+          statusCode: 409,
+          message: "Category already exists",
+        };
+
         return this.response;
       }
-      this.response.statusCode = 201;
-      this.response.data = results;
-      return this.response;
+      this.response = {
+        statusCode: 201,
+        data: results,
+      };
     } catch (error) {
       console.log(error);
-      this.response.statusCode = 500;
-      this.response.message = error.message;
-      return this.response;
+      this.response = {
+        statusCode: 500,
+        message: error.message,
+      };
     }
+    return this.response;
   }
 
   @Put("{id}")
@@ -98,25 +110,26 @@ class CategoriesController extends Controller {
     @Path() id: string,
     @Body() category: ICategory
   ): Promise<DataResponse> {
-    const results = await this.cs.updateCategory(id, category);
+    try {
+      const results = await this.cs.updateCategory(id, category);
 
-    if (results == null) {
+      if (results == null) {
+        this.response = {
+          statusCode: 404,
+          message: "Category not found",
+        };
+        return this.response;
+      }
       this.response = {
-        statusCode: 404,
-        message: "Category not found",
+        statusCode: 204,
       };
-    }
-
-    if (results == undefined) {
+    } catch (error) {
+      console.log(error);
       this.response = {
         statusCode: 500,
-        message: "Something happened",
+        message: error.message,
       };
     }
-
-    this.response = {
-      statusCode: 204,
-    };
     return this.response;
   }
 }

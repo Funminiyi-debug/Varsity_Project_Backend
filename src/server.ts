@@ -8,10 +8,13 @@ import cookieSession from "cookie-session";
 import passport from "passport";
 import passportConfig from "./config/passport";
 import "dotenv/config";
-import auth from "./routes/auth";
-import user from "./routes/user.route";
-import category from "./routes/category.route";
 import databaseConnection from "./config/db";
+import categoryModule from "./routes/category.route";
+import productModule from "./routes/product.route";
+import authModule from "./routes/auth.route";
+import userModule from "./routes/user.route";
+import redisMiddleware from "./middlewares/redis";
+import authMiddleware from "./middlewares/auth";
 const app: Application = express();
 const port = process.env.PORT || 3001;
 passportConfig(passport);
@@ -61,17 +64,18 @@ app.use(
     },
   })
 );
+// REDIS
+app.use(authMiddleware.authMiddleware);
+app.use(redisMiddleware);
 
 app.get("/", (req, res) => {
   res.redirect("/good");
 });
 
-app.get("/good", (req, res) => {
-  res.send("good");
-});
-app.use("/auth", auth);
-app.use("/", user);
-app.use("/categories", category);
+app.use("/auth", authModule);
+app.use("/", userModule);
+app.use("/categories", categoryModule);
+app.use("/products", productModule);
 // PASSPORT CONFIG
 
 // const server = new InversifyExpressServer(
@@ -84,7 +88,7 @@ app.use("/categories", category);
 // server.setConfig((app) => {
 
 // });
-// server.build().
+// server.build()
 app.listen(port, () => {
   console.log(`subscriber connected to ${port}`);
 });

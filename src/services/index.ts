@@ -1,0 +1,10 @@
+export { default as UserService } from "./user.service";
+export { default as ProductService } from "./product.service";
+export { default as CategoryService } from "./category.service";
+export { default as AppFileService } from "./appfile.service";
+export { default as NotificationService } from "./notification.service";
+export { default as SubcategoryService } from "./subcategory.service";
+export { default as FeedbackService } from "./feedback.service";
+export { default as CommentService } from "./comment.service";
+export { default as PostService } from "./post.service";
+export { default as ServiceService } from "./service.service";
