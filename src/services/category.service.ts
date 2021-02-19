@@ -14,9 +14,10 @@ export default class CategoryService implements ICategoryService {
 
   public async getCategories(): Promise<any> {
     const results: Document<any>[] = await Category.find({})
-      .populate("SubCategory")
-      .populate("Service");
+      .populate("subcategory")
+      .populate("service");
     // const results = this.productService.getData();
+
     return results;
   }
 

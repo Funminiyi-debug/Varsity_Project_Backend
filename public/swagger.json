@@ -99,44 +99,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"Name": {
-				"properties": {
-					"first": {
-						"type": "string"
-					},
-					"last": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"first"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"UserCreationRequest": {
-				"properties": {
-					"email": {
-						"type": "string"
-					},
-					"name": {
-						"$ref": "#/components/schemas/Name"
-					},
-					"phoneNumbers": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"email",
-					"name",
-					"phoneNumbers"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"CategoryType": {
 				"enum": [
 					"Product",
@@ -425,29 +387,6 @@
 				],
 				"security": [],
 				"parameters": []
-			},
-			"post": {
-				"operationId": "CreateUser",
-				"responses": {
-					"201": {
-						"description": "Created"
-					}
-				},
-				"tags": [
-					"User"
-				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/UserCreationRequest"
-							}
-						}
-					}
-				}
 			}
 		},
 		"/users/{id}": {
@@ -463,6 +402,16 @@
 								}
 							}
 						}
+					},
+					"400": {
+						"description": "Bad Data",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseModel"
+								}
+							}
+						}
 					}
 				},
 				"tags": [
@@ -475,11 +424,65 @@
 						"name": "id",
 						"required": true,
 						"schema": {
-							"format": "double",
-							"type": "number"
+							"type": "string"
 						}
 					}
 				]
+			},
+			"put": {
+				"operationId": "CreateUser",
+				"responses": {
+					"204": {
+						"description": "Updated",
+						"content": {
+							"application/json": {
+								"schema": {}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Data",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseModel"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseModel"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {}
+						}
+					}
+				}
 			}
 		},
 		"/categories": {

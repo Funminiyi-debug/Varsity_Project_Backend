@@ -6,6 +6,7 @@ import Service from "./Service";
 import Product from "./Product";
 import Feedback from "./Feedback";
 import VerificationStatus from "../enums/VerificationStatus";
+import IUser from "../interfaces/IUser";
 import { boolean } from "joi";
 
 const UserShema = new mongoose.Schema(
@@ -77,4 +78,4 @@ UserShema.pre("remove", function (next) {
   next();
 });
 
-export default mongoose.model("users", UserShema);
+export default mongoose.model<IUser>("users", UserShema);

@@ -15,6 +15,7 @@ router.get("/", async (req: Request, res: Response) => {
 
   return handleResponse(res, response);
 });
+
 router.get("/:id", async (req: Request, res: Response) => {
   const response: DataResponse = await categoryController.getCategory(
     req.params.id

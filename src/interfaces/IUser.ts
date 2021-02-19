@@ -1,5 +1,7 @@
+import { Document } from "mongoose";
 import VerificationStatus from "../enums/VerificationStatus";
-interface IUser {
+
+interface IUser extends Document {
   _id?: string;
   name: string;
   email: string;

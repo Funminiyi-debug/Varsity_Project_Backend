@@ -1,7 +1,7 @@
 // import mongoose from "mongoose";
 // import databaseConnection from "../config/db";
 const connectDb = require("./connectDb.ts");
-const dotenv = require("dotenv");
+import "dotenv/config";
 dotenv.config({ path: "../../.env" });
 
 const mongoose = require("mongoose");

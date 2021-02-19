@@ -5,9 +5,20 @@ import GoogleStrategy from "passport-google-oauth20";
 import FacebookStrategy from "passport-facebook";
 import helper from "./jwtHelper";
 import User from "../models/User";
-import client, { jwt } from "twilio";
-import { generateRandomNumber } from "../utils/helperFunction";
+import client from "twilio";
 import VerificationStatus from "../enums/VerificationStatus";
+import {
+  Username,
+  SmsCodeRequest,
+  SmsRequest,
+} from "../interfaces/DataResponse";
+import {
+  googgleFacebookSchema,
+  smsSchema,
+  validateSmsCodeSchema,
+  usernameSchema,
+} from "../utils/schema";
+import { generateRandomNumber } from "../utils/helperFunction";
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
@@ -142,119 +153,138 @@ export default function (passport) {
   passport.use(
     "sendSms",
     new passportSmsAuth.Strategy(async function (req, cb) {
-      const code = generateRandomNumber();
-      const authHeader = req.headers.authorization;
-      let token: any;
-      if (authHeader) token = authHeader.split(" ")[1];
-      await helper.verify(token, async (err, decoded) => {
-        if (!err) {
-          const { phoneNumber } = req.body;
-          const { email } = decoded;
+      //validate incoming requests
+      const data: SmsRequest = req.body;
+      const { phoneNumber } = data;
+      const { error } = smsSchema.validate(data);
+      if (error) {
+        return cb(null, {
+          validationError: true,
+        });
+      } else {
+        const code = generateRandomNumber();
+        const authHeader = req.headers.authorization;
+        let token: any;
+        if (authHeader) token = authHeader.split(" ")[1];
+        await helper.verify(token, async (err, decoded) => {
+          if (!err) {
+            const { email } = decoded;
 
-          try {
-            let user: any = await User.findOne({ email });
+            try {
+              let user: any = await User.findOne({ email });
 
-            if (user) {
-              user = await User.findOneAndUpdate(
-                email,
-                { phone: phoneNumber, phoneCode: code },
-                { new: true }
-              );
-
-              client(accountSid, authToken)
-                .messages.create({
-                  body: code,
-                  from: "+12565673518",
-                  to: phoneNumber,
-                })
-                .then((message) => {
-                  return cb(null, { data: user, messageid: message.sid });
-                })
-                .catch((err) =>
-                  cb(null, { data: user, phoneCode: code, error: true })
+              if (user) {
+                user = await User.findOneAndUpdate(
+                  email,
+                  { phone: phoneNumber, phoneCode: code },
+                  { new: true }
                 );
+
+                client(accountSid, authToken)
+                  .messages.create({
+                    body: code,
+                    from: "+12565673518",
+                    to: phoneNumber,
+                  })
+                  .then((message) => {
+                    return cb(null, { data: user, messageid: message.sid });
+                  })
+                  .catch((err) =>
+                    cb(null, { data: user, phoneCode: code, error: true })
+                  );
+              }
+              //phoneCode shouldnt be sent, just for testing
+            } catch (error) {
+              return cb(error, null);
             }
-            //phoneCode shouldnt be sent, just for testing
-          } catch (error) {
-            return cb(error, null);
           }
-        }
-      });
+        });
+      }
     })
   );
 
   passport.use(
     "validateSmsCode",
     new passportSmsCodeAuth.Strategy(async function (req, cb) {
-      const authHeader = req.headers.authorization;
-      let token: any;
-      if (authHeader) token = authHeader.split(" ")[1];
-      await helper.verify(token, async (err, decoded) => {
-        if (!err) {
-          const { phoneCode } = req.body;
-          const { email } = decoded;
-          try {
-            let user: any = await User.findOne({ email });
-            if (user) {
-              if (phoneCode === user.phoneCode) {
-                user = await User.findOneAndUpdate(
-                  email,
-                  { verifyCode: true },
-                  { new: true }
-                );
-                return cb(null, { data: user });
-              } else cb(null, { data: user, error: true });
+      //validate incoming requests
+      const data: SmsCodeRequest = req.body;
+      const { error } = validateSmsCodeSchema.validate(data);
+      if (error) {
+        return cb(null, {
+          validationError: true,
+        });
+      } else {
+        const authHeader = req.headers.authorization;
+        let token: any;
+        if (authHeader) token = authHeader.split(" ")[1];
+        await helper.verify(token, async (err, decoded) => {
+          if (!err) {
+            const { phoneCode } = req.body;
+            const { email } = decoded;
+            try {
+              let user: any = await User.findOne({ email });
+              if (user) {
+                if (phoneCode === user.phoneCode) {
+                  user = await User.findOneAndUpdate(
+                    email,
+                    { verifyCode: true },
+                    { new: true }
+                  );
+                  return cb(null, { data: user });
+                } else cb(null, { data: user, error: true });
+              }
+            } catch (err) {
+              console.error(err);
+              cb(err, null);
             }
-          } catch (err) {
-            console.error(err);
-            cb(err, null);
           }
-        }
-      });
+        });
+      }
     })
   );
 
   passport.use(
     "usernameAuth",
     new passportUsernameAuth.Strategy(async function (req, cb) {
-      const authHeader = req.headers.authorization;
-      let token: any;
-      if (authHeader) token = authHeader.split(" ")[1];
-      await helper.verify(token, async (err, decoded) => {
-        if (!err) {
-          const { username } = req.body;
-          const { email } = decoded;
-          try {
-<<<<<<< HEAD
-            let user: any = await User.findOne(email);
-=======
-            let user: any = await User.findOne({ email });
->>>>>>> 413ee3b3ac780eda7b0bf8964b1915aad6fd0e7e
-            if (user) {
-              if (user.userName === username) {
-                return cb(null, { data: user, error: true });
-              } else {
-<<<<<<< HEAD
-                await User.findOneAndUpdate(
-=======
-                let newUser = await User.findOneAndUpdate(
->>>>>>> 413ee3b3ac780eda7b0bf8964b1915aad6fd0e7e
-                  email,
-                  {
-                    userName: username,
-                    verificationStatus: VerificationStatus.Verified,
-                  },
-                  { new: true }
-                );
-                return cb(null, { data: newUser });
+      //validate incoming requests
+      const data: Username = req.body;
+      const { error } = usernameSchema.validate(data);
+      if (error) {
+        return cb(null, {
+          validationError: true,
+        });
+      } else {
+        const authHeader = req.headers.authorization;
+        let token: any;
+        if (authHeader) token = authHeader.split(" ")[1];
+        await helper.verify(token, async (err, decoded) => {
+          if (!err) {
+            const { username } = req.body;
+            const { email } = decoded;
+            try {
+              let user: any = await User.findOne({ email });
+              if (user) {
+                if (user.userName === username) {
+                  return cb(null, { data: user, error: true });
+                } else {
+                  let newUser = await User.findOneAndUpdate(
+                    email,
+                    {
+                      userName: username,
+                      verificationStatus: VerificationStatus.Verified,
+                    },
+                    { new: true }
+                  );
+                  return cb(null, { data: newUser });
+                }
               }
+            } catch (err) {
+              console.error(err);
+              cb(err, null);
             }
-          } catch (err) {
-            console.error(err);
-            cb(err, null);
           }
-        }
-      });
+        });
+      }
     })
   );
 
@@ -266,4 +296,3 @@ export default function (passport) {
     done(null, user);
   });
 }
-
