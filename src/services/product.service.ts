@@ -5,6 +5,7 @@ import {
   IUserService,
   IFeedbackService,
   IAppFileService,
+  ISubcategoryService,
 } from "./interfaces";
 import Product from "../models/Product";
 import Types from "../types";
@@ -15,7 +16,9 @@ export default class ProductService implements IProductService {
   constructor(
     @inject(Types.IUserService) private userService: IUserService,
     @inject(Types.IFeedbackService) private feedbackService: IFeedbackService,
-    @inject(Types.IAppFileService) private appFileService: IAppFileService
+    @inject(Types.IAppFileService) private appFileService: IAppFileService,
+    @inject(Types.ISubcategoryService)
+    private subcategoryService: ISubcategoryService
   ) {}
   async getProducts(): Promise<Document<any>[]> {
     return await Product.find({})
@@ -47,7 +50,14 @@ export default class ProductService implements IProductService {
     // const saveImages = this.appFileService.
 
     const product = new Product(entity);
-    return await product.save();
+    const saved = await product.save();
+
+    await this.subcategoryService.addProductToSubcategory(
+      entity.subcategoryId,
+      product.id
+    );
+
+    return saved;
   }
 
   // update product

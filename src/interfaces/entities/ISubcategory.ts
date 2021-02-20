@@ -1,5 +1,5 @@
 export default interface ISubcategory {
   name: string;
-  products?: string[];
+  product?: string;
   category: string;
 }
