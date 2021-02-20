@@ -1,5 +1,5 @@
 import { Document } from "mongoose";
-import IUser from "../../interfaces/IUser";
+import { IUser } from "../../interfaces/entities";
 
 export default interface IUserService {
   getUserByCondition(query: IUser): Promise<Document<IUser>[]>;

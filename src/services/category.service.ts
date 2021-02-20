@@ -10,6 +10,37 @@ export default class CategoryService implements ICategoryService {
   constructor(
     @inject(Types.IProductService) private productService: IProductService
   ) {}
+  async addSubcategoryToCategory(
+    id: string,
+    subcategoryid: string
+  ): Promise<boolean> {
+    try {
+      await Category.findByIdAndUpdate(id, {
+        $push: {
+          subcategory: subcategoryid,
+        },
+      });
+
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
+  async addServiceToCategory(id: string, serviceid: string): Promise<boolean> {
+    try {
+      await Category.findByIdAndUpdate(id, {
+        $push: {
+          service: serviceid,
+        },
+      });
+
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
 
   public async getCategories(): Promise<Document<any>[]> {
     return await Category.find({}).populate("subcategory").populate("services");

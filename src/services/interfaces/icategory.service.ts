@@ -13,4 +13,8 @@ export default interface ICategoryService {
   updateCategory(id: string, entity: ICategory): Promise<Document<any>>;
 
   deleteCategory(id: string): Promise<Document<any>>;
+
+  addSubcategoryToCategory(id: string, subcategoryid: string): Promise<boolean>;
+
+  addServiceToCategory(id: string, serviceid: string): Promise<boolean>;
 }

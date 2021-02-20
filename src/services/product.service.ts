@@ -6,9 +6,9 @@ import {
   IFeedbackService,
   IAppFileService,
 } from "./interfaces";
-import IProduct from "../interfaces/IProduct";
 import Product from "../models/Product";
 import Types from "../types";
+import { IProduct } from "../interfaces/entities";
 
 @injectable()
 export default class ProductService implements IProductService {

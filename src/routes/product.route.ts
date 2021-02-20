@@ -2,7 +2,6 @@ import express, { Request, Response } from "express";
 import { container } from "../containerDI";
 import ProductsController from "../controllers/product.controller";
 import { DataResponse } from "../interfaces/DataResponse";
-import IProduct from "../interfaces/IProduct";
 import ProductService from "../services/product.service";
 import Types from "../types";
 import { handleResponse } from "../utils/handleResponse";
@@ -24,7 +23,6 @@ router.get("/:id", async (req: Request, res: Response) => {
 });
 
 router.post("/", async (req: Request, res: Response) => {
-  const product: IProduct = req.body;
   // product.author = res.locals.user;
   const response: DataResponse = await productController.createProduct(
     req.body,

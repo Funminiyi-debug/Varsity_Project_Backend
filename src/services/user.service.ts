@@ -1,8 +1,10 @@
 import { Document } from "mongoose";
-import IUser from "../interfaces/IUser";
+import { IUser } from "../interfaces/entities";
 import User from "../models/User";
 import { IUserService } from "./interfaces";
+import { injectable } from "inversify";
 
+@injectable()
 export default class UserService implements IUserService {
   async getUserByCondition(query: IUser): Promise<Document<any>[]> {
     return await User.find(query);

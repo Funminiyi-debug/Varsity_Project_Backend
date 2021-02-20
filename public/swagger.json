@@ -110,7 +110,7 @@
 					"author": {
 						"type": "string"
 					},
-					"subcategory": {
+					"subcategoryId": {
 						"type": "string"
 					},
 					"images": {
@@ -145,7 +145,7 @@
 				"required": [
 					"title",
 					"author",
-					"subcategory",
+					"subcategoryId",
 					"images",
 					"adStatus",
 					"school",
