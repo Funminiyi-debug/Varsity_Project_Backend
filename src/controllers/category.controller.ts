@@ -13,7 +13,7 @@ import {
 } from "tsoa";
 import { DataResponse } from "../interfaces/DataResponse";
 import ErrorResponseModel from "../interfaces/ErrorResponseModel";
-import { ICategoryService } from "../services/interfaces/icategory.service";
+import ICategoryService from "../services/interfaces/icategory.service";
 import Types from "../types";
 import express, { response } from "express";
 import ICategory from "../interfaces/ICategory";

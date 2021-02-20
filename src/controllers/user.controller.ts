@@ -16,7 +16,7 @@ import {
   Response,
 } from "tsoa";
 import { DataResponse, UserCreationRequest } from "../interfaces/DataResponse";
-import { IUserService } from "../services/Iuser.service";
+import { IUserService } from "../services/interfaces";
 import ErrorResponseModel from "../interfaces/ErrorResponseModel";
 import IUser from "../interfaces/IUser";
 import { inject, injectable } from "inversify";
@@ -40,17 +40,17 @@ export default class UsersController extends Controller {
   public async getAllUsers(): Promise<DataResponse> {
     return {
       statusCode: 200,
-      data: await this.user.getUsers(),
+      data: dummydata, //await this.user.getUsers(),
     };
   }
 
   @Get("{id}")
   @Response<ErrorResponseModel>("400", "Bad Data")
   public async getUser(id: string): Promise<DataResponse> {
-    //const user = dummydata.filter((result: any) => result.userId == id);
+    const user = dummydata.filter((result: any) => result.userId == id);
     return {
       statusCode: 200,
-      data: await this.user.getUser(id),
+      data: user, //await this.user.getUser(id),
     };
   }
 
@@ -62,8 +62,8 @@ export default class UsersController extends Controller {
     @Path() id: string,
     @Body() status: any
   ): Promise<any> {
-    const results = await this.user.updateUser(id, status);
-
+    //const results = await this.user.updateUser(id, status);
+    const results = [];
     this.setStatus(201);
     if (results == null) {
       this.response = {
