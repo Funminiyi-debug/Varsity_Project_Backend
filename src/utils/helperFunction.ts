@@ -1,4 +1,6 @@
-export function generateRandomNumber(numLenght = 4) {
+import Joi from "joi";
+
+export function generateRandomNumber(numLenght = 6) {
   const chars = [..."0123456789"];
 
   return [...Array(numLenght)]

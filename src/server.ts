@@ -28,6 +28,15 @@ app.use(express.static("public"));
 app.use(express.json());
 app.use(cors());
 
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
+
 app.use(
   morgan(
     ":method :url statusCode ===  :status :res[content-length] - :response-time ms"
@@ -60,7 +69,7 @@ app.use(authMiddleware.authMiddleware);
 app.use(redisMiddleware);
 
 app.get("/", (req, res) => {
-  res.send("working");
+  res.redirect("/good");
 });
 
 app.use("/auth", authModule);

@@ -28,7 +28,6 @@ export interface Name {
 }
 
 export interface UserCreationRequest {
-  email: string;
-  name: Name;
-  phoneNumbers: string[];
+  id: string;
+  verificationStatus: any;
 }

@@ -1,4 +1,5 @@
 import { Container } from "inversify";
+import Types from "./types";
 import {
   CategoryService,
   ProductService,
@@ -11,7 +12,6 @@ import {
   PostService,
   ServiceService,
 } from "./services";
-import Types from "./types";
 import {
   IUserService,
   IProductService,
@@ -29,9 +29,9 @@ const container = new Container();
 container.bind<ICategoryService>(Types.ICategoryService).to(CategoryService);
 container.bind<IProductService>(Types.IProductService).to(ProductService);
 container.bind<IUserService>(Types.IUserService).to(UserService);
-container
+/**container
   .bind<ISubcategoryService>(Types.ISubcategoryService)
-  .to(SubcategoryService);
+  .to(SubCategoryService);
 container.bind<ICommentService>(Types.ICommentService).to(CommentService);
 container.bind<IAppFileService>(Types.IAppFileService).to(AppFileService);
 container.bind<IFeedbackService>(Types.IFeedbackService).to(FeedbackService);
@@ -39,5 +39,5 @@ container
   .bind<INotificationService>(Types.INotificationService)
   .to(NotificationService);
 container.bind<IPostService>(Types.IPostService).to(PostService);
-container.bind<IServiceService>(Types.IServiceService).to(ServiceService);
+container.bind<IServiceService>(Types.IServiceService).to(ServiceService);*/
 export { container };

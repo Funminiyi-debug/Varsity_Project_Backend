@@ -7,6 +7,8 @@ import middleWare from "../middlewares/auth";
 import { handleResponse } from "../utils/handleResponse";
 const router = express.Router();
 const authController = new AuthController();
+import joiValidator from "../middlewares/schemaValidator";
+import { smsSchema } from "../utils/schema";
 
 router.get(
   "/google",
@@ -18,15 +20,25 @@ router.get(
   passport.authenticate("facebook", { authType: "rerequest", scope: ["email"] })
 );
 
+router.post("/test", joiValidator(smsSchema), (req, res) => {
+  res.send("working");
+});
+
 router.post(
   "/sendsms",
-  [middleWare.authMiddleware, middleWare.ensureSmsAuth],
+  middleWare.authMiddleware,
   passport.authenticate("sendSms", { failureRedirect: "/auth/failed" }),
   async function (req: any, res: Response) {
-    // let response = await authController.sendSms(req.user);
-    req.session.user = req.user.data;
+    //let response = await authController.sendSms(req.user);
+    const { data, validationError, error } = req.user;
+    req.session.user = data;
     console.log(req.user);
-    if (req.user.error) {
+    if (validationError) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid mobile number...",
+      });
+    } else if (error) {
       return res.status(400).json({
         success: false,
         message: "Check number and Try again...",
@@ -42,19 +54,25 @@ router.post(
 
 router.post(
   "/validatesmscode",
-  [middleWare.authMiddleware, middleWare.ensureSmsCodeAuth],
+  middleWare.authMiddleware,
   passport.authenticate("validateSmsCode", { failureRedirect: "/auth/failed" }),
   async function (req: any, res: Response) {
+    const { data, validationError, error } = req.user;
+    req.session.user = data;
     console.log(req.user);
-    req.session.user = req.user.data;
-    if (req.user.error) {
+    if (validationError) {
+      return res.status(400).json({
+        success: false,
+        message: "Incomplete code entered...",
+      });
+    } else if (error) {
       return res.status(400).json({
         success: false,
         message: "Invalid code entered...",
       });
     } else {
       return res.status(200).json({
-        success: false,
+        success: true,
         message: "Code verified,  username next",
       });
     }
@@ -63,19 +81,24 @@ router.post(
 
 router.post(
   "/username",
-  [middleWare.authMiddleware, middleWare.ensureVerifyCodeAuth],
+  middleWare.authMiddleware,
   passport.authenticate("usernameAuth", { failureRedirect: "/auth/failed" }),
   async function (req: any, res: Response) {
-    console.log(req.user);
-    req.session.user = req.user.data;
-    if (req.user.error) {
+    const { data, validationError, error } = req.user;
+    req.session.user = data;
+    if (validationError) {
+      return res.status(400).json({
+        success: false,
+        message: "Enter username at least 4 characters long...",
+      });
+    } else if (error) {
       return res.status(400).json({
         success: false,
         message: "Username Unavailable",
       });
     } else {
       return res.status(200).json({
-        success: false,
+        success: true,
         message: "Registration Completed",
       });
     }
