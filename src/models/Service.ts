@@ -28,7 +28,7 @@ const ServiceSchema = new mongoose.Schema(
       ],
       default: AdStatus.Active,
     },
-    categoryId: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
+    category: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
     school: { type: String, required: true },
     price: { type: String, required: true },
     otherFields: [FieldSchema],

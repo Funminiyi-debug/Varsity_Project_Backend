@@ -1,10 +1,12 @@
-import { inject } from "inversify";
+import { inject, injectable } from "inversify";
 import { Document } from "mongoose";
 import { ISubcategory } from "../interfaces/entities";
 import SubCategory from "../models/SubCategory";
 import Types from "../types";
 import { ICategoryService, ISubcategoryService } from "./interfaces";
+import { ServerErrorException } from "../exceptions";
 
+@injectable()
 export default class SubcategoryService implements ISubcategoryService {
   /**
    *
@@ -39,11 +41,10 @@ export default class SubcategoryService implements ISubcategoryService {
       if (addCategory) {
         return createdSubcategory;
       }
-
-      throw "unable to add subcategory to category";
+      throw new ServerErrorException("unable to add subcategory to category");
     } catch (error) {
       console.log(error);
-      return undefined;
+      throw new ServerErrorException(error);
     }
 
     // return createdSubcategory;
