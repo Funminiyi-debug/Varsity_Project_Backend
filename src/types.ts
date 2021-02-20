@@ -2,7 +2,6 @@ const Types = {
   IUserService: Symbol("IUserService"),
   ICategoryService: Symbol("ICategoryService"),
   IProductService: Symbol("IProductService"),
-  IUserService: Symbol("IUserService"),
   IAppFileService: Symbol("IAppFileService"),
   INotificationService: Symbol("INotificationService"),
   ISubcategoryService: Symbol("ISubcategoryService"),

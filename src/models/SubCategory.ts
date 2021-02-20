@@ -5,7 +5,7 @@ const SubCategorySchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     products: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
-    categoryId: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
+    category: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
   },
   {
     timestamps: true,
@@ -13,7 +13,7 @@ const SubCategorySchema = new mongoose.Schema(
 );
 
 SubCategorySchema.pre("remove", function (next) {
-  Product.remove({ subcategoryId: this._id }).exec();
+  Product.remove({ subcategory: this._id }).exec();
   next();
 });
 

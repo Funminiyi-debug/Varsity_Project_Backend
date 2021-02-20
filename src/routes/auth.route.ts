@@ -8,7 +8,7 @@ import { handleResponse } from "../utils/handleResponse";
 const router = express.Router();
 const authController = new AuthController();
 import joiValidator from "../middlewares/schemaValidator";
-import { smsSchema } from "../utils/schema";
+import { smsSchema } from "../validators";
 
 router.get(
   "/google",

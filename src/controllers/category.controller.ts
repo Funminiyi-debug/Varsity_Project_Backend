@@ -13,10 +13,10 @@ import {
 } from "tsoa";
 import { DataResponse } from "../interfaces/DataResponse";
 import ErrorResponseModel from "../interfaces/ErrorResponseModel";
-import ICategoryService from "../services/interfaces/icategory.service";
+import { ICategoryService } from "../services/interfaces";
 import Types from "../types";
 import express, { response } from "express";
-import ICategory from "../interfaces/ICategory";
+import ICategory from "../interfaces/entities/ICategory";
 import { Params } from "@decorators/express";
 
 @Route("/categories")

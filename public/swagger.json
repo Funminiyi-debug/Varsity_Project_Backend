@@ -1,797 +1,882 @@
 {
-	"components": {
-		"examples": {},
-		"headers": {},
-		"parameters": {},
-		"requestBodies": {},
-		"responses": {},
-		"schemas": {
-			"DataResponse": {
-				"properties": {
-					"statusCode": {
-						"type": "number",
-						"format": "double"
-					},
-					"data": {},
-					"message": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"statusCode"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"ErrorResponseModel": {
-				"properties": {
-					"message": {
-						"type": "string"
-					},
-					"success": {
-						"type": "boolean",
-						"enum": [
-							"false"
-						],
-						"nullable": false
-					}
-				},
-				"required": [
-					"message",
-					"success"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"CategoryType": {
-				"enum": [
-					"Product",
-					"Service"
-				],
-				"type": "string"
-			},
-			"ICategory": {
-				"properties": {
-					"name": {
-						"type": "string"
-					},
-					"categoryType": {
-						"$ref": "#/components/schemas/CategoryType"
-					}
-				},
-				"required": [
-					"name",
-					"categoryType"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"AdStatus": {
-				"enum": [
-					"Active",
-					"InReview",
-					"Hidden",
-					"Draft",
-					"Declined"
-				],
-				"type": "string"
-			},
-			"IField": {
-				"properties": {
-					"_id": {
-						"type": "string"
-					},
-					"name": {
-						"type": "string"
-					},
-					"value": {
-						"type": "string"
-					},
-					"options": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"name",
-					"value",
-					"options"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"IProduct": {
-				"properties": {
-					"title": {
-						"type": "string"
-					},
-					"author": {
-						"type": "string"
-					},
-					"subcategory": {
-						"type": "string"
-					},
-					"images": {
-						"items": {},
-						"type": "array"
-					},
-					"adStatus": {
-						"$ref": "#/components/schemas/AdStatus"
-					},
-					"feedbacks": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
-					},
-					"school": {
-						"type": "string"
-					},
-					"price": {
-						"type": "string"
-					},
-					"delivery": {
-						"type": "string"
-					},
-					"otherFields": {
-						"items": {
-							"$ref": "#/components/schemas/IField"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"title",
-					"author",
-					"subcategory",
-					"images",
-					"adStatus",
-					"school",
-					"price",
-					"delivery",
-					"otherFields"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"AuthResponse": {
-				"properties": {
-					"statusCode": {
-						"type": "number",
-						"format": "double"
-					},
-					"token": {
-						"type": "string"
-					},
-					"message": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"statusCode",
-					"token"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"SmsRequest": {
-				"properties": {
-					"phoneNumber": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"phoneNumber"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"SmsCodeRequest": {
-				"properties": {
-					"phoneCode": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"phoneCode"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
-			"Username": {
-				"properties": {
-					"username": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"username"
-				],
-				"type": "object",
-				"additionalProperties": false
-			}
-		},
-		"securitySchemes": {}
-	},
-	"info": {
-		"title": "versity-backend",
-		"version": "1.0.0",
-		"description": "versity api",
-		"license": {
-			"name": "ISC"
-		},
-		"contact": {}
-	},
-	"openapi": "3.0.0",
-	"paths": {
-		"/categories": {
-			"get": {
-				"operationId": "GetCategories",
-				"responses": {
-					"200": {
-						"description": "OK",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/DataResponse"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Category"
-				],
-				"security": [],
-				"parameters": []
-			},
-			"post": {
-				"operationId": "CreateCategory",
-				"responses": {
-					"201": {
-						"description": "Created",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/DataResponse"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Data",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponseModel"
-								}
-							}
-						}
-					},
-					"409": {
-						"description": "Category already exists",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponseModel"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Category"
-				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/ICategory"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/categories/{id}": {
-			"get": {
-				"operationId": "GetCategory",
-				"responses": {
-					"200": {
-						"description": "OK",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/DataResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponseModel"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Category"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			},
-			"put": {
-				"operationId": "UpdateCategory",
-				"responses": {
-					"204": {
-						"description": "Updated",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/DataResponse"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Data",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponseModel"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponseModel"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Category"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/ICategory"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/products": {
-			"get": {
-				"operationId": "GetProducts",
-				"responses": {
-					"200": {
-						"description": "OK",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/DataResponse"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Product"
-				],
-				"security": [],
-				"parameters": []
-			},
-			"post": {
-				"operationId": "CreateProduct",
-				"responses": {
-					"201": {
-						"description": "Created",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/DataResponse"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Data",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponseModel"
-								}
-							}
-						}
-					},
-					"409": {
-						"description": "product already exists",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponseModel"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Product"
-				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/IProduct"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/products/{id}": {
-			"get": {
-				"operationId": "GetProduct",
-				"responses": {
-					"200": {
-						"description": "OK",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/DataResponse"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponseModel"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Product"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			},
-			"put": {
-				"operationId": "UpdateProduct",
-				"responses": {
-					"204": {
-						"description": "Updated",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/DataResponse"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Bad Data",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponseModel"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Not Found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponseModel"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Product"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/IProduct"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/auth/{method}": {
-			"get": {
-				"operationId": "Login",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/DataResponse"
-								}
-							}
-						}
-					},
-					"201": {
-						"description": "User Created",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/AuthResponse"
-								}
-							}
-						}
-					},
-					"403": {
-						"description": "Account is Restricted",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponseModel"
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Server Error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponseModel"
-								}
-							}
-						}
-					},
-					"200 response": {
-						"description": "Logged In",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/AuthResponse"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Authentication"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "method",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/auth/sendsms": {
-			"post": {
-				"operationId": "SendSms",
-				"responses": {
-					"400": {
-						"description": "Check Number and Try Again",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponseModel"
-								}
-							}
-						}
-					},
-					"200 response": {
-						"description": "SMS sent",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/DataResponse"
-								}
-							}
-						},
-						"headers": {
-							"DataResponse": {
-								"schema": {
-									"$ref": "#/components/schemas/DataResponse"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Authentication"
-				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/SmsRequest"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/auth/validatesmscode": {
-			"post": {
-				"operationId": "SendSmsCode",
-				"responses": {
-					"400": {
-						"description": "Code verified,  username next",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponseModel"
-								}
-							}
-						}
-					},
-					"200 response": {
-						"description": "Invalid code entered...",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/DataResponse"
-								}
-							}
-						},
-						"headers": {
-							"DataResponse": {
-								"schema": {
-									"$ref": "#/components/schemas/DataResponse"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Authentication"
-				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/SmsCodeRequest"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/auth/username": {
-			"post": {
-				"operationId": "ChangeUsername",
-				"responses": {
-					"400": {
-						"description": "Username Unavailable",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ErrorResponseModel"
-								}
-							}
-						}
-					},
-					"200 response": {
-						"description": "Registration Completed",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/DataResponse"
-								}
-							}
-						},
-						"headers": {
-							"DataResponse": {
-								"schema": {
-									"$ref": "#/components/schemas/DataResponse"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Authentication"
-				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/Username"
-							}
-						}
-					}
-				}
-			}
-		}
-	},
-	"servers": [
-		{
-			"url": "/"
-		}
-	]
+  "components": {
+    "examples": {},
+    "headers": {},
+    "parameters": {},
+    "requestBodies": {},
+    "responses": {},
+    "schemas": {
+      "DataResponse": {
+        "properties": {
+          "statusCode": {
+            "type": "number",
+            "format": "double"
+          },
+          "data": {},
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": ["statusCode"],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "ErrorResponseModel": {
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean",
+            "enum": ["false"],
+            "nullable": false
+          }
+        },
+        "required": ["message", "success"],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "CategoryType": {
+        "enum": ["Product", "Service"],
+        "type": "string"
+      },
+      "ICategory": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "categoryType": {
+            "$ref": "#/components/schemas/CategoryType"
+          }
+        },
+        "required": ["name", "categoryType"],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AdStatus": {
+        "enum": ["Active", "InReview", "Hidden", "Draft", "Declined"],
+        "type": "string"
+      },
+      "IField": {
+        "properties": {
+          "_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "options": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": ["name", "value", "options"],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "IProduct": {
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "subcategoryId": {
+            "type": "string"
+          },
+          "images": {
+            "items": {},
+            "type": "array"
+          },
+          "adStatus": {
+            "$ref": "#/components/schemas/AdStatus"
+          },
+          "feedbacks": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "school": {
+            "type": "string"
+          },
+          "price": {
+            "type": "string"
+          },
+          "delivery": {
+            "type": "string"
+          },
+          "otherFields": {
+            "items": {
+              "$ref": "#/components/schemas/IField"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "title",
+          "author",
+          "subcategoryId",
+          "images",
+          "adStatus",
+          "school",
+          "price",
+          "delivery",
+          "otherFields"
+        ],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "AuthResponse": {
+        "properties": {
+          "statusCode": {
+            "type": "number",
+            "format": "double"
+          },
+          "token": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": ["statusCode", "token"],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "SmsRequest": {
+        "properties": {
+          "phoneNumber": {
+            "type": "string"
+          }
+        },
+        "required": ["phoneNumber"],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "SmsCodeRequest": {
+        "properties": {
+          "phoneCode": {
+            "type": "string"
+          }
+        },
+        "required": ["phoneCode"],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "Username": {
+        "properties": {
+          "username": {
+            "type": "string"
+          }
+        },
+        "required": ["username"],
+        "type": "object",
+        "additionalProperties": false
+      },
+      "VStatus": {
+        "enum": ["Verified", "NotVerified", "Restricted"],
+        "type": "string"
+      },
+      "VerifyStatusRequest": {
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/VStatus"
+          }
+        },
+        "required": ["id", "status"],
+        "type": "object",
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {}
+  },
+  "info": {
+    "title": "versity-backend",
+    "version": "1.0.0",
+    "description": "versity api",
+    "license": {
+      "name": "ISC"
+    },
+    "contact": {}
+  },
+  "openapi": "3.0.0",
+  "paths": {
+    "/categories": {
+      "get": {
+        "operationId": "GetCategories",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Category"],
+        "security": [],
+        "parameters": []
+      },
+      "post": {
+        "operationId": "CreateCategory",
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseModel"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Category already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseModel"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Category"],
+        "security": [],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ICategory"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories/{id}": {
+      "get": {
+        "operationId": "GetCategory",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseModel"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Category"],
+        "security": [],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "put": {
+        "operationId": "UpdateCategory",
+        "responses": {
+          "204": {
+            "description": "Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseModel"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseModel"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Category"],
+        "security": [],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ICategory"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products": {
+      "get": {
+        "operationId": "GetProducts",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Product"],
+        "security": [],
+        "parameters": []
+      },
+      "post": {
+        "operationId": "CreateProduct",
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseModel"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "product already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseModel"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Product"],
+        "security": [],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IProduct"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/{id}": {
+      "get": {
+        "operationId": "GetProduct",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseModel"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Product"],
+        "security": [],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "put": {
+        "operationId": "UpdateProduct",
+        "responses": {
+          "204": {
+            "description": "Updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseModel"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseModel"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Product"],
+        "security": [],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IProduct"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/{method}": {
+      "get": {
+        "operationId": "Login",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "User Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Account is Restricted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseModel"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseModel"
+                }
+              }
+            }
+          },
+          "200 response": {
+            "description": "Logged In",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Authentication"],
+        "security": [],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "method",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      }
+    },
+    "/auth/sendsms": {
+      "post": {
+        "operationId": "SendSms",
+        "responses": {
+          "400": {
+            "description": "Check Number and Try Again",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseModel"
+                }
+              }
+            }
+          },
+          "200 response": {
+            "description": "SMS sent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataResponse"
+                }
+              }
+            },
+            "headers": {
+              "DataResponse": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Authentication"],
+        "security": [],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SmsRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/validatesmscode": {
+      "post": {
+        "operationId": "SendSmsCode",
+        "responses": {
+          "400": {
+            "description": "Code verified,  username next",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseModel"
+                }
+              }
+            }
+          },
+          "200 response": {
+            "description": "Invalid code entered...",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataResponse"
+                }
+              }
+            },
+            "headers": {
+              "DataResponse": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Authentication"],
+        "security": [],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SmsCodeRequest"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/username": {
+      "post": {
+        "operationId": "ChangeUsername",
+        "responses": {
+          "400": {
+            "description": "Username Unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseModel"
+                }
+              }
+            }
+          },
+          "200 response": {
+            "description": "Registration Completed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataResponse"
+                }
+              }
+            },
+            "headers": {
+              "DataResponse": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Authentication"],
+        "security": [],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Username"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "operationId": "GetAllUsers",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseModel"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["User"],
+        "security": [],
+        "parameters": []
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "operationId": "GetUser",
+        "responses": {
+          "200": {
+            "description": "Ok",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DataResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseModel"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["User"],
+        "security": [],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ]
+      },
+      "put": {
+        "operationId": "CreateUser",
+        "responses": {
+          "204": {
+            "description": "Updated",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseModel"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseModel"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["User"],
+        "security": [],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyStatusRequest"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "/"
+    }
+  ]
 }

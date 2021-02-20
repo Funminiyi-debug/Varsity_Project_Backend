@@ -1,6 +1,6 @@
 import Category from "../models/Category";
 import { Document } from "mongoose";
-import ICategory from "../interfaces/ICategory";
+import ICategory from "../interfaces/entities/ICategory";
 import { injectable, inject } from "inversify";
 import Types from "../types";
 import { ICategoryService, IProductService } from "./interfaces";
@@ -10,6 +10,37 @@ export default class CategoryService implements ICategoryService {
   constructor(
     @inject(Types.IProductService) private productService: IProductService
   ) {}
+  async addSubcategoryToCategory(
+    id: string,
+    subcategoryid: string
+  ): Promise<boolean> {
+    try {
+      await Category.findByIdAndUpdate(id, {
+        $push: {
+          subcategory: subcategoryid,
+        },
+      });
+
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
+  async addServiceToCategory(id: string, serviceid: string): Promise<boolean> {
+    try {
+      await Category.findByIdAndUpdate(id, {
+        $push: {
+          service: serviceid,
+        },
+      });
+
+      return true;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
 
   public async getCategories(): Promise<Document<any>[]> {
     return await Category.find({}).populate("subcategory").populate("services");

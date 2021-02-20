@@ -1,5 +1,5 @@
 import { Document } from "mongoose";
-import ICategory from "../../interfaces/ICategory";
+import ICategory from "../../interfaces/entities/ICategory";
 
 export default interface ICategoryService {
   getCategories(): Promise<Document<any>[]>;
@@ -13,4 +13,8 @@ export default interface ICategoryService {
   updateCategory(id: string, entity: ICategory): Promise<Document<any>>;
 
   deleteCategory(id: string): Promise<Document<any>>;
+
+  addSubcategoryToCategory(id: string, subcategoryid: string): Promise<boolean>;
+
+  addServiceToCategory(id: string, serviceid: string): Promise<boolean>;
 }

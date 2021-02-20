@@ -6,7 +6,7 @@ import { handleResponse } from "../utils/handleResponse";
 import { container } from "../containerDI";
 import Types from "../types";
 import cacheData from "../utils/cache-data";
-import ICategory from "../interfaces/ICategory";
+import ICategory from "../interfaces/entities/ICategory";
 const router = express.Router();
 const categoryService = container.get<CategoryService>(Types.ICategoryService);
 

@@ -1,3 +1,6 @@
+import { injectable } from "inversify";
 import { Document } from "mongoose";
+import { IAppFileService } from "./interfaces";
 
-export default class AppFileService {}
+@injectable()
+export default class AppFileService implements IAppFileService {}

@@ -18,8 +18,8 @@ import { DataResponse } from "../interfaces/DataResponse";
 import ErrorResponseModel from "../interfaces/ErrorResponseModel";
 import Types from "../types";
 import express from "express";
-import IProductService from "../services/interfaces/iproduct.service";
-import IProduct from "../interfaces/IProduct";
+import { IProductService } from "../services/interfaces";
+import { IProduct } from "../interfaces/entities";
 
 @Route("/products")
 @Tags("Product")

@@ -1,5 +1,4 @@
-import { Document } from "mongoose";
-import VerificationStatus from "../enums/VerificationStatus";
+import VStatus from "../../enums/VerificationStatus";
 
 interface IUser {
   _id?: string;
@@ -8,7 +7,7 @@ interface IUser {
   phone: string;
   token: string;
   gender: string;
-  verificationStatus: VerificationStatus;
+  verificationStatus: VStatus;
 }
 
 export default IUser;
