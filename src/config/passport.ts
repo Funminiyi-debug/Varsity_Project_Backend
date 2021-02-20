@@ -12,13 +12,13 @@ import {
   SmsCodeRequest,
   SmsRequest,
 } from "../interfaces/DataResponse";
-import {
-  googgleFacebookSchema,
-  smsSchema,
-  validateSmsCodeSchema,
-  usernameSchema,
-} from "../utils/schema";
+
 import { generateRandomNumber } from "../utils/helperFunction";
+import {
+  smsSchema,
+  usernameSchema,
+  validateSmsCodeSchema,
+} from "../validators";
 
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;

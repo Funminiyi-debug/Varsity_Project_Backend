@@ -16,11 +16,16 @@ import {
   Response,
 } from "tsoa";
 import { DataResponse, UserCreationRequest } from "../interfaces/DataResponse";
-import { IUserService } from "../services/Iuser.service";
 import ErrorResponseModel from "../interfaces/ErrorResponseModel";
-import IUser from "../interfaces/IUser";
 import { inject, injectable } from "inversify";
 import Types from "../types";
+import { IUserService } from "../services/interfaces";
+import VStatus from "../enums/VerificationStatus";
+
+interface VerifyStatusRequest {
+  id: string;
+  status: VStatus;
+}
 
 @Route("users")
 @Tags("User")
@@ -60,9 +65,12 @@ export default class UsersController extends Controller {
   @Response<ErrorResponseModel>("404", "Not Found")
   public async createUser(
     @Path() id: string,
-    @Body() status: any
+    @Body() request: VerifyStatusRequest
   ): Promise<any> {
-    const results = await this.user.updateUser(id, status);
+    const results = await this.user.changeVerificationStatus(
+      id,
+      request.status
+    );
 
     this.setStatus(201);
     if (results == null) {
