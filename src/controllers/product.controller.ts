@@ -1,4 +1,5 @@
 import { inject, injectable } from "inversify";
+import { UploadedFiles } from "routing-controllers";
 import {
   Controller,
   Route,
@@ -18,12 +19,12 @@ import { DataResponse } from "../interfaces/DataResponse";
 import ErrorResponseModel from "../interfaces/ErrorResponseModel";
 import Types from "../types";
 import express from "express";
-import { IProductService } from "../services/interfaces";
+import { IAppFileService, IProductService } from "../services/interfaces";
 import { IProduct } from "../interfaces/entities";
+import handleAppExceptions from "../utils/handleAppExceptions";
 
 @Route("/products")
 @Tags("Product")
-// @controller("/categories")
 class ProductsController extends Controller {
   constructor(@inject(Types.IProductService) private ps: IProductService) {
     super();
@@ -87,34 +88,22 @@ class ProductsController extends Controller {
   @Response<ErrorResponseModel>("409", "product already exists")
   public async createProduct(
     @Body() product: IProduct,
-    @Request() res
+    @Request() req: any,
+    @Request() res: express.Response
   ): Promise<DataResponse> {
-    if (!product.title || !product.price || product.images.length == 0) {
-      return {
-        statusCode: 400,
-        message: "Ensure all required fields are filled",
-      };
-    }
-
     try {
-      const results = await this.ps.createProduct(product, res.locals.email);
-      if (results == null) {
-        return {
-          statusCode: 409,
-          message: "product already exists",
-        };
-      }
+      const results = await this.ps.createProduct(
+        product,
+        req.files,
+        res.locals.email
+      );
 
       return {
         statusCode: 201,
         data: results,
       };
     } catch (error) {
-      console.log(error);
-      return {
-        statusCode: 500,
-        message: error.message,
-      };
+      return handleAppExceptions(error);
     }
   }
 

@@ -7,8 +7,8 @@ import VerificationStatus from "../enums/VerificationStatus";
 
 @injectable()
 export default class UserService implements IUserService {
-  getUsers() {
-    throw new Error("Method not implemented.");
+  async getUsers() {
+    return await User.find({});
   }
   updateUser(id: string, entity: IUser) {
     throw new Error("Method not implemented.");
@@ -16,8 +16,12 @@ export default class UserService implements IUserService {
   changeVerificationStatus(id: string, status: VerificationStatus) {
     throw new Error("Method not implemented.");
   }
-  getUser(id: string) {
-    throw new Error("Method not implemented.");
+  async getUser(id: string) {
+    const user = await User.findById(id);
+    if (user) {
+      return user;
+    }
+    return null;
   }
   async getUserByCondition(query: IUser): Promise<Document<any>[]> {
     return await User.find(query);
@@ -25,6 +29,7 @@ export default class UserService implements IUserService {
 
   async getByEmail(email: string): Promise<Document<IUser>> {
     const user = await User.findOne({ email });
+    console.log(user);
     if (user) {
       return user;
     }

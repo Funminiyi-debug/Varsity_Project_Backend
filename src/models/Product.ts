@@ -18,9 +18,11 @@ const ProductSchema = new mongoose.Schema(
       required: true,
     },
     feedbacks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Feedback" }],
-    images: [
-      { type: mongoose.Schema.Types.ObjectId, required: true, ref: "AppFile" },
-    ],
+    images: {
+      type: [mongoose.Schema.Types.ObjectId],
+      required: true,
+      ref: "AppFile",
+    },
     adStatus: {
       type: String,
       enum: [

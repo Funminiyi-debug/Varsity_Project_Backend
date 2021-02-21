@@ -78,9 +78,6 @@
 			},
 			"IField": {
 				"properties": {
-					"_id": {
-						"type": "string"
-					},
 					"name": {
 						"type": "string"
 					},
@@ -107,9 +104,6 @@
 					"title": {
 						"type": "string"
 					},
-					"author": {
-						"type": "string"
-					},
 					"subcategoryId": {
 						"type": "string"
 					},
@@ -119,12 +113,6 @@
 					},
 					"adStatus": {
 						"$ref": "#/components/schemas/AdStatus"
-					},
-					"feedbacks": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
 					},
 					"school": {
 						"type": "string"
@@ -144,7 +132,6 @@
 				},
 				"required": [
 					"title",
-					"author",
 					"subcategoryId",
 					"images",
 					"adStatus",

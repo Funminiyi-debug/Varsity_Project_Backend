@@ -72,7 +72,7 @@ export default class SubcategoryService implements ISubcategoryService {
       return true;
     } catch (error) {
       console.log(error);
-      return false;
+      throw new ServerErrorException(error);
     }
   }
   async deleteSubcategory(id: string): Promise<Document<any>> {

@@ -26,6 +26,7 @@ router.post("/", async (req: Request, res: Response) => {
   // product.author = res.locals.user;
   const response: DataResponse = await productController.createProduct(
     req.body,
+    req,
     res
   );
 
