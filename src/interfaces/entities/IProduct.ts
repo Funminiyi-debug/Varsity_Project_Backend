@@ -9,7 +9,7 @@ interface IProduct {
   school: string;
   price: string;
   delivery: string;
-  otherFields: IField[];
+  otherFields?: IField[];
 }
 
 export default IProduct;

@@ -13,6 +13,8 @@ import categoryModule from "./routes/category.route";
 import productModule from "./routes/product.route";
 import authModule from "./routes/auth.route";
 import userModule from "./routes/user.route";
+import subcategoryModule from "./routes/subcategory.route";
+import sampleModule from "./routes/sample.route";
 import redisMiddleware from "./middlewares/redis";
 import authMiddleware from "./middlewares/auth";
 const app: Application = express();
@@ -66,29 +68,15 @@ app.use(
 );
 // REDIS
 app.use(authMiddleware.authMiddleware);
-app.use(redisMiddleware);
-
-app.get("/", (req, res) => {
-  res.redirect("/good");
-});
+// app.use(redisMiddleware);
 
 app.use("/auth", authModule);
-app.use("/", userModule);
 app.use("/categories", categoryModule);
 app.use("/products", productModule);
-// PASSPORT CONFIG
+app.use("/subcategories", subcategoryModule);
+// app.use("/subcategories", sampleModule);
+app.use("/", userModule);
 
-// const server = new InversifyExpressServer(
-//   container,
-//   null,
-//   { rootPath: "/api" },
-//   app
-// );
-
-// server.setConfig((app) => {
-
-// });
-// server.build()
 app.listen(port, () => {
   console.log(`subscriber connected to ${port}`);
 });

@@ -132,8 +132,7 @@
 					"adStatus",
 					"school",
 					"price",
-					"delivery",
-					"otherFields"
+					"delivery"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -214,6 +213,25 @@
 				"required": [
 					"id",
 					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ISubcategory": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"product": {
+						"type": "string"
+					},
+					"category": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"name",
+					"category"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -944,6 +962,178 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/VerifyStatusRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/subcategories": {
+			"get": {
+				"operationId": "GetSubcategories",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DataResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"subcategory"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "CreateSubcategory",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DataResponse"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Data",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseModel"
+								}
+							}
+						}
+					},
+					"409": {
+						"description": "product already exists",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseModel"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"subcategory"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ISubcategory"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/subcategories/{id}": {
+			"get": {
+				"operationId": "GetSubcategory",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DataResponse"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseModel"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"subcategory"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateSubcategory",
+				"responses": {
+					"204": {
+						"description": "Updated",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/DataResponse"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Data",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseModel"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Not Found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ErrorResponseModel"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"subcategory"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ISubcategory"
 							}
 						}
 					}

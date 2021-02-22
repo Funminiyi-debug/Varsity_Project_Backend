@@ -15,8 +15,10 @@ import IAppFile from "../interfaces/entities/IAppFile";
 import {
   BadDataException,
   ConflictException,
+  NotFoundException,
   ServerErrorException,
 } from "../exceptions";
+import { UnauthorizedError } from "routing-controllers";
 
 @injectable()
 export default class ProductService implements IProductService {
@@ -54,10 +56,16 @@ export default class ProductService implements IProductService {
   }
   // create product
   async createProduct(
-    entity: any,
+    product: IProduct,
     files: any,
     email: string
   ): Promise<Document<any>> {
+    const entity = {
+      ...product,
+      author: "",
+      images: [],
+      subcategory: "",
+    };
     // AUTHOR
     const user = await this.userService.getByEmail(email);
     entity.author = user.id;
@@ -94,6 +102,8 @@ export default class ProductService implements IProductService {
       throw new BadDataException("subcategory does not exist");
     }
 
+    entity.subcategory = subcategoryExist[0].id;
+
     try {
       const product = await Product.create(entity);
 
@@ -112,10 +122,51 @@ export default class ProductService implements IProductService {
   // update product
   async updateProduct(
     id: string,
-    entity: IProduct,
+    files: any,
+    product: any,
     userEmail
   ): Promise<Document<any>> {
-    return await Product.findByIdAndUpdate(id, entity, { new: true });
+    const entity = {
+      ...product,
+      author: "",
+      images: [],
+      subcategory: "",
+    };
+    // AUTHOR
+    const user = await this.userService.getByEmail(userEmail);
+    entity.author = user.id;
+
+    // Check if product exists
+    const exists = (await Product.find({
+      name: entity.title,
+      author: entity.author,
+    })) as any[];
+
+    if (exists.length == 0) throw new NotFoundException("product not found");
+
+    // IMAGE
+    if (files || files.length > 0) {
+      const imageids = await Promise.all([
+        ...files.map(async (file) => {
+          const appfile = await this.appfileService.addAppFile(file);
+          return appfile.id;
+        }),
+      ]);
+      entity.images.push(...imageids);
+    } else {
+      entity.images = exists[0].images;
+    }
+
+    try {
+      const product = await Product.findByIdAndUpdate(id, entity, {
+        new: true,
+      });
+
+      return product;
+    } catch (error) {
+      console.log(error);
+      throw new ServerErrorException(error);
+    }
   }
 
   // delete product

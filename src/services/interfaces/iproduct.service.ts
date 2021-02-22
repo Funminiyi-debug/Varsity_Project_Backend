@@ -18,7 +18,8 @@ export default interface IProductService {
 
   updateProduct(
     id: string,
-    entity: IProduct,
+    files: any,
+    entity: any,
     userEmail: string
   ): Promise<Document<any>>;
 
