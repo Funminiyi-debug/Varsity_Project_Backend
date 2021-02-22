@@ -29,7 +29,6 @@ export default class UserService implements IUserService {
 
   async getByEmail(email: string): Promise<Document<IUser>> {
     const user = await User.findOne({ email });
-    console.log(user);
     if (user) {
       return user;
     }

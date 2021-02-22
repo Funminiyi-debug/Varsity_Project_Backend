@@ -1,6 +1,7 @@
 import { Document } from "mongoose";
 import { IProduct } from "../../interfaces/entities";
 import IAppFile from "../../interfaces/entities/IAppFile";
+import { Express } from "express";
 
 export default interface IProductService {
   getProducts(): Promise<Document<any>[]>;
@@ -11,7 +12,7 @@ export default interface IProductService {
 
   createProduct(
     entity: IProduct,
-    files: IAppFile[],
+    files: any,
     email: string
   ): Promise<Document<any>>;
 
@@ -22,4 +23,10 @@ export default interface IProductService {
   ): Promise<Document<any>>;
 
   deleteProduct(id: string, userEmail: string): Promise<Document<any>>;
+
+  addFeedbacksToProduct(
+    productid: string,
+    feedbackids: string[],
+    useremail: string
+  );
 }

@@ -17,6 +17,7 @@
     "@types/cors": "^2.8.9",
     "@types/mongoose": "^5.10.3",
     "@types/morgan": "^1.9.2",
+    "@types/multer": "^1.4.5",
     "@types/redis": "^2.8.28",
     "axios": "^0.21.1",
     "bcrypt": "^5.0.0",

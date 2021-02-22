@@ -107,10 +107,6 @@
 					"subcategoryId": {
 						"type": "string"
 					},
-					"images": {
-						"items": {},
-						"type": "array"
-					},
 					"adStatus": {
 						"$ref": "#/components/schemas/AdStatus"
 					},
@@ -133,7 +129,6 @@
 				"required": [
 					"title",
 					"subcategoryId",
-					"images",
 					"adStatus",
 					"school",
 					"price",
@@ -224,7 +219,25 @@
 				"additionalProperties": false
 			}
 		},
-		"securitySchemes": {}
+		"securitySchemes": {
+			"api_key": {
+				"type": "apiKey",
+				"name": "access_token",
+				"in": "query"
+			},
+			"tsoa_auth": {
+				"type": "oauth2",
+				"flows": {
+					"implicit": {
+						"authorizationUrl": "http://localhost:3001/auth/google",
+						"scopes": {
+							"write:pets": "modify things",
+							"read:pets": "read things"
+						}
+					}
+				}
+			}
+		}
 	},
 	"info": {
 		"title": "versity-backend",
@@ -468,7 +481,14 @@
 					"Product"
 				],
 				"security": [],
-				"parameters": [],
+				"parameters": [
+					{
+						"in": "formData",
+						"name": "images",
+						"required": true,
+						"type": "image/jpeg"
+					}
+				],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -478,7 +498,8 @@
 							}
 						}
 					}
-				}
+				},
+				"consumes": "multipart/form-data"
 			}
 		},
 		"/products/{id}": {

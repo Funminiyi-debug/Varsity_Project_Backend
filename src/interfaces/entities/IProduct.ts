@@ -4,7 +4,7 @@ import { IField } from "../IField";
 interface IProduct {
   title: string;
   subcategoryId: string;
-  images: any[];
+  // images: any[];
   adStatus: AdStatus;
   school: string;
   price: string;

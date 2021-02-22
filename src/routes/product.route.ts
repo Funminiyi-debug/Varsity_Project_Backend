@@ -5,6 +5,7 @@ import { DataResponse } from "../interfaces/DataResponse";
 import ProductService from "../services/product.service";
 import Types from "../types";
 import { handleResponse } from "../utils/handleResponse";
+import upload from "../config/multer";
 const router = express.Router();
 const productService = container.get<ProductService>(Types.IProductService);
 const productController = new ProductsController(productService);
@@ -22,16 +23,20 @@ router.get("/:id", async (req: Request, res: Response) => {
   return handleResponse(res, response);
 });
 
-router.post("/", async (req: Request, res: Response) => {
-  // product.author = res.locals.user;
-  const response: DataResponse = await productController.createProduct(
-    req.body,
-    req,
-    res
-  );
+router.post(
+  "/",
+  upload.array("images", 4),
+  async (req: Request, res: Response) => {
+    // product.author = res.locals.user;
+    const response: DataResponse = await productController.createProduct(
+      req.body,
+      req,
+      res
+    );
 
-  return handleResponse(res, response);
-});
+    return handleResponse(res, response);
+  }
+);
 
 router.put("/:id", async (req: Request, res: Response) => {
   const response: DataResponse = await productController.updateProduct(

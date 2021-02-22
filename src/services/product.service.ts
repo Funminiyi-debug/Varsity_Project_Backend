@@ -1,5 +1,6 @@
 import { Document } from "mongoose";
 import { inject, injectable } from "inversify";
+import { Express } from "express";
 import {
   IProductService,
   IUserService,
@@ -26,12 +27,20 @@ export default class ProductService implements IProductService {
     @inject(Types.ISubcategoryService)
     private subcategoryService: ISubcategoryService
   ) {}
+  addFeedbacksToProduct(
+    productid: string,
+    feedbackids: string[],
+    useremail: string
+  ) {
+    throw new Error("Method not implemented.");
+  }
   async getProducts(): Promise<Document<any>[]> {
-    return await Product.find({})
-      .populate("author")
-      .populate("subcategory")
-      .populate("images")
-      .populate("Feedback");
+    // return await Product.find({})
+    //   .populate("author")
+    //   .populate("subcategory")
+    //   .populate("images")
+    //   .populate("Feedback");
+    return await this.appfileService.getAllAppFiles();
   }
 
   // get product
@@ -46,7 +55,7 @@ export default class ProductService implements IProductService {
   // create product
   async createProduct(
     entity: any,
-    files: IAppFile[],
+    files: any,
     email: string
   ): Promise<Document<any>> {
     // AUTHOR
@@ -65,10 +74,13 @@ export default class ProductService implements IProductService {
       throw new BadDataException("you must include images");
     }
 
-    const imageids = files.map(async (file) => {
-      const appfile = await this.appfileService.addAppFile(file);
-      return appfile.id;
-    });
+    const imageids = await Promise.all([
+      ...files.map(async (file) => {
+        const appfile = await this.appfileService.addAppFile(file);
+        return appfile.id;
+      }),
+    ]);
+    // await Promise.all(imageids);
     entity.images = imageids;
 
     // SUBCATEGORY
@@ -76,6 +88,9 @@ export default class ProductService implements IProductService {
       entity.subcategoryId
     );
     if (subcategoryExist.length == 0) {
+      imageids.forEach(
+        async (id) => await this.appfileService.deleteAppFile(id)
+      );
       throw new BadDataException("subcategory does not exist");
     }
 

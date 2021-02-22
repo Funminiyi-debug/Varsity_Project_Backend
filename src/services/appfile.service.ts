@@ -6,9 +6,13 @@ import { ServerErrorException } from "../exceptions";
 import IAppFile from "../interfaces/entities/IAppFile";
 import AppFile from "../models/AppFile";
 import { IAppFileService } from "./interfaces";
+import { EntityList } from "twilio/lib/rest/verify/v2/service/entity";
 
 @injectable()
 export default class AppFileService implements IAppFileService {
+  async deleteAppFile(id: string) {
+    return await AppFile.findByIdAndDelete(id);
+  }
   async getAppFile(id: string): Promise<Document<any>> {
     try {
       return await AppFile.findById(id)
@@ -31,13 +35,11 @@ export default class AppFileService implements IAppFileService {
     }
   }
 
-  async addAppFile(entity: IAppFile): Promise<Document<any>> {
+  async addAppFile(entity: Express.Multer.File): Promise<Document<any>> {
     try {
       const image = {
-        name: `../uploads/${entity.filename}`,
-        data: fs.readFileSync(
-          path.resolve(__dirname, "../uploads/" + entity.filename)
-        ),
+        name: `image_${entity.originalname}`,
+        data: fs.readFileSync(path.resolve(__dirname, "../../", entity.path)),
         mimetype: entity.mimetype,
       };
       return await AppFile.create(image);

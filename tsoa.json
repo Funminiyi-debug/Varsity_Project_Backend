@@ -3,6 +3,40 @@
   "noImplicitAdditionalProperties": "throw-on-extras",
   "spec": {
     "outputDirectory": "public",
-    "specVersion": 3
+    "specVersion": 3,
+    "specMerging": "recursive",
+    "securityDefinitions": {
+      "api_key": {
+        "type": "apiKey",
+        "name": "access_token",
+        "in": "query"
+      },
+      "tsoa_auth": {
+        "type": "oauth2",
+        "authorizationUrl": "http://localhost:3001/auth/google",
+        "flow": "implicit",
+        "scopes": {
+          "write:pets": "modify things",
+          "read:pets": "read things"
+        }
+      }
+    },
+    "spec": {
+      "paths": {
+        "/products": {
+          "post": {
+            "consumes": "multipart/form-data",
+            "parameters": [
+              {
+                "in": "formData",
+                "name": "images",
+                "required": true,
+                "type": "image/jpeg"
+              }
+            ]
+          }
+        }
+      }
+    }
   }
 }

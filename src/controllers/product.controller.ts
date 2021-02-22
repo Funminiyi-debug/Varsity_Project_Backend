@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify";
-import { UploadedFiles } from "routing-controllers";
+import multer from "multer";
 import {
   Controller,
   Route,
@@ -39,7 +39,6 @@ class ProductsController extends Controller {
   @SuccessResponse("200", "OK")
   public async getProducts(): Promise<DataResponse> {
     const results = await this.ps.getProducts();
-
     this.response = {
       statusCode: 200,
       data: results,
@@ -88,9 +87,10 @@ class ProductsController extends Controller {
   @Response<ErrorResponseModel>("409", "product already exists")
   public async createProduct(
     @Body() product: IProduct,
-    @Request() req: any,
+    @Request() req: express.Request,
     @Request() res: express.Response
   ): Promise<DataResponse> {
+    // await this.handleFile(req);
     try {
       const results = await this.ps.createProduct(
         product,
@@ -144,6 +144,18 @@ class ProductsController extends Controller {
         message: "Something happened",
       };
     }
+  }
+
+  private async handleFile(request: express.Request): Promise<void> {
+    const multerSingle = multer().single("randomFileIsHere");
+    return new Promise((resolve, reject) => {
+      multerSingle(request, undefined, async (error) => {
+        if (error) {
+          reject(error);
+        }
+        resolve();
+      });
+    });
   }
 }
 
