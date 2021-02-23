@@ -7,9 +7,7 @@ import { ICategoryService, IProductService } from "./interfaces";
 
 @injectable()
 export default class CategoryService implements ICategoryService {
-  constructor(
-    @inject(Types.IProductService) private productService: IProductService
-  ) {}
+  constructor() {}
   async addSubcategoryToCategory(
     id: string,
     subcategoryid: string
@@ -37,7 +35,7 @@ export default class CategoryService implements ICategoryService {
 
       return true;
     } catch (error) {
-      console.log(error);
+      console.log("add service to category", error);
       return false;
     }
   }

@@ -2,6 +2,7 @@ import handleResponse from "../utils/response";
 import helper from "../config/jwtHelper";
 import globals from "node-global-storage";
 import TokenContent from "../interfaces/TokenContent";
+import express from "express";
 
 export default {
   ensureAuth: (req, res, next) => {
@@ -69,6 +70,19 @@ export default {
     }
   },
   authMiddleware: (req, res, next) => {
+    const approvedRoutesWithoutAuth = [
+      "/auth/google",
+      "/auth/facebook",
+      "/auth/google/callback",
+      "auth/facebook/callback",
+    ];
+    const approved = approvedRoutesWithoutAuth.find((routes) =>
+      req.originalUrl.startsWith(routes)
+    );
+    if (approved != undefined) {
+      next();
+      return;
+    }
     // read the token from header or url
     //const token = req.headers["x-access-token"] || req.query.token;
     const authHeader = req.headers.authorization;
