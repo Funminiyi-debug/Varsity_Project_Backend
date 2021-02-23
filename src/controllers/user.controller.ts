@@ -45,17 +45,17 @@ export default class UsersController extends Controller {
   public async getAllUsers(): Promise<DataResponse> {
     return {
       statusCode: 200,
-      data: await this.user.getUsers(),
+      data: dummydata, //await this.user.getUsers(),
     };
   }
 
   @Get("{id}")
   @Response<ErrorResponseModel>("400", "Bad Data")
   public async getUser(id: string): Promise<DataResponse> {
-    //const user = dummydata.filter((result: any) => result.userId == id);
+    const user = dummydata.filter((result: any) => result.userId == id);
     return {
       statusCode: 200,
-      data: await this.user.getUser(id),
+      data: user, //await this.user.getUser(id),
     };
   }
 

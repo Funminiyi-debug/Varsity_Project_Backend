@@ -15,7 +15,7 @@ const googgleFacebookSchema = Joi.object().keys({
   email: Joi.string()
     .email()
     .lowercase()
-    .pattern(/^\S+@\S+[\.][0-9A-Z]+$/)
+    .pattern(/^\S+@\S+$/)
     .required(),
   token: Joi.string().alphanum().min(3).max(200).required(),
 });
