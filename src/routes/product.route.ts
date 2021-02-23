@@ -48,4 +48,12 @@ router.put("/:id", async (req: Request, res: Response) => {
   return handleResponse(res, response);
 });
 
+router.delete("/:id", async (req: Request, res: Response) => {
+  const response: DataResponse = await productController.deleteProduct(
+    req.params.id,
+    res
+  );
+  return handleResponse;
+});
+
 export default router;

@@ -14,6 +14,7 @@ import {
   Put,
   Hidden,
   Query,
+  Delete,
 } from "tsoa";
 import { DataResponse } from "../interfaces/DataResponse";
 import ErrorResponseModel from "../interfaces/ErrorResponseModel";
@@ -131,6 +132,36 @@ class ProductsController extends Controller {
           message: "Product not found",
         };
       }
+
+      this.response = {
+        statusCode: 204,
+      };
+      return this.response;
+    } catch (error) {
+      if (error.message.search("Cast") != -1) {
+        return {
+          statusCode: 404,
+          message: "Not Found",
+        };
+      }
+
+      return {
+        statusCode: 500,
+        message: "Something happened",
+      };
+    }
+  }
+  @Delete("{id}")
+  @SuccessResponse("204", "Deleted")
+  @Response<ErrorResponseModel>("400", "Bad Data")
+  @Response<ErrorResponseModel>("404", "Not Found")
+  public async deleteProduct(
+    @Path() id: string,
+    @Request() res: express.Response
+  ): Promise<DataResponse> {
+    const email = "";
+    try {
+      const results = await this.ps.deleteProduct(id, res.locals.email);
 
       this.response = {
         statusCode: 204,

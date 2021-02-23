@@ -3,10 +3,8 @@ import path from "path";
 import { injectable } from "inversify";
 import { Document } from "mongoose";
 import { ServerErrorException } from "../exceptions";
-import IAppFile from "../interfaces/entities/IAppFile";
 import AppFile from "../models/AppFile";
 import { IAppFileService } from "./interfaces";
-import { EntityList } from "twilio/lib/rest/verify/v2/service/entity";
 
 @injectable()
 export default class AppFileService implements IAppFileService {
