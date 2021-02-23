@@ -13,7 +13,10 @@ import {
   SmsRequest,
 } from "../interfaces/DataResponse";
 
-import { generateRandomNumber } from "../utils/helperFunction";
+import {
+  generateRandomNumber,
+  generateJwtToken,
+} from "../utils/helperFunction";
 import {
   smsSchema,
   usernameSchema,
@@ -43,14 +46,7 @@ export default function (passport) {
           email: profile.emails[0].value,
         };
 
-        const { googleId, email, displayName } = newUser;
-
-        const jwtAccessToken = helper.sign({
-          email,
-          displayName,
-        });
-
-        newUser.token = jwtAccessToken;
+        const { googleId, email } = newUser;
 
         try {
           let user: any = await User.findOne({
@@ -61,7 +57,7 @@ export default function (passport) {
             if (user.token !== newUser.token) {
               user = await User.findOneAndUpdate(
                 googleId,
-                { token: newUser.token },
+                { token: generateJwtToken(user) },
                 { new: true }
               );
 
@@ -71,6 +67,7 @@ export default function (passport) {
             }
           } else {
             user = await User.create(newUser);
+            user.token = generateJwtToken(user);
             user.verificationStatus = VerificationStatus.NotVerified;
             user.save();
             cb(null, { data: user });
@@ -110,15 +107,8 @@ export default function (passport) {
         };
 
         const { facebookId, email, displayName } = newUser;
-        console.log(email);
+
         if (!email) return cb(null, { data: newUser });
-
-        const jwtAccessToken = helper.sign({
-          email,
-          displayName,
-        });
-
-        newUser.token = jwtAccessToken;
 
         try {
           let user: any = await User.findOne({
@@ -129,7 +119,7 @@ export default function (passport) {
             if (user.token !== newUser.token) {
               user = await User.findOneAndUpdate(
                 facebookId,
-                { token: newUser.token },
+                { token: generateJwtToken(user) },
                 { new: true }
               );
               cb(null, { data: user });
@@ -138,6 +128,7 @@ export default function (passport) {
             }
           } else {
             user = await User.create(newUser);
+            user.token = generateJwtToken(user);
             user.verificationStatus = VerificationStatus.NotVerified;
             user.save();
             cb(null, { data: user });

@@ -18,7 +18,6 @@ import {
   NotFoundException,
   ServerErrorException,
 } from "../exceptions";
-import { UnauthorizedError } from "routing-controllers";
 
 @injectable()
 export default class ProductService implements IProductService {

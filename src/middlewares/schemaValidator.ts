@@ -1,6 +1,23 @@
-export default (schema) => {
-  return (req, res, next) => {
-    const { error } = schema.validate(req.body);
+import express from "express";
+
+export default (schemaId, schemaBody) => {
+  return (req: express.Request, res: express.Response, next) => {
+    let validation: any;
+    switch (req.method) {
+      case "put":
+        validation = schemaId.validate(req.params.id);
+        break;
+
+      case "post":
+        validation = schemaBody.validate(req.params.id);
+        break;
+
+      default:
+        break;
+    }
+
+    let { error } = validation;
+
     const valid = error == null;
 
     if (valid) {

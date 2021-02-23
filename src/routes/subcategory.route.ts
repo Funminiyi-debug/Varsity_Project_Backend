@@ -6,12 +6,13 @@ import Types from "../types";
 import cacheData from "../utils/cache-data";
 import SubcategoryController from "../controllers/subcategory.controller";
 import { SubcategoryService } from "../services";
-const router = express.Router();
+import validatorMiddleware from "../middlewares/schemaValidator";
+import { identifierSchema, subcategorySchema } from "../validators";
 
+const router = express.Router();
 const subcategoryService = container.get<SubcategoryService>(
   Types.ISubcategoryService
 );
-
 const subcategoryController = new SubcategoryController(subcategoryService);
 
 router.get("/", async (req: Request, res: Response) => {
@@ -28,21 +29,29 @@ router.get("/:id", async (req: Request, res: Response) => {
   return handleResponse(res, response);
 });
 
-router.post("/", async (req: Request, res: Response) => {
-  const response: DataResponse = await subcategoryController.createSubcategory(
-    req.body
-  );
+router.post(
+  "/",
+  validatorMiddleware(identifierSchema, subcategorySchema),
+  async (req: Request, res: Response) => {
+    const response: DataResponse = await subcategoryController.createSubcategory(
+      req.body
+    );
 
-  return handleResponse(res, response);
-});
+    return handleResponse(res, response);
+  }
+);
 
-router.put("/:id", async (req: Request, res: Response) => {
-  const response: DataResponse = await subcategoryController.updateSubcategory(
-    req.params.id,
-    req.body
-  );
+router.put(
+  "/:id",
+  validatorMiddleware(identifierSchema, subcategorySchema),
+  async (req: Request, res: Response) => {
+    const response: DataResponse = await subcategoryController.updateSubcategory(
+      req.params.id,
+      req.body
+    );
 
-  return handleResponse(res, response);
-});
+    return handleResponse(res, response);
+  }
+);
 
 export default router;

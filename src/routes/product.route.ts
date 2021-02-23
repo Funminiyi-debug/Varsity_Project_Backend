@@ -6,6 +6,9 @@ import ProductService from "../services/product.service";
 import Types from "../types";
 import { handleResponse } from "../utils/handleResponse";
 import upload from "../config/multer";
+import validatorMiddleware from "../middlewares/schemaValidator";
+import { identifierSchema, productSchema } from "../validators";
+
 const router = express.Router();
 const productService = container.get<ProductService>(Types.IProductService);
 const productController = new ProductsController(productService);
@@ -15,6 +18,7 @@ router.get("/", async (req: Request, res: Response) => {
 
   return handleResponse(res, response);
 });
+
 router.get("/:id", async (req: Request, res: Response) => {
   const response: DataResponse = await productController.getProduct(
     req.params.id
@@ -25,7 +29,10 @@ router.get("/:id", async (req: Request, res: Response) => {
 
 router.post(
   "/",
-  upload.array("images", 4),
+  [
+    validatorMiddleware(identifierSchema, productSchema),
+    upload.array("images", 4),
+  ],
   async (req: Request, res: Response) => {
     // product.author = res.locals.user;
     const response: DataResponse = await productController.createProduct(
@@ -38,22 +45,30 @@ router.post(
   }
 );
 
-router.put("/:id", async (req: Request, res: Response) => {
-  const response: DataResponse = await productController.updateProduct(
-    req.params.id,
-    req.body,
-    req
-  );
+router.put(
+  "/:id",
+  validatorMiddleware(identifierSchema, productSchema),
+  async (req: Request, res: Response) => {
+    const response: DataResponse = await productController.updateProduct(
+      req.params.id,
+      req.body,
+      req
+    );
 
-  return handleResponse(res, response);
-});
+    return handleResponse(res, response);
+  }
+);
 
-router.delete("/:id", async (req: Request, res: Response) => {
-  const response: DataResponse = await productController.deleteProduct(
-    req.params.id,
-    res
-  );
-  return handleResponse;
-});
+router.delete(
+  "/:id",
+  validatorMiddleware(identifierSchema, productSchema),
+  async (req: Request, res: Response) => {
+    const response: DataResponse = await productController.deleteProduct(
+      req.params.id,
+      res
+    );
+    return handleResponse;
+  }
+);
 
 export default router;
