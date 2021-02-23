@@ -63,7 +63,7 @@ export default class UsersController extends Controller {
   @SuccessResponse("204", "Updated")
   @Response<ErrorResponseModel>("400", "Bad Data")
   @Response<ErrorResponseModel>("404", "Not Found")
-  public async createUser(
+  public async updateUser(
     @Path() id: string,
     @Body() request: VerifyStatusRequest
   ): Promise<any> {

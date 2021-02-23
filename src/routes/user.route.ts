@@ -23,7 +23,7 @@ router.get("/users/:id", async (req: Request, res: Response) => {
 });
 
 router.put("/users/:id", async (req: Request, res: Response) => {
-  const data = await Users.createUser(req.params.id, req.body);
+  const data = await Users.updateUser(req.params.id, req.body);
   res.status(201).json({ sucess: "ok", data: data });
 });
 
