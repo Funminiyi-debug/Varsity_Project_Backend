@@ -1,10 +1,11 @@
-import { inject } from "inversify";
+import { injectable, inject } from "inversify";
 import { Document } from "mongoose";
 import { ISubcategory } from "../interfaces/entities";
 import SubCategory from "../models/SubCategory";
 import Types from "../types";
 import { ICategoryService, ISubcategoryService } from "./interfaces";
 
+@injectable()
 export default class SubcategoryService implements ISubcategoryService {
   /**
    *
