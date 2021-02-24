@@ -14,19 +14,19 @@ const userService = container.get<UserService>(Types.IUserService);
 const Users = new UserController(userService);
 
 //geting all users
-router.get("/users", async (req: Request, res: Response) => {
+router.get("/", async (req: Request, res: Response) => {
   const response: DataResponse = await Users.getAllUsers();
   return handleResponse(res, response);
 });
 
 //geting single user
-router.get("/users/:id", async (req: Request, res: Response) => {
+router.get("/:id", async (req: Request, res: Response) => {
   const response: DataResponse = await Users.getUser(req.params.id);
   return handleResponse(res, response);
 });
 
 router.put(
-  "/users/:id",
+  "/:id",
   validatorMiddleware(identifierSchema, userSchema),
   async (req: Request, res: Response) => {
     const data = await Users.updateUser(req.params.id, req.body);

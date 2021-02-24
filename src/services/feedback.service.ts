@@ -3,6 +3,7 @@ import { Document } from "mongoose";
 import Feedback from "../models/Feedback";
 import { IFeed } from "../interfaces/entities";
 import { IFeedbackService } from "./interfaces";
+import { ConflictException, ServerErrorException } from "../exceptions";
 
 @injectable()
 export default class FeedbackService implements IFeedbackService {
@@ -11,24 +12,39 @@ export default class FeedbackService implements IFeedbackService {
   }
 
   async getFeedback(id: string): Promise<Document<any>[]> {
-    return await Feedback.find({ _id: id });
+    try {
+      return await Feedback.find({ _id: id });
+    } catch (error) {
+      console.log(error);
+      throw new ServerErrorException(error);
+    }
   }
 
-  async createFeedback(entity: IFeed): Promise<Document<any>> {
-    const exists = await Feedback.find({ _id: entity.productId });
-    if (exists.length > 0) {
-      return null;
-    }
+  async createFeedback(request: IFeed): Promise<Document<any>> {
+    const { productId, serviceId } = request;
+    if (productId && serviceId) throw new ConflictException("ids conflit");
+    else if (productId) delete request.serviceId;
+    else if (serviceId) delete request.productId;
 
-    const feedback = new Feedback(entity);
+    const feedback = new Feedback(request);
     return await feedback.save();
   }
 
   async updateFeedback(id: string, entity: IFeed): Promise<Document<any>> {
-    return await Feedback.findByIdAndUpdate(id, entity, { new: true });
+    try {
+      return await Feedback.findByIdAndUpdate(id, entity, { new: true });
+    } catch (error) {
+      console.log(error);
+      throw new ServerErrorException(error);
+    }
   }
 
   async deleteFeedback(id: string): Promise<Document<any>> {
-    return await Feedback.findByIdAndDelete(id);
+    try {
+      return await Feedback.findByIdAndDelete(id);
+    } catch (error) {
+      console.log(error);
+      throw new ServerErrorException(error);
+    }
   }
 }

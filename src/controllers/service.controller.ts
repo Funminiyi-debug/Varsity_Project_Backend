@@ -1,5 +1,12 @@
 import { inject, injectable } from "inversify";
 import multer from "multer";
+import { DataResponse } from "../interfaces/DataResponse";
+import ErrorResponseModel from "../interfaces/ErrorResponseModel";
+import Types from "../types";
+import express from "express";
+import { IAppFileService, IServiceService } from "../services/interfaces";
+import { IService } from "../interfaces/entities";
+import handleAppExceptions from "../utils/handleAppExceptions";
 import {
   Controller,
   Route,
@@ -16,20 +23,14 @@ import {
   Query,
   Delete,
 } from "tsoa";
-import { DataResponse } from "../interfaces/DataResponse";
-import ErrorResponseModel from "../interfaces/ErrorResponseModel";
-import Types from "../types";
-import express from "express";
-import { IAppFileService, IProductService } from "../services/interfaces";
-import { IProduct } from "../interfaces/entities";
-import handleAppExceptions from "../utils/handleAppExceptions";
 
-@Route("/products")
-@Tags("Product")
-class ProductsController extends Controller {
-  constructor(@inject(Types.IProductService) private ps: IProductService) {
+@Route("/services")
+@Tags("Service")
+class ServicesController extends Controller {
+  constructor(@inject(Types.IServiceService) private ps: IServiceService) {
     super();
   }
+
   response: DataResponse = {
     statusCode: 500,
     data: [],
@@ -38,8 +39,8 @@ class ProductsController extends Controller {
   @Get("/")
   // @httpGet("/")
   @SuccessResponse("200", "OK")
-  public async getProducts(): Promise<DataResponse> {
-    const results = await this.ps.getProducts();
+  public async getServices(): Promise<DataResponse> {
+    const results = await this.ps.getServices();
     this.response = {
       statusCode: 200,
       data: results,
@@ -52,9 +53,9 @@ class ProductsController extends Controller {
   // @httpGet("{id}")
   @SuccessResponse("200", "OK")
   @Response<ErrorResponseModel>("404", "Not Found")
-  public async getProduct(id: string): Promise<DataResponse> {
+  public async getService(id: string): Promise<DataResponse> {
     try {
-      const results = await this.ps.getProduct(id);
+      const results = await this.ps.getService(id);
 
       if (results.length > 0) {
         return {
@@ -86,15 +87,15 @@ class ProductsController extends Controller {
   @SuccessResponse("201", "Created")
   @Response<ErrorResponseModel>("400", "Bad Data")
   @Response<ErrorResponseModel>("409", "product already exists")
-  public async createProduct(
-    @Body() product: IProduct,
+  public async createService(
+    @Body() service: IService,
     @Request() req: express.Request,
     @Request() res: express.Response
   ): Promise<DataResponse> {
     // await this.handleFile(req);
     try {
-      const results = await this.ps.createProduct(
-        product,
+      const results = await this.ps.createService(
+        service,
         req.files,
         res.locals.email
       );
@@ -112,14 +113,14 @@ class ProductsController extends Controller {
   @SuccessResponse("204", "Updated")
   @Response<ErrorResponseModel>("400", "Bad Data")
   @Response<ErrorResponseModel>("404", "Not Found")
-  public async updateProduct(
+  public async updateService(
     @Path() id: string,
-    @Body() product: IProduct,
+    @Body() product: IService,
     @Request() req: express.Request
   ): Promise<DataResponse> {
     const email = "";
     try {
-      const results = await this.ps.updateProduct(
+      const results = await this.ps.updateService(
         id,
         req.files,
         product as any,
@@ -156,13 +157,13 @@ class ProductsController extends Controller {
   @SuccessResponse("204", "Deleted")
   @Response<ErrorResponseModel>("400", "Bad Data")
   @Response<ErrorResponseModel>("404", "Not Found")
-  public async deleteProduct(
+  public async deleteService(
     @Path() id: string,
     @Request() res: express.Response
   ): Promise<DataResponse> {
     const email = "";
     try {
-      const results = await this.ps.deleteProduct(id, res.locals.email);
+      const results = await this.ps.deleteService(id, res.locals.email);
 
       this.response = {
         statusCode: 204,
@@ -196,4 +197,4 @@ class ProductsController extends Controller {
   }
 }
 
-export default ProductsController;
+export default ServicesController;
