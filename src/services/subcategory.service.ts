@@ -16,17 +16,32 @@ export default class SubcategoryService implements ISubcategoryService {
   ) {}
   // get all subcategories
   async getSubcategories(): Promise<Document<any>[]> {
-    return await SubCategory.find().populate("products");
+    try {
+      return await SubCategory.find().populate("products");
+    } catch (error) {
+      console.log(error);
+      throw ServerErrorException(error);
+    }
   }
 
   //   get subcategry by id
   async getSubcategory(id: string): Promise<Document<any>[]> {
-    return await SubCategory.find({ id }).populate("products");
+    try {
+      return await SubCategory.find({ id }).populate("products");
+    } catch (error) {
+      console.log(error);
+      throw ServerErrorException(error);
+    }
   }
 
   //   get subcategory by any condition
   async getSubcategoryByCondition(query: object): Promise<Document<any>[]> {
-    return await SubCategory.find(query).populate("products");
+    try {
+      return await SubCategory.find(query).populate("products");
+    } catch (error) {
+      console.log(error);
+      throw ServerErrorException(error);
+    }
   }
 
   //   creates a subcategory
@@ -55,7 +70,12 @@ export default class SubcategoryService implements ISubcategoryService {
     id: string,
     entity: ISubcategory
   ): Promise<Document<any>> {
-    return await SubCategory.findByIdAndUpdate(id, entity);
+    try {
+      return await SubCategory.findByIdAndUpdate(id, entity);
+    } catch (error) {
+      console.log(error);
+      throw ServerErrorException(error);
+    }
   }
 
   //   add product to a subcategory
@@ -75,7 +95,13 @@ export default class SubcategoryService implements ISubcategoryService {
       throw new ServerErrorException(error);
     }
   }
+
   async deleteSubcategory(id: string): Promise<Document<any>> {
-    return await SubCategory.findByIdAndDelete(id);
+    try {
+      return await SubCategory.findByIdAndDelete(id);
+    } catch (error) {
+      console.log(error);
+      throw new ServerErrorException(error);
+    }
   }
 }

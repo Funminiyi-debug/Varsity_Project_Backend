@@ -25,9 +25,13 @@ export default class FeedbackService implements IFeedbackService {
     if (productId && serviceId) throw new ConflictException("ids conflit");
     else if (productId) delete request.serviceId;
     else if (serviceId) delete request.productId;
-
-    const feedback = new Feedback(request);
-    return await feedback.save();
+    try {
+      const feedback = new Feedback(request);
+      return await feedback.save();
+    } catch (error) {
+      console.log(error);
+      throw ServerErrorException(error);
+    }
   }
 
   async updateFeedback(id: string, entity: IFeed): Promise<Document<any>> {
