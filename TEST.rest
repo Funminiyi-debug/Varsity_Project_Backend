@@ -1,2 +1,2 @@
-GET
-https://facebook.com/
+GET http://localhost:3001/categories
+Authorization: Bearer 

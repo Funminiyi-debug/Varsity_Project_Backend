@@ -1,14 +1,13 @@
 import passport from "passport";
-import { Route, Get } from "tsoa";
 import express, { Response } from "express";
 import AuthController from "../controllers/auth.controller";
-import VerificationStatus from "../enums/VerificationStatus";
 import middleWare from "../middlewares/auth";
 import { handleResponse } from "../utils/handleResponse";
+import validatorMiddleware from "../middlewares/schemaValidator";
+import { identifierSchema, categorySchema } from "../validators";
+
 const router = express.Router();
 const authController = new AuthController();
-import joiValidator from "../middlewares/schemaValidator";
-import { smsSchema } from "../validators";
 
 router.get(
   "/google",
@@ -20,9 +19,13 @@ router.get(
   passport.authenticate("facebook", { authType: "rerequest", scope: ["email"] })
 );
 
-router.post("/test", joiValidator(smsSchema), (req, res) => {
-  res.send("working");
-});
+router.post(
+  "/test",
+  validatorMiddleware(identifierSchema, categorySchema),
+  (req, res) => {
+    res.send("working");
+  }
+);
 
 router.post(
   "/sendsms",

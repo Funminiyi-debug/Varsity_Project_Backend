@@ -7,9 +7,11 @@ import { container } from "../containerDI";
 import Types from "../types";
 import cacheData from "../utils/cache-data";
 import ICategory from "../interfaces/entities/ICategory";
+import validatorMiddleware from "../middlewares/schemaValidator";
+import { categorySchema, identifierSchema } from "../validators";
+
 const router = express.Router();
 const categoryService = container.get<CategoryService>(Types.ICategoryService);
-
 const categoryController = new CategoriesController(categoryService);
 
 router.get("/", async (req: Request, res: Response) => {
@@ -26,21 +28,29 @@ router.get("/:id", async (req: Request, res: Response) => {
   return handleResponse(res, response);
 });
 
-router.post("/", async (req: Request, res: Response) => {
-  const response: DataResponse = await categoryController.createCategory(
-    req.body
-  );
+router.post(
+  "/",
+  validatorMiddleware(identifierSchema, categorySchema),
+  async (req: Request, res: Response) => {
+    const response: DataResponse = await categoryController.createCategory(
+      req.body
+    );
 
-  return handleResponse(res, response);
-});
+    return handleResponse(res, response);
+  }
+);
 
-router.put("/:id", async (req: Request, res: Response) => {
-  const response: DataResponse = await categoryController.updateCategory(
-    req.params.id,
-    req.body
-  );
+router.put(
+  "/:id",
+  validatorMiddleware(identifierSchema, categorySchema),
+  async (req: Request, res: Response) => {
+    const response: DataResponse = await categoryController.updateCategory(
+      req.params.id,
+      req.body
+    );
 
-  return handleResponse(res, response);
-});
+    return handleResponse(res, response);
+  }
+);
 
 export default router;

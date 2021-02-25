@@ -71,10 +71,10 @@ export default {
   },
   authMiddleware: (req, res, next) => {
     const approvedRoutesWithoutAuth = [
-      "/auth/google",
-      "/auth/facebook",
-      "/auth/google/callback",
-      "/auth/facebook/callback",
+      "/api/auth/google",
+      "/api/auth/facebook",
+      "/api/auth/google/callback",
+      "/api/auth/facebook/callback",
     ];
     const approved = approvedRoutesWithoutAuth.find((routes) =>
       req.originalUrl.startsWith(routes)

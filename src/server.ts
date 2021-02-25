@@ -11,6 +11,7 @@ import "dotenv/config";
 import databaseConnection from "./config/db";
 import categoryModule from "./routes/category.route";
 import productModule from "./routes/product.route";
+import serviceModule from "./routes/service.route";
 import authModule from "./routes/auth.route";
 import userModule from "./routes/user.route";
 import subcategoryModule from "./routes/subcategory.route";
@@ -58,7 +59,7 @@ app.use(express.static("public"));
 app.use(express.json());
 
 app.use(
-  "/docs",
+  "/api/docs",
   swaggerUi.serve,
   swaggerUi.setup(undefined, {
     swaggerOptions: {
@@ -70,12 +71,12 @@ app.use(
 app.use(authMiddleware.authMiddleware);
 // app.use(redisMiddleware);
 
-app.use("/auth", authModule);
-app.use("/categories", categoryModule);
-app.use("/products", productModule);
-app.use("/subcategories", subcategoryModule);
-// app.use("/subcategories", sampleModule);
-app.use("/", userModule);
+app.use("/api/auth", authModule);
+app.use("/api/categories", categoryModule);
+app.use("/api/products", productModule);
+app.use("/api/subcategories", subcategoryModule);
+app.use("/api/services", serviceModule);
+app.use("/api/users", userModule);
 
 app.listen(port, () => {
   console.log(`subscriber connected to ${port}`);

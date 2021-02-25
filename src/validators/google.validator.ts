@@ -1,7 +1,7 @@
 import Joi from "joi";
 
 const googgleFacebookSchema = Joi.object().keys({
-  id: Joi.string().min(16).required(),
+  id: Joi.string().min(10).required(),
   displayName: Joi.string()
     .regex(/^[A-Z]+ [A-Z]+$/i)
     .required(),

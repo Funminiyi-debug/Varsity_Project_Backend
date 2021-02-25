@@ -45,7 +45,7 @@ export default class UsersController extends Controller {
   public async getAllUsers(): Promise<DataResponse> {
     return {
       statusCode: 200,
-      data: dummydata, //await this.user.getUsers(),
+      data: await this.user.getUsers(), //await this.user.getUsers(),
     };
   }
 
@@ -55,7 +55,7 @@ export default class UsersController extends Controller {
     const user = dummydata.filter((result: any) => result.userId == id);
     return {
       statusCode: 200,
-      data: user, //await this.user.getUser(id),
+      data: await this.user.getUser(id), //await this.user.getUser(id),
     };
   }
 
@@ -63,7 +63,7 @@ export default class UsersController extends Controller {
   @SuccessResponse("204", "Updated")
   @Response<ErrorResponseModel>("400", "Bad Data")
   @Response<ErrorResponseModel>("404", "Not Found")
-  public async createUser(
+  public async updateUser(
     @Path() id: string,
     @Body() request: VerifyStatusRequest
   ): Promise<any> {

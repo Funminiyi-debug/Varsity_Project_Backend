@@ -4,34 +4,49 @@ import User from "../models/User";
 import { IUserService } from "./interfaces";
 import { injectable } from "inversify";
 import VerificationStatus from "../enums/VerificationStatus";
+import { ServerErrorException } from "../exceptions";
 
 @injectable()
 export default class UserService implements IUserService {
   async getUsers() {
-    return await User.find({});
+    try {
+      return await User.find({});
+    } catch (error) {
+      throw ServerErrorException(error);
+    }
   }
+
   updateUser(id: string, entity: IUser) {
     throw new Error("Method not implemented.");
   }
+
   changeVerificationStatus(id: string, status: VerificationStatus) {
     throw new Error("Method not implemented.");
   }
+
   async getUser(id: string) {
-    const user = await User.findById(id);
-    if (user) {
+    try {
+      const user = await User.findById(id);
       return user;
+    } catch (error) {
+      throw ServerErrorException(error);
     }
-    return null;
   }
+
   async getUserByCondition(query: IUser): Promise<Document<any>[]> {
-    return await User.find(query);
+    try {
+      return await User.find(query);
+    } catch (error) {
+      throw ServerErrorException(error);
+    }
   }
 
   async getByEmail(email: string): Promise<Document<IUser>> {
-    const user = await User.findOne({ email });
-    if (user) {
+    try {
+      const user = await User.findOne({ email });
       return user;
+    } catch (error) {
+      throw ServerErrorException(error);
     }
-    return null;
   }
 }
