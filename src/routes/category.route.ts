@@ -9,14 +9,20 @@ import cacheData from "../utils/cache-data";
 import ICategory from "../interfaces/entities/ICategory";
 import validatorMiddleware from "../middlewares/schemaValidator";
 import { categorySchema, identifierSchema } from "../validators";
+import Category from "../models/Category";
 
 const router = express.Router();
 const categoryService = container.get<CategoryService>(Types.ICategoryService);
 const categoryController = new CategoriesController(categoryService);
 
 router.get("/", async (req: Request, res: Response) => {
+  console.log(req.query);
+  if (req.query.name != undefined) {
+    const category = await Category.findOne({ name: req.query.name });
+    return res.status(200).json({ success: true, payload: category });
+  }
   const response: DataResponse = await categoryController.getCategories();
-  cacheData(req.originalUrl, response);
+  // cacheData(req.originalUrl, response);
   return handleResponse(res, response);
 });
 
@@ -52,5 +58,28 @@ router.put(
     return handleResponse(res, response);
   }
 );
+
+router.delete("/", async (req, res) => {
+  const items = await Category.find();
+  const response = items.map(async (item) => {
+    try {
+      // method 1 worked
+      let deleted = await Category.deleteOne({ _id: item._id });
+
+      // method 2
+      // let deleted = await item.deleteOne();
+      console.log("deleted", deleted);
+      return deleted;
+    } catch (error) {
+      console.log("unable to delete");
+    }
+  });
+
+  const data = await Promise.all([...response]);
+
+  // Category.deleteOne({ })
+
+  return res.status(200).json({ message: "deleted", response: data });
+});
 
 export default router;

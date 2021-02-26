@@ -4,7 +4,7 @@ import { ISubcategory } from "../interfaces/entities";
 import SubCategory from "../models/SubCategory";
 import Types from "../types";
 import { ICategoryService, ISubcategoryService } from "./interfaces";
-import { ServerErrorException } from "../exceptions";
+import { ConflictException, ServerErrorException } from "../exceptions";
 
 @injectable()
 export default class SubcategoryService implements ISubcategoryService {
@@ -46,21 +46,24 @@ export default class SubcategoryService implements ISubcategoryService {
 
   //   creates a subcategory
   async createSubcategory(entity: ISubcategory): Promise<Document<any>> {
-    try {
-      const createdSubcategory = await SubCategory.create(entity);
-      const addCategory = await this.categoryService.addSubcategoryToCategory(
-        entity.category,
-        createdSubcategory.id
-      );
-
-      if (addCategory) {
-        return createdSubcategory;
-      }
-      throw new ServerErrorException("unable to add subcategory to category");
-    } catch (error) {
-      console.log(error);
-      throw new ServerErrorException(error);
+    const exists = await SubCategory.find({
+      name: entity.name,
+      category: entity.category,
+    });
+    if (exists.length > 0) {
+      throw new ConflictException("subcategory already exist");
     }
+    const createdSubcategory = await SubCategory.create(entity);
+    const addCategory = await this.categoryService.addSubcategoryToCategory(
+      entity.category,
+      createdSubcategory.id
+    );
+
+    console.log("category added", addCategory);
+    if (addCategory) {
+      return createdSubcategory;
+    }
+    throw new ServerErrorException("unable to add subcategory to category");
 
     // return createdSubcategory;
   }

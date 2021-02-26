@@ -13,12 +13,12 @@ export default class CategoryService implements ICategoryService {
     subcategoryid: string
   ): Promise<boolean> {
     try {
-      await Category.findByIdAndUpdate(id, {
+      const data = await Category.findByIdAndUpdate(id, {
         $push: {
           subcategory: subcategoryid,
         },
       });
-
+      console.log("updatedCategory", data);
       return true;
     } catch (error) {
       console.log(error);

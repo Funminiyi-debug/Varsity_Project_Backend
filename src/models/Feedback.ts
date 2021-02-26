@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import FeedbackStatus from "../enums/FeedbackStatus";
+import Product from "./Product";
 const Schema = mongoose.Schema;
 
 const FeedbackSchema = new mongoose.Schema(
@@ -28,7 +29,9 @@ const FeedbackSchema = new mongoose.Schema(
 
 FeedbackSchema.pre("remove", function (next) {
   Feedback.remove({ feedbackId: this._id }).exec();
-  Feedback.remove({ productId: this._id }).exec();
+  Feedback.remove({ replies: this._id }).exec();
+
+  // Product.remove({ productId: this._id }).exec();
   next();
 });
 

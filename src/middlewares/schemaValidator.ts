@@ -1,24 +1,11 @@
 import express from "express";
 
-// switch (req.method) {
-//   case "PUT":
-//     validation = await schemaId.validateAsync(req.params.id);
-//     break;
-
-//   case "POST":
-//     try {
-//       validation = await schemaBody.validateAsync(req.body);
-//     } catch (err) {
-//       error.details = err;
-//       console.log("this ran", error);
-//     }
-//     break;
-
-//   default:
-//     break;
-// }
 export default (schemaId, schemaBody) => {
-  return async (req: express.Request, res: express.Response, next) => {
+  return async (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
     let validation: any;
     let error = { details: undefined };
     if (req.method == "POST") {
@@ -31,11 +18,9 @@ export default (schemaId, schemaBody) => {
     if (req.method == "PUT") {
       try {
         if (req.body.id != req.params.id) {
-          return res
-            .status(422)
-            .json({
-              error: "ensure id in params is consistent with entity id",
-            });
+          return res.status(422).json({
+            error: "ensure id in params is consistent with entity id",
+          });
         }
         validation = await schemaId.validateAsync(req.params.id);
       } catch (err) {

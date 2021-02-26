@@ -8,6 +8,7 @@ import SubcategoryController from "../controllers/subcategory.controller";
 import { SubcategoryService } from "../services";
 import validatorMiddleware from "../middlewares/schemaValidator";
 import { identifierSchema, subcategorySchema } from "../validators";
+import SubCategory from "../models/SubCategory";
 
 const router = express.Router();
 const subcategoryService = container.get<SubcategoryService>(
@@ -53,5 +54,12 @@ router.put(
     return handleResponse(res, response);
   }
 );
+
+router.delete("/:id", (req, res) => {});
+
+router.delete("/", async (req, res) => {
+  const deleted = await SubCategory.deleteMany();
+  return res.status(200).json({ message: "deleted", deleted });
+});
 
 export default router;
