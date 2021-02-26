@@ -1,33 +1,56 @@
 import express from "express";
 
+// switch (req.method) {
+//   case "PUT":
+//     validation = await schemaId.validateAsync(req.params.id);
+//     break;
+
+//   case "POST":
+//     try {
+//       validation = await schemaBody.validateAsync(req.body);
+//     } catch (err) {
+//       error.details = err;
+//       console.log("this ran", error);
+//     }
+//     break;
+
+//   default:
+//     break;
+// }
 export default (schemaId, schemaBody) => {
-  return (req: express.Request, res: express.Response, next) => {
+  return async (req: express.Request, res: express.Response, next) => {
     let validation: any;
-    switch (req.method) {
-      case "put":
-        validation = schemaId.validate(req.params.id);
-        break;
-
-      case "post":
-        validation = schemaBody.validate(req.params.id);
-        break;
-
-      default:
-        break;
+    let error = { details: undefined };
+    if (req.method == "POST") {
+      try {
+        validation = await schemaBody.validateAsync(req.body);
+      } catch (err) {
+        error.details = err;
+      }
+    }
+    if (req.method == "PUT") {
+      try {
+        if (req.body.id != req.params.id) {
+          return res
+            .status(422)
+            .json({
+              error: "ensure id in params is consistent with entity id",
+            });
+        }
+        validation = await schemaId.validateAsync(req.params.id);
+      } catch (err) {
+        error.details = err;
+      }
     }
 
-    let { error } = validation;
-
-    const valid = error == null;
+    let valid = error.details == undefined;
 
     if (valid) {
       next();
+      return;
     } else {
       const { details } = error;
-      const message = details.map((i) => i.message).join(",");
-
-      console.log("error", message);
-      res.status(422).json({ error: message });
+      return res.status(422).json({ error: details });
     }
   };
 };

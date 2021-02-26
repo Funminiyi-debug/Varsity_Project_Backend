@@ -116,15 +116,15 @@ class ServicesController extends Controller {
   public async updateService(
     @Path() id: string,
     @Body() product: IService,
-    @Request() req: express.Request
+    @Request() req: express.Request,
+    @Request() userEmail: string
   ): Promise<DataResponse> {
-    const email = "";
     try {
       const results = await this.ps.updateService(
         id,
         req.files,
         product as any,
-        email
+        userEmail
       );
 
       if (results == null) {

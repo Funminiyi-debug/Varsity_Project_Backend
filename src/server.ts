@@ -15,7 +15,6 @@ import serviceModule from "./routes/service.route";
 import authModule from "./routes/auth.route";
 import userModule from "./routes/user.route";
 import subcategoryModule from "./routes/subcategory.route";
-import sampleModule from "./routes/sample.route";
 import redisMiddleware from "./middlewares/redis";
 import authMiddleware from "./middlewares/auth";
 const app: Application = express();

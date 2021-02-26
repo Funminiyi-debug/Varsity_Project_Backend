@@ -52,7 +52,8 @@ router.put(
     const response: DataResponse = await serviceController.updateService(
       req.params.id,
       req.body,
-      req
+      req,
+      res.locals.email
     );
 
     return handleResponse(res, response);
