@@ -21,7 +21,7 @@ import {
 export default class PostService implements IPostService {
   constructor(
     @inject(Types.IUserService) private userService: IUserService,
-    @inject(Types.IFeedbackService) private commentService: ICommentService,
+    @inject(Types.ICommentService) private commentService: ICommentService,
     @inject(Types.IAppFileService) private appfileService: IAppFileService,
     @inject(Types.ILikeService) private likeService: ILikeService
   ) {}
