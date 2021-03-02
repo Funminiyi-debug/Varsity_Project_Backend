@@ -8,6 +8,7 @@ import { ICategoryService, IProductService } from "./interfaces";
 @injectable()
 export default class CategoryService implements ICategoryService {
   constructor() {}
+
   async addSubcategoryToCategory(
     id: string,
     subcategoryid: string
@@ -25,6 +26,7 @@ export default class CategoryService implements ICategoryService {
       return false;
     }
   }
+
   async addServiceToCategory(id: string, serviceid: string): Promise<boolean> {
     try {
       await Category.findByIdAndUpdate(id, {

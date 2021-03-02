@@ -9,6 +9,7 @@ import {
   SubcategoryService,
   FeedbackService,
   CommentService,
+  LikeService,
   PostService,
   ServiceService,
 } from "./services";
@@ -23,6 +24,7 @@ import {
   ICommentService,
   IPostService,
   IServiceService,
+  ILikeService,
 } from "./services/interfaces";
 
 const container = new Container();
@@ -40,4 +42,5 @@ container
   .to(NotificationService);
 container.bind<IPostService>(Types.IPostService).to(PostService);
 container.bind<IServiceService>(Types.IServiceService).to(ServiceService);
+container.bind<ILikeService>(Types.ILikeService).to(LikeService);
 export { container };

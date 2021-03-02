@@ -7,6 +7,7 @@ const Types = {
   ISubcategoryService: Symbol("ISubcategoryService"),
   IFeedbackService: Symbol("IFeedbackService"),
   ICommentService: Symbol("ICommentService"),
+  ILikeService: Symbol("ILikeService"),
   IPostService: Symbol("IPostService"),
   IServiceService: Symbol("IServiceService"),
 };

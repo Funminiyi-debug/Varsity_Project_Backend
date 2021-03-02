@@ -8,13 +8,14 @@ const OptionsSchema = new mongoose.Schema({
   name: { type: String, required: true },
   votes: { type: Number, default: 0 },
 });
+
 const PostSchema = new mongoose.Schema(
   {
     // post type
     title: {
       type: String,
       required: function () {
-        this.postType == PostType.Regular;
+        return this.postType == PostType.Regular;
       },
       validate: optionalWithLength(3, 300),
     },
@@ -27,7 +28,7 @@ const PostSchema = new mongoose.Schema(
     },
     // end of post type
     author: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    likes: { type: Number, default: 0 },
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
     comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
     shares: { type: Number, default: 0 },
     images: [{ type: mongoose.Schema.Types.ObjectId, ref: "AppFile" }],
@@ -41,7 +42,7 @@ const PostSchema = new mongoose.Schema(
     question: {
       type: String,
       required: function () {
-        this.postType = PostType.Poll;
+        return this.postType == PostType.Poll;
       },
       validate: optionalWithLength(5, 300),
     },
@@ -51,7 +52,7 @@ const PostSchema = new mongoose.Schema(
     pollExpiryDate: {
       type: Date,
       required: function () {
-        this.postType = PostType.Poll;
+        return this.postType == PostType.Poll;
       },
     },
     // end of poll

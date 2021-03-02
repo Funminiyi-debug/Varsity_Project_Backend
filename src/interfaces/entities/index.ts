@@ -7,3 +7,5 @@ export { default as IFields } from "./IFields";
 export { default as IService } from "./IService";
 export { default as INotification } from "./INotification";
 export { default as IComment } from "./IComment";
+export { default as ILike } from "./ILike";
+export { default as IPost } from "./IPost";
