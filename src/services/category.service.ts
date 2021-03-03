@@ -4,6 +4,7 @@ import ICategory from "../interfaces/entities/ICategory";
 import { injectable, inject } from "inversify";
 import Types from "../types";
 import { ICategoryService, IProductService } from "./interfaces";
+import { ServerErrorException } from "../exceptions";
 
 @injectable()
 export default class CategoryService implements ICategoryService {
@@ -83,6 +84,11 @@ export default class CategoryService implements ICategoryService {
   }
 
   public async deleteCategory(id: string): Promise<Document<any>> {
-    return await Category.findByIdAndDelete(id);
+    //return await Category.findByIdAndDelete(id);
+    try {
+      return (await Category.findById(id)).remove();
+    } catch (error) {
+      throw ServerErrorException(error);
+    }
   }
 }

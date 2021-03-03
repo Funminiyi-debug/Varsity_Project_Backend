@@ -134,6 +134,10 @@ export default class PostService implements IPostService {
   }
 
   async deletePost(id: string, userEmail: string): Promise<Document<any>> {
-    return await Post.findByIdAndDelete(id);
+    try {
+      return (await Post.findById(id)).remove();
+    } catch (error) {
+      throw ServerErrorException(error);
+    }
   }
 }

@@ -45,7 +45,7 @@ export default class FeedbackService implements IFeedbackService {
 
   async deleteFeedback(id: string): Promise<Document<any>> {
     try {
-      return await Feedback.findByIdAndDelete(id);
+      return (await Feedback.findById(id)).remove();
     } catch (error) {
       console.log(error);
       throw new ServerErrorException(error);

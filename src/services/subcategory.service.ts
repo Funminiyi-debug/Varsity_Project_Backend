@@ -101,7 +101,7 @@ export default class SubcategoryService implements ISubcategoryService {
 
   async deleteSubcategory(id: string): Promise<Document<any>> {
     try {
-      return await SubCategory.findByIdAndDelete(id);
+      return (await SubCategory.findById(id)).remove();
     } catch (error) {
       console.log(error);
       throw new ServerErrorException(error);

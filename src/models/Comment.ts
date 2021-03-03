@@ -18,9 +18,10 @@ const CommentSchema = new mongoose.Schema(
 
 const Comment = mongoose.model("Comment", CommentSchema);
 
-CommentSchema.pre("remove", function (next) {
+CommentSchema.pre("remove", async function (next) {
   Comment.remove({ post: this._id }).exec();
   AppFile.remove({ post: this._id }).exec();
-  return next();
+  next();
 });
+
 export default Comment;
