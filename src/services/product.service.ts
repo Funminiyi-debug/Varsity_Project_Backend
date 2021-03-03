@@ -57,7 +57,7 @@ export default class ProductService implements IProductService {
   async createProduct(
     product: IProduct,
     files: any,
-    email: string
+    userid: string
   ): Promise<Document<any>> {
     const entity = {
       ...product,
@@ -66,8 +66,8 @@ export default class ProductService implements IProductService {
       subcategory: "",
     };
     // AUTHOR
-    const user = await this.userService.getByEmail(email);
-    entity.author = user.id;
+
+    entity.author = userid;
 
     // Check if product exists
     const exists = await Product.find({
@@ -123,7 +123,7 @@ export default class ProductService implements IProductService {
     id: string,
     files: any,
     product: any,
-    userEmail
+    userid
   ): Promise<Document<any>> {
     const entity = {
       ...product,
@@ -132,8 +132,7 @@ export default class ProductService implements IProductService {
       subcategory: "",
     };
     // AUTHOR
-    const user = await this.userService.getByEmail(userEmail);
-    entity.author = user.id;
+    entity.author = userid;
 
     // Check if product exists
     const exists = (await Product.find({
@@ -169,11 +168,18 @@ export default class ProductService implements IProductService {
   }
 
   // delete product
-  async deleteProduct(id: string, userEmail): Promise<Document<any>> {
+  async deleteProduct(
+    productid: string,
+    userid: string
+  ): Promise<Document<any>> {
     try {
-      return (await Product.findById(id)).remove();
+      const product = (
+        await Product.find({ _id: productid, author: userid })
+      )[0];
+      if (product) return await product.remove();
+      throw new NotFoundException("product not found");
     } catch (error) {
-      throw ServerErrorException(error);
+      throw error;
     }
   }
 }

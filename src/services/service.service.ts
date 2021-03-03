@@ -164,11 +164,13 @@ export default class ServiceService implements IServiceService {
     }
   }
 
-  async deleteService(id: string, userEmail: string): Promise<Document<any>> {
+  async deleteService(id: string, userid: string): Promise<Document<any>> {
     try {
-      return (await Service.findById(id)).remove();
+      const service = (await Service.find({ _id: id, author: userid }))[0];
+      if (service) return await service.remove();
+      throw new NotFoundException("service not found");
     } catch (error) {
-      throw ServerErrorException(error);
+      throw error;
     }
   }
 }

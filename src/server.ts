@@ -16,6 +16,7 @@ import authModule from "./routes/auth.route";
 import userModule from "./routes/user.route";
 import subcategoryModule from "./routes/subcategory.route";
 import postModule from "./routes/post.route";
+import feedbackMoodule from "./routes/feedback.route";
 import redisMiddleware from "./middlewares/redis";
 import authMiddleware from "./middlewares/auth";
 const app: Application = express();
@@ -78,6 +79,7 @@ app.use("/api/subcategories", subcategoryModule);
 app.use("/api/services", serviceModule);
 app.use("/api/users", userModule);
 app.use("/api/posts", postModule);
+app.use("api/feedbacks", feedbackMoodule);
 
 app.listen(port, () => {
   console.log(`subscriber connected to ${port}`);

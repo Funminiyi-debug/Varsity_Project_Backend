@@ -53,7 +53,7 @@ router.put(
       req.params.id,
       req.body,
       req,
-      res.locals.email
+      res
     );
 
     return handleResponse(res, response);
@@ -68,7 +68,7 @@ router.delete(
       req.params.id,
       res
     );
-    return handleResponse;
+    return handleResponse(res, response);
   }
 );
 

@@ -6,14 +6,11 @@ export default interface IPostService {
 
   getPost(id: string): Promise<Document<any>[]>;
 
-  createPost(entity: IPost, files: any, email: string): Promise<Document<any>>;
+  createPost(entity: IPost, userid: string): Promise<Document<any>>;
 
-  updatePost(
-    id: string,
-    files: any,
-    entity: any,
-    userEmail: string
-  ): Promise<Document<any>>;
+  updatePost(id: string, entity: any, userid: string): Promise<Document<any>>;
 
-  deletePost(id: string, userEmail: string): Promise<Document<any>>;
+  deletePost(id: string, userid: string): Promise<Document<any>>;
+
+  addCommentToPost(commentid: string, postid: string): Promise<boolean>;
 }

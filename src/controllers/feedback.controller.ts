@@ -1,5 +1,4 @@
 import { inject, injectable } from "inversify";
-import multer from "multer";
 import {
   Controller,
   Route,
@@ -12,22 +11,20 @@ import {
   Body,
   Path,
   Put,
-  Hidden,
-  Query,
   Delete,
 } from "tsoa";
 import { DataResponse } from "../interfaces/DataResponse";
 import ErrorResponseModel from "../interfaces/ErrorResponseModel";
 import Types from "../types";
 import express from "express";
-import { IAppFileService, IProductService } from "../services/interfaces";
-import { IProduct } from "../interfaces/entities";
+import { IFeedbackService } from "../services/interfaces";
+import { IFeed } from "../interfaces/entities";
 import handleAppExceptions from "../utils/handleAppExceptions";
 
-@Route("/products")
-@Tags("Product")
-class ProductsController extends Controller {
-  constructor(@inject(Types.IProductService) private ps: IProductService) {
+@Route("/feedbacks")
+@Tags("Feedback")
+class FeedbackController extends Controller {
+  constructor(@inject(Types.IFeedbackService) private fb: IFeedbackService) {
     super();
   }
   response: DataResponse = {
@@ -38,8 +35,8 @@ class ProductsController extends Controller {
   @Get("/")
   // @httpGet("/")
   @SuccessResponse("200", "OK")
-  public async getProducts(): Promise<DataResponse> {
-    const results = await this.ps.getProducts();
+  public async getFeedbacks(): Promise<DataResponse> {
+    const results = await this.fb.getFeedbacks();
     this.response = {
       statusCode: 200,
       data: results,
@@ -52,9 +49,9 @@ class ProductsController extends Controller {
   // @httpGet("{id}")
   @SuccessResponse("200", "OK")
   @Response<ErrorResponseModel>("404", "Not Found")
-  public async getProduct(id: string): Promise<DataResponse> {
+  public async getFeedback(id: string): Promise<DataResponse> {
     try {
-      const results = await this.ps.getProduct(id);
+      const results = await this.fb.getFeedback(id);
 
       if (results.length > 0) {
         return {
@@ -64,7 +61,7 @@ class ProductsController extends Controller {
       } else {
         return {
           statusCode: 404,
-          message: "Product not found",
+          message: "Feedback not found",
         };
       }
     } catch (error) {
@@ -86,18 +83,13 @@ class ProductsController extends Controller {
   @SuccessResponse("201", "Created")
   @Response<ErrorResponseModel>("400", "Bad Data")
   @Response<ErrorResponseModel>("409", "product already exists")
-  public async createProduct(
-    @Body() product: IProduct,
-    @Request() req: express.Request,
+  public async createFeedback(
+    @Body() feedback: IFeed,
     @Request() res: express.Response
   ): Promise<DataResponse> {
     // await this.handleFile(req);
     try {
-      const results = await this.ps.createProduct(
-        product,
-        req.files,
-        res.locals.userid
-      );
+      const results = await this.fb.createFeedback(feedback, res.locals.userid);
 
       return {
         statusCode: 201,
@@ -108,29 +100,26 @@ class ProductsController extends Controller {
     }
   }
 
-  @Put("{productid}")
+  @Put("{feedbackid}")
   @SuccessResponse("204", "Updated")
   @Response<ErrorResponseModel>("400", "Bad Data")
   @Response<ErrorResponseModel>("404", "Not Found")
-  public async updateProduct(
-    @Path() productid: string,
-    @Body() product: IProduct,
-    @Request() req: express.Request,
+  public async updateFeedback(
+    @Path() feedbackid: string,
+    @Body() feedback: IFeed,
     @Request() res: express.Response
   ): Promise<DataResponse> {
-    const email = "";
     try {
-      const results = await this.ps.updateProduct(
-        productid,
-        req.files,
-        product as any,
+      const results = await this.fb.updateFeedback(
+        feedbackid,
+        feedback,
         res.locals.userid
       );
 
       if (results == null) {
         this.response = {
           statusCode: 404,
-          message: "Product not found",
+          message: "Feedback not found",
         };
       }
 
@@ -145,20 +134,27 @@ class ProductsController extends Controller {
           message: "Not Found",
         };
       }
-      return handleAppExceptions(error);
+
+      return {
+        statusCode: 500,
+        message: "Something happened",
+      };
     }
   }
 
-  @Delete("{productid}")
+  @Delete("{feedbackid}")
   @SuccessResponse("204", "Deleted")
   @Response<ErrorResponseModel>("400", "Bad Data")
   @Response<ErrorResponseModel>("404", "Not Found")
-  public async deleteProduct(
-    @Path() productid: string,
+  public async deleteFeedback(
+    @Path() feedbackid: string,
     @Request() res: express.Response
   ): Promise<DataResponse> {
     try {
-      const results = await this.ps.deleteProduct(productid, res.locals.userid);
+      const results = await this.fb.deleteFeedback(
+        feedbackid,
+        res.locals.userid
+      );
 
       this.response = {
         statusCode: 204,
@@ -180,4 +176,4 @@ class ProductsController extends Controller {
   }
 }
 
-export default ProductsController;
+export default FeedbackController;

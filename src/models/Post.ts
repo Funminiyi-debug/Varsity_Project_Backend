@@ -7,6 +7,7 @@ import PostType from "../enums/PostType";
 const OptionsSchema = new mongoose.Schema({
   name: { type: String, required: true },
   votes: { type: Number, default: 0 },
+  voter: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "User" },
 });
 
 const PostSchema = new mongoose.Schema(
@@ -19,13 +20,7 @@ const PostSchema = new mongoose.Schema(
       },
       validate: optionalWithLength(3, 300),
     },
-    body: {
-      type: String,
-      required: function () {
-        this.postType == PostType.Regular;
-      },
-      validate: optionalWithLength(3, 300),
-    },
+
     // end of post type
     author: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Like" }],

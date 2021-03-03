@@ -6,9 +6,13 @@ export default interface IFeedbackService {
 
   getFeedback(id: string): Promise<Document<any>[]>;
 
-  createFeedback(entity: IFeed): Promise<Document<any>>;
+  createFeedback(entity: IFeed, userid: string): Promise<Document<any>>;
 
-  updateFeedback(id: string, entity: IFeed): Promise<Document<any>>;
+  updateFeedback(
+    id: string,
+    entity: IFeed,
+    userid: string
+  ): Promise<Document<any>>;
 
-  deleteFeedback(id: string): Promise<Document<any>>;
+  deleteFeedback(id: string, userid: string): Promise<Document<any>>;
 }

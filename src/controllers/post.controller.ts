@@ -88,16 +88,11 @@ class PostController extends Controller {
   @Response<ErrorResponseModel>("409", "product already exists")
   public async createPost(
     @Body() post: IPost,
-    @Request() req: express.Request,
     @Request() res: express.Response
   ): Promise<DataResponse> {
     // await this.handleFile(req);
     try {
-      const results = await this.ps.createPost(
-        post,
-        req.files,
-        res.locals.email
-      );
+      const results = await this.ps.createPost(post, res.locals.userid);
 
       return {
         statusCode: 201,
@@ -108,23 +103,17 @@ class PostController extends Controller {
     }
   }
 
-  @Put("{id}")
+  @Put("{postid}")
   @SuccessResponse("204", "Updated")
   @Response<ErrorResponseModel>("400", "Bad Data")
   @Response<ErrorResponseModel>("404", "Not Found")
   public async updatePost(
-    @Path() id: string,
+    @Path() postid: string,
     @Body() post: IPost,
-    @Request() req: express.Request
+    @Request() res: express.Response
   ): Promise<DataResponse> {
-    const email = "";
     try {
-      const results = await this.ps.updatePost(
-        id,
-        req.files,
-        post as any,
-        email
-      );
+      const results = await this.ps.updatePost(postid, post, res.locals.userid);
 
       if (results == null) {
         this.response = {

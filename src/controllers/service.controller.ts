@@ -19,8 +19,6 @@ import {
   Body,
   Path,
   Put,
-  Hidden,
-  Query,
   Delete,
 } from "tsoa";
 
@@ -97,7 +95,7 @@ class ServicesController extends Controller {
       const results = await this.ps.createService(
         service,
         req.files,
-        res.locals.email
+        res.locals.userid
       );
 
       return {
@@ -117,39 +115,22 @@ class ServicesController extends Controller {
     @Path() id: string,
     @Body() product: IService,
     @Request() req: express.Request,
-    @Request() userEmail: string
+    @Request() res: express.Response
   ): Promise<DataResponse> {
     try {
       const results = await this.ps.updateService(
         id,
         req.files,
         product as any,
-        userEmail
+        res.locals.userid
       );
-
-      if (results == null) {
-        this.response = {
-          statusCode: 404,
-          message: "Product not found",
-        };
-      }
 
       this.response = {
         statusCode: 204,
       };
       return this.response;
     } catch (error) {
-      if (error.message.search("Cast") != -1) {
-        return {
-          statusCode: 404,
-          message: "Not Found",
-        };
-      }
-
-      return {
-        statusCode: 500,
-        message: "Something happened",
-      };
+      return handleAppExceptions(error);
     }
   }
 
@@ -163,37 +144,15 @@ class ServicesController extends Controller {
   ): Promise<DataResponse> {
     const email = "";
     try {
-      const results = await this.ps.deleteService(id, res.locals.email);
+      const results = await this.ps.deleteService(id, res.locals.userid);
 
       this.response = {
         statusCode: 204,
       };
       return this.response;
     } catch (error) {
-      if (error.message.search("Cast") != -1) {
-        return {
-          statusCode: 404,
-          message: "Not Found",
-        };
-      }
-
-      return {
-        statusCode: 500,
-        message: "Something happened",
-      };
+      return handleAppExceptions(error);
     }
-  }
-
-  private async handleFile(request: express.Request): Promise<void> {
-    const multerSingle = multer().single("images");
-    return new Promise((resolve, reject) => {
-      multerSingle(request, undefined, async (error) => {
-        if (error) {
-          reject(error);
-        }
-        resolve();
-      });
-    });
   }
 }
 

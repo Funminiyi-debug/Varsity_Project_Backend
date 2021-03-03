@@ -1,8 +1,8 @@
 interface IFeed {
   message: string;
-  productId?: string;
-  feedbackId: string;
-  serviceId?: string;
+  productid?: string;
+  feedbackid: string;
+  serviceid?: string;
 }
 
 export default IFeed;

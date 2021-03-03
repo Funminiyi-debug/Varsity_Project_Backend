@@ -6,7 +6,7 @@ import Types from "../types";
 import { handleResponse } from "../utils/handleResponse";
 import upload from "../config/multer";
 import validatorMiddleware from "../middlewares/schemaValidator";
-import { identifierSchema, productSchema } from "../validators";
+import { identifierSchema, postSchema } from "../validators";
 import { PostService } from "../services";
 
 const router = express.Router();
@@ -28,14 +28,13 @@ router.get("/:id", async (req: Request, res: Response) => {
 router.post(
   "/",
   [
-    validatorMiddleware(identifierSchema, productSchema),
+    validatorMiddleware(identifierSchema, postSchema),
     upload.array("images", 4),
   ],
   async (req: Request, res: Response) => {
     // product.author = res.locals.user;
     const response: DataResponse = await postController.createPost(
       req.body,
-      req,
       res
     );
 
@@ -45,12 +44,12 @@ router.post(
 
 router.put(
   "/:id",
-  validatorMiddleware(identifierSchema, productSchema),
+  validatorMiddleware(identifierSchema, postSchema),
   async (req: Request, res: Response) => {
     const response: DataResponse = await postController.updatePost(
       req.params.id,
       req.body,
-      req
+      res
     );
 
     return handleResponse(res, response);
@@ -59,13 +58,13 @@ router.put(
 
 router.delete(
   "/:id",
-  validatorMiddleware(identifierSchema, productSchema),
+  validatorMiddleware(identifierSchema, postSchema),
   async (req: Request, res: Response) => {
     const response: DataResponse = await postController.deletePost(
       req.params.id,
       res
     );
-    return handleResponse;
+    return handleResponse(res, response);
   }
 );
 

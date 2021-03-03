@@ -39,7 +39,7 @@ const ServiceSchema = new mongoose.Schema(
 );
 
 ServiceSchema.pre("remove", function (next) {
-  AppFile.remove({ subcategoryId: this._id }).exec();
+  AppFile.remove({ service: this._id }).exec();
   Feedback.remove({ productId: this._id }).exec();
   next();
 });

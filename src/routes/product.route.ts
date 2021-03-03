@@ -52,7 +52,8 @@ router.put(
     const response: DataResponse = await productController.updateProduct(
       req.params.id,
       req.body,
-      req
+      req,
+      res
     );
 
     return handleResponse(res, response);

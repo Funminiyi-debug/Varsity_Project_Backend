@@ -16,15 +16,23 @@ import {
   ServerErrorException,
   NotFoundException,
 } from "../exceptions";
+import PostType from "../enums/PostType";
+import UnauthorizedException from "../exceptions/UnauthorizedException";
 
 @injectable()
 export default class PostService implements IPostService {
-  constructor(
-    @inject(Types.IUserService) private userService: IUserService,
-    @inject(Types.ICommentService) private commentService: ICommentService,
-    @inject(Types.IAppFileService) private appfileService: IAppFileService,
-    @inject(Types.ILikeService) private likeService: ILikeService
-  ) {}
+  constructor(@inject(Types.IUserService) private userService: IUserService) {}
+
+  async addCommentToPost(commentid: string, postid: string): Promise<boolean> {
+    let post = (await Post.findById(postid)) as any;
+    if (post) {
+      post.comments = [commentid, ...post.comments];
+      await post.save();
+      return true;
+    }
+
+    return false;
+  }
 
   async getPosts(): Promise<Document<any>[]> {
     try {
@@ -42,41 +50,35 @@ export default class PostService implements IPostService {
     }
   }
 
-  async createPost(
-    post: IPost,
-    files: any,
-    email: string
-  ): Promise<Document<any>> {
+  async createPost(post: IPost, userid: string): Promise<Document<any>> {
     const entity = {
       ...post,
       author: "",
-      images: [],
     };
     // AUTHOR
-    const user = await this.userService.getByEmail(email);
-    entity.author = user.id;
+    entity.author = userid;
 
     // Check if post exists
-    const exists = (await Post.find({
-      name: entity.title,
-      author: entity.author,
-    })) as any[];
 
-    if (exists.length > 0) throw new ConflictException("Product already exist");
+    if (entity.postType == PostType.Regular) {
+      const exists = await Post.find({
+        title: entity.title,
+        author: entity.author,
+        sector: entity.sector,
+      });
 
-    // IMAGE
-    if (!files || files.length == 0) {
-      throw new BadDataException("you must include images");
+      if (exists.length > 0) throw new ConflictException("Post already exist");
     }
 
-    const imageids = await Promise.all([
-      ...files.map(async (file) => {
-        const appfile = await this.appfileService.addAppFile(file);
-        return appfile.id;
-      }),
-    ]);
-    // await Promise.all(imageids);
-    entity.images = imageids;
+    if (entity.postType == PostType.Poll) {
+      const exists = await Post.find({
+        question: entity.title,
+        author: entity.author,
+        sector: entity.sector,
+      });
+
+      if (exists.length > 0) throw new ConflictException("Post already exist");
+    }
 
     try {
       return await Post.create(entity);
@@ -87,44 +89,25 @@ export default class PostService implements IPostService {
   }
 
   async updatePost(
-    id: string,
-    files: any,
+    postid: string,
     post: any,
-    userEmail: string
+    userid: string
   ): Promise<Document<any>> {
-    throw new Error("Method not implemented.");
     const entity = {
       ...post,
       author: "",
-      images: [],
     };
-    // AUTHOR
-    const user = await this.userService.getByEmail(userEmail);
-    entity.author = user.id;
 
     // Check if product exists
-    const exists = (await Post.find({
-      name: entity.title,
-      author: entity.author,
-    })) as any[];
+    const exists = await Post.find({ _id: postid, author: userid });
 
-    if (exists.length == 0) throw new NotFoundException("product not found");
+    if (!exists) throw new NotFoundException("post not found");
 
-    // IMAGE
-    if (files || files.length > 0) {
-      const imageids = await Promise.all([
-        ...files.map(async (file) => {
-          const appfile = await this.appfileService.addAppFile(file);
-          return appfile.id;
-        }),
-      ]);
-      entity.images.push(...imageids);
-    } else {
-      entity.images = exists[0].images;
-    }
+    // AUTHOR
+    entity.author = userid;
 
     try {
-      return await Post.findByIdAndUpdate(id, entity, {
+      return await Post.findByIdAndUpdate(postid, entity, {
         new: true,
       });
     } catch (error) {
@@ -133,11 +116,14 @@ export default class PostService implements IPostService {
     }
   }
 
-  async deletePost(id: string, userEmail: string): Promise<Document<any>> {
+  async deletePost(id: string, userid: string): Promise<Document<any>> {
     try {
-      return (await Post.findById(id)).remove();
+      // return ()[0].remove();
+      const post = (await Post.find({ _id: id, author: userid }))[0];
+      if (post) return await post.remove();
+      throw new NotFoundException("post not found");
     } catch (error) {
-      throw ServerErrorException(error);
+      throw error;
     }
   }
 }

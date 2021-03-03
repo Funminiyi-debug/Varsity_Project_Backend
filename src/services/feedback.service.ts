@@ -3,7 +3,11 @@ import { Document } from "mongoose";
 import Feedback from "../models/Feedback";
 import { IFeed } from "../interfaces/entities";
 import { IFeedbackService } from "./interfaces";
-import { ConflictException, ServerErrorException } from "../exceptions";
+import {
+  ConflictException,
+  NotFoundException,
+  ServerErrorException,
+} from "../exceptions";
 
 @injectable()
 export default class FeedbackService implements IFeedbackService {
@@ -20,11 +24,11 @@ export default class FeedbackService implements IFeedbackService {
     }
   }
 
-  async createFeedback(request: IFeed): Promise<Document<any>> {
-    const { productId, serviceId } = request;
-    if (productId && serviceId) throw new ConflictException("ids conflit");
-    else if (productId) delete request.serviceId;
-    else if (serviceId) delete request.productId;
+  async createFeedback(request: IFeed, userid: string): Promise<Document<any>> {
+    const { productid, serviceid } = request;
+    if (productid && serviceid) throw new ConflictException("ids conflict");
+    else if (productid) delete request.serviceid;
+    else if (serviceid) delete request.productid;
     try {
       const feedback = new Feedback(request);
       return await feedback.save();
@@ -34,18 +38,26 @@ export default class FeedbackService implements IFeedbackService {
     }
   }
 
-  async updateFeedback(id: string, entity: IFeed): Promise<Document<any>> {
+  async updateFeedback(
+    id: string,
+    entity: IFeed,
+    userid: string
+  ): Promise<Document<any>> {
     try {
+      const exists = (await Feedback.find({ _id: id, author: userid }))[0];
+      if (exists) throw new NotFoundException("feedback not found");
       return await Feedback.findByIdAndUpdate(id, entity, { new: true });
     } catch (error) {
       console.log(error);
-      throw new ServerErrorException(error);
+      throw error;
     }
   }
 
-  async deleteFeedback(id: string): Promise<Document<any>> {
+  async deleteFeedback(id: string, userid: string): Promise<Document<any>> {
     try {
-      return (await Feedback.findById(id)).remove();
+      const exists = await Feedback.find({ _id: id, author: userid })[0];
+      if (!exists) throw new NotFoundException("Feedback not found");
+      return await exists.remove();
     } catch (error) {
       console.log(error);
       throw new ServerErrorException(error);

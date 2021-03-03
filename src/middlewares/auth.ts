@@ -119,6 +119,7 @@ export default {
 
     // process the promise
     p.then((decoded: TokenContent) => {
+      res.locals.userid = decoded._id;
       res.locals.email = decoded.email;
       next();
     }).catch(onError);

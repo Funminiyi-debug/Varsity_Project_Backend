@@ -1,12 +1,17 @@
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
 import { Document } from "mongoose";
 import { IComment } from "../interfaces/entities";
-import { ICommentService } from "./interfaces";
+import { ICommentService, IPostService } from "./interfaces";
 import Comment from "../models/Comment";
-import { ServerErrorException } from "../exceptions";
+import { NotFoundException, ServerErrorException } from "../exceptions";
+import Types from "../types";
 
 @injectable()
 export default class CommentService implements ICommentService {
+  /**
+   *
+   */
+  constructor(@inject(Types.IPostService) private postService: IPostService) {}
   async getComments(): Promise<Document<any>[]> {
     try {
       return await Comment.find({});
@@ -25,30 +30,52 @@ export default class CommentService implements ICommentService {
     }
   }
 
-  async createComment(request: IComment): Promise<Document<any>> {
+  async createComment(
+    request: IComment,
+    userid: string
+  ): Promise<Document<any>> {
     try {
-      const entity = {
+      const entity: any = {
         ...request,
         post: request.postid,
       };
+
+      entity.author = userid;
       const comment = new Comment(entity);
+      const commentAddedToPost = this.postService.addCommentToPost(
+        comment._id,
+        entity.post
+      );
+
+      if (!commentAddedToPost) {
+        await comment.remove();
+        throw new ServerErrorException("Unable to add comment to post");
+      }
+
       return await comment.save();
     } catch (error) {
       console.log(error);
-      throw ServerErrorException(error);
+      throw error;
     }
   }
 
-  async updateComment(id: string, request: IComment): Promise<Document<any>> {
+  async updateComment(
+    id: string,
+    request: IComment,
+    userid: string
+  ): Promise<Document<any>> {
     try {
-      const entity = {
+      const entity: any = {
         ...request,
         post: request.postid,
       };
+      const exists = (await Comment.find({ _id: id, author: userid }))[0];
+      if (!exists) throw new NotFoundException("comment not found");
+
       return await Comment.findByIdAndUpdate(id, entity, { new: true });
     } catch (error) {
       console.log(error);
-      throw ServerErrorException(error);
+      throw error;
     }
   }
 

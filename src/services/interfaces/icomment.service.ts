@@ -6,9 +6,13 @@ export default interface ICommentService {
 
   getComment(id: string): Promise<Document<any>[]>;
 
-  createComment(entity: IComment): Promise<Document<any>>;
+  createComment(entity: IComment, userid: string): Promise<Document<any>>;
 
-  updateComment(id: string, entity: IComment): Promise<Document<any>>;
+  updateComment(
+    id: string,
+    entity: IComment,
+    userid: string
+  ): Promise<Document<any>>;
 
   deleteComment(id: string): Promise<Document<any>>;
 }

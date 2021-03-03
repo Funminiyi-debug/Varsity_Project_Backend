@@ -4,6 +4,7 @@ enum AppException {
   ServerErrorException = "ServerErrorException",
   NotFoundException = "NotFoundException",
   ConflictException = "ConflictException",
+  UnauthorizedException = "UnauthorizedException",
 }
 
 export default AppException;
