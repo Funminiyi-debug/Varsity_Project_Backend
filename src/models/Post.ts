@@ -28,7 +28,7 @@ const PostSchema = new mongoose.Schema(
     },
     // end of post type
     author: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
+    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Like" }],
     comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
     shares: { type: Number, default: 0 },
     images: [{ type: mongoose.Schema.Types.ObjectId, ref: "AppFile" }],
@@ -64,6 +64,9 @@ const PostSchema = new mongoose.Schema(
 
 PostSchema.virtual("noOfComments").get(function () {
   return this.comments.length;
+});
+PostSchema.virtual("noOfLikes").get(function () {
+  return this.likes.length;
 });
 
 // cascade delete

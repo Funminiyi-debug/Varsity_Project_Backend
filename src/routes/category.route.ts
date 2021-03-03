@@ -5,6 +5,7 @@ import CategoryService from "../services/category.service";
 import { handleResponse } from "../utils/handleResponse";
 import { container } from "../containerDI";
 import Types from "../types";
+import atob from "atob";
 import cacheData from "../utils/cache-data";
 import ICategory from "../interfaces/entities/ICategory";
 import validatorMiddleware from "../middlewares/schemaValidator";
@@ -16,9 +17,10 @@ const categoryService = container.get<CategoryService>(Types.ICategoryService);
 const categoryController = new CategoriesController(categoryService);
 
 router.get("/", async (req: Request, res: Response) => {
-  console.log(req.query);
   if (req.query.name != undefined) {
-    const category = await Category.findOne({ name: req.query.name });
+    const category = await Category.findOne({
+      name: atob(req.query.name as string),
+    });
     return res.status(200).json({ success: true, payload: category });
   }
   const response: DataResponse = await categoryController.getCategories();
@@ -64,13 +66,16 @@ router.delete("/", async (req, res) => {
   const response = items.map(async (item) => {
     try {
       // method 1 worked
-      let deleted = await Category.deleteOne({ _id: item._id });
+      // come back here later
+      // let deleted = await Category.deleteOne({ _id: item._id });
+      // let deleted = await Category.remove({ _id: item._id });
 
       // method 2
-      // let deleted = await item.deleteOne();
+      let deleted = await item.remove();
       console.log("deleted", deleted);
       return deleted;
     } catch (error) {
+      console.log(error);
       console.log("unable to delete");
     }
   });

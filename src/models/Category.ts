@@ -38,32 +38,10 @@ const CategorySchema = new mongoose.Schema({
   },
 });
 
-CategorySchema.pre("deleteOne", async function () {
-  let category = this as any;
-  const id = category.getFilter()["_id"];
-
-  try {
-    // remove services
-    const services = await Service.find({
-      category: id,
-    });
-    services.forEach(async (service) => {
-      const deleted = await Service.deleteOne({ _id: service._id });
-      console.log("Child service deleted from model post", deleted);
-    });
-
-    // remove subcategories
-    const subcategories = await SubCategory.find({
-      category: id,
-    });
-    subcategories.forEach(async (subcategory) => {
-      const deleted = await SubCategory.deleteOne({ _id: subcategory._id });
-      console.log("Child subcategory deleted from model post", deleted);
-    });
-  } catch (error) {
-    console.log("because", error);
-    throw new ServerErrorException("unable to delete category");
-  }
+CategorySchema.pre("remove", function (next) {
+  SubCategory.remove({ category: this._id }).exec();
+  Service.remove({ category: this._id }).exec();
+  return next();
 });
 
 const Category = mongoose.model("Category", CategorySchema);
