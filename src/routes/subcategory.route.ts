@@ -55,7 +55,13 @@ router.put(
   }
 );
 
-router.delete("/:id", (req, res) => {});
+router.delete("/:id", async (req: Request, res: Response) => {
+  const response: DataResponse = await subcategoryController.deleteSubCategory(
+    req.params.id
+  );
+
+  return handleResponse(res, response);
+});
 
 router.delete("/", async (req, res) => {
   const deleted = await SubCategory.deleteMany();

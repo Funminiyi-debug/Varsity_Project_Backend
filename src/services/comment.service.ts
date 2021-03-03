@@ -46,7 +46,7 @@ export default class CommentService implements ICommentService {
 
   async deleteComment(id: string): Promise<Document<any>> {
     try {
-      return await Comment.findByIdAndDelete(id);
+      return (await Comment.findById(id)).remove();
     } catch (error) {
       console.log(error);
       throw ServerErrorException(error);

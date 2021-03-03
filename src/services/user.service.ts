@@ -49,4 +49,12 @@ export default class UserService implements IUserService {
       throw ServerErrorException(error);
     }
   }
+
+  async deleteService(id: string, userEmail: string) {
+    try {
+      return (await User.findById(id)).remove();
+    } catch (error) {
+      throw ServerErrorException(error);
+    }
+  }
 }

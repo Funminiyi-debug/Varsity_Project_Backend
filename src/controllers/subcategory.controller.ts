@@ -14,6 +14,7 @@ import {
   Put,
   Hidden,
   Query,
+  Delete,
 } from "tsoa";
 import { DataResponse } from "../interfaces/DataResponse";
 import ErrorResponseModel from "../interfaces/ErrorResponseModel";
@@ -125,6 +126,34 @@ class SubcategoryController extends Controller {
       return this.response;
     } catch (error) {
       return handleAppExceptions(error);
+    }
+  }
+
+  @Delete("{id}")
+  @SuccessResponse("204", "Deleted")
+  @Response<ErrorResponseModel>("400", "Bad Data")
+  @Response<ErrorResponseModel>("404", "Not Found")
+  public async deleteSubCategory(@Path() id: string): Promise<DataResponse> {
+    try {
+      const result = await this.subcategoryService.deleteSubcategory(id);
+      this.response = {
+        statusCode: 204,
+      };
+      if (result == null) {
+        this.response = {
+          statusCode: 404,
+          message: "Subcategory not found",
+        };
+      }
+      this.response = {
+        statusCode: 204,
+      };
+      return this.response;
+    } catch (error) {
+      return {
+        statusCode: 500,
+        message: "Cannot delete Caategory",
+      };
     }
   }
 }

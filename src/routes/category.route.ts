@@ -81,10 +81,13 @@ router.delete("/", async (req, res) => {
   });
 
   const data = await Promise.all([...response]);
-
   // Category.deleteOne({ })
-
   return res.status(200).json({ message: "deleted", response: data });
+
+  /**    ********Original*********
+  const response2: DataResponse = await categoryController.deleteCategory(req.params.id);
+  return handleResponse(res, response2);
+  */
 });
 
 export default router;

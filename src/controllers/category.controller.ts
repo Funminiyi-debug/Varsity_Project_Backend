@@ -10,6 +10,7 @@ import {
   Body,
   Path,
   Put,
+  Delete,
 } from "tsoa";
 import { DataResponse } from "../interfaces/DataResponse";
 import ErrorResponseModel from "../interfaces/ErrorResponseModel";
@@ -131,6 +132,25 @@ class CategoriesController extends Controller {
       };
     }
     return this.response;
+  }
+
+  @Delete("{id}")
+  @SuccessResponse("204", "Deleted")
+  @Response<ErrorResponseModel>("400", "Bad Data")
+  @Response<ErrorResponseModel>("404", "Not Found")
+  public async deleteCategory(@Path() id: string): Promise<DataResponse> {
+    try {
+      await this.cs.deleteCategory(id);
+      this.response = {
+        statusCode: 204,
+      };
+      return this.response;
+    } catch (error) {
+      return {
+        statusCode: 500,
+        message: "Cannot delete Caategory",
+      };
+    }
   }
 }
 

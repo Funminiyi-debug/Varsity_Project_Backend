@@ -170,6 +170,10 @@ export default class ProductService implements IProductService {
 
   // delete product
   async deleteProduct(id: string, userEmail): Promise<Document<any>> {
-    return await Product.findByIdAndDelete(id);
+    try {
+      return (await Product.findById(id)).remove();
+    } catch (error) {
+      throw ServerErrorException(error);
+    }
   }
 }

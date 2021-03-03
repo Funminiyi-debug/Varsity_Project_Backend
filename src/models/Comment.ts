@@ -19,21 +19,21 @@ const CommentSchema = new mongoose.Schema(
 const Comment = mongoose.model("Comment", CommentSchema);
 
 CommentSchema.pre("remove", async function (next) {
-  let comment = this as any;
-  const id = comment.getFilter()["_id"];
-  try {
-    const comments = await Comment.find({ commentid: id });
-    comments.forEach(async (comment) => {
-      const deleted = await Comment.deleteOne({ _id: comment._id });
-      console.log("Child comment deleted from model Comment", deleted);
-    });
-  } catch (error) {
-    console.log("because", error);
-    throw new ServerErrorException("unable to delete COmment");
-  }
-  // Comment.remove({ post: this._id }).exec();
-  // AppFile.remove({ post: this._id }).exec();
-
+  Comment.remove({ post: this._id }).exec();
+  AppFile.remove({ post: this._id }).exec();
   next();
+  // let comment = this as any;
+  // const id = comment.getFilter()["_id"];
+  // try {
+  //   const comments = await Comment.find({ commentid: id });
+  //   comments.forEach(async (comment) => {
+  //     const deleted = await Comment.deleteOne({ _id: comment._id });
+  //     console.log("Child comment deleted from model Comment", deleted);
+  //   });
+  // } catch (error) {
+  //   console.log("because", error);
+  //   throw new ServerErrorException("unable to delete COmment");
+  // }
 });
+
 export default Comment;
