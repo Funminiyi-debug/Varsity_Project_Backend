@@ -36,12 +36,11 @@ export default class ServiceService implements IServiceService {
   }
 
   async getServices(): Promise<Document<any>[]> {
-    // return await Product.find({})
-    //   .populate("author")
-    //   .populate("subcategory")
-    //   .populate("images")
-    //   .populate("Feedback");
-    return await this.appfileService.getAllAppFiles();
+    return await Service.find({})
+      .populate("author")
+      .populate("category")
+      .populate("images")
+      .populate("feedbacks");
   }
 
   async getService(id: string): Promise<Document<any>[]> {

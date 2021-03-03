@@ -25,8 +25,12 @@ export default class CommentService implements ICommentService {
     }
   }
 
-  async createComment(entity: IComment): Promise<Document<any>> {
+  async createComment(request: IComment): Promise<Document<any>> {
     try {
+      const entity = {
+        ...request,
+        post: request.postid,
+      };
       const comment = new Comment(entity);
       return await comment.save();
     } catch (error) {
@@ -35,8 +39,12 @@ export default class CommentService implements ICommentService {
     }
   }
 
-  async updateComment(id: string, entity: IComment): Promise<Document<any>> {
+  async updateComment(id: string, request: IComment): Promise<Document<any>> {
     try {
+      const entity = {
+        ...request,
+        post: request.postid,
+      };
       return await Comment.findByIdAndUpdate(id, entity, { new: true });
     } catch (error) {
       console.log(error);

@@ -2,7 +2,7 @@ import Joi from "joi";
 
 const UserSchema = Joi.object().keys({
   id: Joi.string().length(16),
-  name: Joi.string().min(5),
+  name: Joi.string().min(3),
   email: Joi.string()
     .email()
     .lowercase()

@@ -1,7 +1,7 @@
 import Joi from "joi";
 
 const ProductSchema = Joi.object().keys({
-  title: Joi.string().min(5).required(),
+  title: Joi.string().min(3).required(),
   subcategoryId: Joi.string().min(16).required(),
   adStatus: Joi.string()
     .valid("Active", "InReview", "Hidden", "Draft", "Declined")

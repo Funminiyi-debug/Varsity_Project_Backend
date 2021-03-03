@@ -77,7 +77,7 @@ app.use("/api/products", productModule);
 app.use("/api/subcategories", subcategoryModule);
 app.use("/api/services", serviceModule);
 app.use("/api/users", userModule);
-app.use("/api/post", postModule);
+app.use("/api/posts", postModule);
 
 app.listen(port, () => {
   console.log(`subscriber connected to ${port}`);

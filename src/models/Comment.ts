@@ -4,7 +4,7 @@ import AppFile from "./AppFile";
 
 const CommentSchema = new mongoose.Schema(
   {
-    post: { type: mongoose.Schema.Types.ObjectId, required: true },
+    post: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "Post" },
     comment: { type: String, required: true },
     author: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Like" }],
@@ -18,22 +18,9 @@ const CommentSchema = new mongoose.Schema(
 
 const Comment = mongoose.model("Comment", CommentSchema);
 
-CommentSchema.pre("remove", async function (next) {
-  let comment = this as any;
-  const id = comment.getFilter()["_id"];
-  try {
-    const comments = await Comment.find({ commentid: id });
-    comments.forEach(async (comment) => {
-      const deleted = await Comment.deleteOne({ _id: comment._id });
-      console.log("Child comment deleted from model Comment", deleted);
-    });
-  } catch (error) {
-    console.log("because", error);
-    throw new ServerErrorException("unable to delete COmment");
-  }
-  // Comment.remove({ post: this._id }).exec();
-  // AppFile.remove({ post: this._id }).exec();
-
-  next();
+CommentSchema.pre("remove", function (next) {
+  Comment.remove({ post: this._id }).exec();
+  AppFile.remove({ post: this._id }).exec();
+  return next();
 });
 export default Comment;
