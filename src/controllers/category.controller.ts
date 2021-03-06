@@ -32,6 +32,10 @@ class CategoriesController extends Controller {
     data: [],
   };
 
+  /**
+   * Get all categories
+   *
+   */
   @Get("/")
   // @httpGet("/")
   @SuccessResponse("200", "OK")

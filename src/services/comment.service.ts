@@ -42,6 +42,7 @@ export default class CommentService implements ICommentService {
 
       entity.author = userid;
       const comment = new Comment(entity);
+      await comment.save();
       const commentAddedToPost = this.postService.addCommentToPost(
         comment._id,
         entity.post

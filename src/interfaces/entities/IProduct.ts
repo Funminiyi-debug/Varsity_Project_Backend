@@ -8,8 +8,8 @@ interface IProduct {
   adStatus: AdStatus;
   school: string;
   price: string;
-  delivery: string;
-  otherFields?: IField[];
+  delivery: boolean;
+  otherFields?: any[];
 }
 
 export default IProduct;

@@ -25,12 +25,13 @@ passportConfig(passport);
 databaseConnection();
 
 // PASSPORT CONFIG
+app.use(cors());
+app.use(express.static("public"));
+app.use(express.json({ limit: "50mb" }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use(express.static("public"));
-app.use(express.json());
-app.use(cors());
+// app.use(express.json());
 
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -46,8 +47,6 @@ app.use(
     ":method :url statusCode ===  :status :res[content-length] - :response-time ms"
   )
 );
-app.use(bodyparser.urlencoded({ extended: false }));
-app.use(bodyparser.json());
 //COOKIE CONFIG
 app.use(
   cookieSession({
@@ -56,8 +55,7 @@ app.use(
   })
 );
 
-app.use(express.static("public"));
-app.use(express.json());
+// app.use(express.static("public"));
 
 app.use(
   "/api/docs",

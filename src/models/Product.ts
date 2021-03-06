@@ -40,7 +40,7 @@ const ProductSchema = new mongoose.Schema(
     school: { type: String, required: true },
     price: { type: String, required: true },
     delivery: { type: Boolean, required: true },
-    otherFields: [FieldSchema],
+    otherFields: { type: Array },
   },
   {
     timestamps: true,

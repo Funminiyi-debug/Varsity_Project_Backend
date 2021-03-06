@@ -8,6 +8,7 @@ import { handleResponse } from "../utils/handleResponse";
 import upload from "../config/multer";
 import validatorMiddleware from "../middlewares/schemaValidator";
 import { identifierSchema, serviceSchema } from "../validators";
+import { formatServiceSchema } from "../middlewares/service.middleware";
 
 const router = express.Router();
 const serviceService = container.get<ServiceService>(Types.IServiceService);
@@ -30,11 +31,13 @@ router.get("/:id", async (req: Request, res: Response) => {
 router.post(
   "/",
   [
+    formatServiceSchema,
     validatorMiddleware(identifierSchema, serviceSchema),
     upload.array("images", 4),
   ],
   async (req: Request, res: Response) => {
     // product.author = res.locals.user;
+    console.log("the req body", req.body);
     const response: DataResponse = await serviceController.createService(
       req.body,
       req,
@@ -47,6 +50,7 @@ router.post(
 
 router.put(
   "/:id",
+  formatServiceSchema,
   validatorMiddleware(identifierSchema, serviceSchema),
   async (req: Request, res: Response) => {
     const response: DataResponse = await serviceController.updateService(
