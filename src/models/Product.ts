@@ -1,9 +1,7 @@
 import mongoose from "mongoose";
 import AdStatus from "../enums/AdStatus";
-import { ServerErrorException } from "../exceptions";
 import AppFile from "./AppFile";
 import Feedback from "./Feedback";
-import FieldSchema from "./FieldSchema";
 
 const ProductSchema = new mongoose.Schema(
   {
@@ -50,26 +48,6 @@ const ProductSchema = new mongoose.Schema(
 ProductSchema.pre("remove", async function () {
   AppFile.remove({ subcategoryId: this._id }).exec();
   Feedback.remove({ productId: this._id }).exec();
-  // let product = this as any;
-  // const id = product.getFilter()["_id"];
-  // try {
-  //   // remove child appfiles
-  //   const appfiles = await Product.find({ product: id });
-  //   appfiles.forEach(async (appfile) => {
-  //     const deleted = await AppFile.deleteOne({ _id: appfile._id });
-  //     console.log("Child appfile deleted from model product", deleted);
-  //   });
-
-  //   // remove child feedback
-  //   const feedbacks = await Product.find({ product: id });
-  //   feedbacks.forEach(async (feedback) => {
-  //     const deleted = await Feedback.deleteOne({ _id: feedback._id });
-  //     console.log("Child feedback deleted from model product", deleted);
-  //   });
-  // } catch (error) {
-  //   console.log("because", error);
-  //   throw new ServerErrorException("unable to delete product");
-  // }
 });
 
 const Product = mongoose.model("Product", ProductSchema);

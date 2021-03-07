@@ -18,6 +18,7 @@ import {
   NotFoundException,
   ServerErrorException,
 } from "../exceptions";
+import UnauthorizedException from "../exceptions/UnauthorizedException";
 
 @injectable()
 export default class ProductService implements IProductService {
@@ -36,12 +37,12 @@ export default class ProductService implements IProductService {
     throw new Error("Method not implemented.");
   }
   async getProducts(): Promise<Document<any>[]> {
-    // return await Product.find({})
-    //   .populate("author")
-    //   .populate("subcategory")
-    //   .populate("images")
-    //   .populate("Feedback");
-    return await this.appfileService.getAllAppFiles();
+    return await Product.find({})
+      .populate("author")
+      .populate("subcategory")
+      .populate("images")
+      .populate("Feedback");
+    // return await this.appfileService.getAllAppFiles();
   }
 
   // get product
@@ -59,6 +60,7 @@ export default class ProductService implements IProductService {
     files: any,
     userid: string
   ): Promise<Document<any>> {
+    console.log(product);
     const entity = {
       ...product,
       author: "",
@@ -71,9 +73,10 @@ export default class ProductService implements IProductService {
 
     // Check if product exists
     const exists = await Product.find({
-      name: entity.title,
+      title: entity.title,
       author: entity.author,
     });
+
     if (exists.length > 0) throw new ConflictException("Product already exist");
 
     // IMAGE
@@ -94,6 +97,7 @@ export default class ProductService implements IProductService {
     const subcategoryExist = await this.subcategoryService.getSubcategory(
       entity.subcategoryId
     );
+
     if (subcategoryExist.length == 0) {
       imageids.forEach(
         async (id) => await this.appfileService.deleteAppFile(id)
@@ -127,20 +131,30 @@ export default class ProductService implements IProductService {
   ): Promise<Document<any>> {
     const entity = {
       ...product,
-      author: "",
-      images: [],
       subcategory: "",
+      images: [],
     };
+
     // AUTHOR
     entity.author = userid;
 
     // Check if product exists
-    const exists = (await Product.find({
-      name: entity.title,
-      author: entity.author,
-    })) as any[];
+    const exists = (await Product.findOne({
+      _id: id,
+      author: userid,
+    })) as any;
 
-    if (exists.length == 0) throw new NotFoundException("product not found");
+    if (!exists) throw new NotFoundException("product not found");
+
+    const subcategoryExist = await this.subcategoryService.getSubcategory(
+      entity.subcategoryId
+    );
+
+    if (subcategoryExist.length == 0) {
+      entity.subcategory = exists.subcategoryId;
+    } else {
+      entity.subcategory = subcategoryExist[0].id;
+    }
 
     // IMAGE
     if (files || files.length > 0) {
@@ -150,9 +164,9 @@ export default class ProductService implements IProductService {
           return appfile.id;
         }),
       ]);
-      entity.images.push(...imageids);
+      entity.images = [...entity.images, ...imageids];
     } else {
-      entity.images = exists[0].images;
+      entity.images = exists.images;
     }
 
     try {

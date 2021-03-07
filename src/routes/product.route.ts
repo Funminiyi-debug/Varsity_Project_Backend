@@ -30,12 +30,11 @@ router.get("/:id", async (req: Request, res: Response) => {
 router.post(
   "/",
   [
+    upload.array("images", 4),
     formatProductSchema,
     validatorMiddleware(identifierSchema, productSchema),
-    // upload.array("images", 4),
   ],
   async (req: Request, res: Response) => {
-    console.log("this is our req.body now", req.body);
     // product.author = res.locals.user;
     const response: DataResponse = await productController.createProduct(
       req.body,
@@ -49,9 +48,11 @@ router.post(
 
 router.put(
   "/:id",
+  upload.array("images", 4),
   formatProductSchema,
   validatorMiddleware(identifierSchema, productSchema),
   async (req: Request, res: Response) => {
+    console.log("this ran in the route");
     const response: DataResponse = await productController.updateProduct(
       req.params.id,
       req.body,
@@ -71,7 +72,7 @@ router.delete(
       req.params.id,
       res
     );
-    return handleResponse;
+    return handleResponse(res, response);
   }
 );
 

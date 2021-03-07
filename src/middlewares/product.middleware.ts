@@ -3,8 +3,7 @@ import { IProduct } from "../interfaces/entities";
 
 const formatProductSchema = (req, res, next) => {
   const data = req.body;
-
-  console.log("from first middleware", req.body);
+  console.log("this ran in the middleware");
   const dbEntity: IProduct = {
     title: data.title,
     subcategoryId: data.subcategoryId,
@@ -12,8 +11,10 @@ const formatProductSchema = (req, res, next) => {
     school: data.school,
     price: data.price,
     delivery: data.delivery,
+    id: data.id,
   };
   const allNecessaryKeys = [
+    "id",
     "title",
     "subcategoryid",
     "adstatus",
@@ -33,7 +34,8 @@ const formatProductSchema = (req, res, next) => {
 
   dbEntity.otherFields = otherFields;
 
-  req.body = dbEntity;
+  req.body = { ...dbEntity };
+
   return next();
 };
 
