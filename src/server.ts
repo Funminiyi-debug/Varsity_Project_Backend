@@ -1,4 +1,5 @@
 import express, { Application } from "express";
+import http from "http";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
 import morgan from "morgan";
@@ -20,6 +21,8 @@ import feedbackMoodule from "./routes/feedback.route";
 import redisMiddleware from "./middlewares/redis";
 import authMiddleware from "./middlewares/auth";
 const app: Application = express();
+const server = http.createServer(app);
+const io = require("socket.io")(server);
 const port = process.env.PORT || 3001;
 passportConfig(passport);
 databaseConnection();
@@ -80,7 +83,8 @@ app.use("/api/services", serviceModule);
 app.use("/api/users", userModule);
 app.use("/api/posts", postModule);
 app.use("api/feedbacks", feedbackMoodule);
+//io.on("connection", require("./routes/socket"));
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`subscriber connected to ${port}`);
 });

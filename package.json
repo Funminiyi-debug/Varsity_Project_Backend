@@ -47,6 +47,7 @@
     "passport-google-oauth20": "^2.0.0",
     "redis": "^3.0.2",
     "reflect-metadata": "^0.1.13",
+    "socket.io": "^3.1.2",
     "swagger-ui-express": "^4.1.6",
     "ts-node": "^9.0.0",
     "tslint": "^6.1.3",
