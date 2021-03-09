@@ -4,7 +4,6 @@ import FeedbackController from "../controllers/feedback.controller";
 import { DataResponse } from "../interfaces/DataResponse";
 import Types from "../types";
 import { handleResponse } from "../utils/handleResponse";
-import upload from "../config/multer";
 import validatorMiddleware from "../middlewares/schemaValidator";
 import { identifierSchema, feedbackSchema } from "../validators";
 import { FeedbackService } from "../services";

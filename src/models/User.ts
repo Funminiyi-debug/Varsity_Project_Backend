@@ -76,4 +76,4 @@ UserShema.pre("remove", function (next) {
   next();
 });
 
-export default mongoose.model("users", UserShema);
+export default mongoose.model("User", UserShema);

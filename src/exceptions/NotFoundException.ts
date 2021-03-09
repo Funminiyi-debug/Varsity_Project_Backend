@@ -1,6 +1,6 @@
 function NotFoundException(message) {
   this.message = message;
-  this.name = "NotFound";
+  this.name = "NotFoundException";
 }
 
 export default NotFoundException;

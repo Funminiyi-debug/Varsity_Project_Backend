@@ -6,16 +6,10 @@ const ProductSchema = Joi.object().keys({
   adStatus: Joi.string()
     .valid("Active", "InReview", "Hidden", "Draft", "Declined")
     .required(),
-  school: Joi.string().min(5).required(),
+  school: Joi.string().min(3).required(),
   price: Joi.string().required(),
-  delivery: Joi.string().required(),
-  otherFields: Joi.array().items(
-    Joi.object({
-      name: Joi.string(),
-      value: Joi.string(),
-      options: Joi.array().items(Joi.string()),
-    })
-  ),
+  delivery: Joi.boolean().required(),
+  otherFields: Joi.array(),
 });
 
 export default ProductSchema;

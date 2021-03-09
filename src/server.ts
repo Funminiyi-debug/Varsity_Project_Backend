@@ -4,7 +4,6 @@ import cors from "cors";
 import swaggerUi from "swagger-ui-express";
 import morgan from "morgan";
 import "reflect-metadata";
-import bodyparser from "body-parser";
 import cookieSession from "cookie-session";
 import passport from "passport";
 import passportConfig from "./config/passport";
@@ -24,16 +23,18 @@ const app: Application = express();
 const server = http.createServer(app);
 const io = require("socket.io")(server);
 const port = process.env.PORT || 3001;
+// PASSPORT CONFIG
 passportConfig(passport);
 databaseConnection();
 
-// PASSPORT CONFIG
+app.use(cors());
+app.use(express.static("public"));
+app.use(
+  express.urlencoded({ extended: true, limit: "50mb", parameterLimit: 1000000 })
+);
+app.use(express.json({ limit: "50mb" }));
 app.use(passport.initialize());
 app.use(passport.session());
-
-app.use(express.static("public"));
-app.use(express.json());
-app.use(cors());
 
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -49,8 +50,6 @@ app.use(
     ":method :url statusCode ===  :status :res[content-length] - :response-time ms"
   )
 );
-app.use(bodyparser.urlencoded({ extended: false }));
-app.use(bodyparser.json());
 //COOKIE CONFIG
 app.use(
   cookieSession({
@@ -59,8 +58,7 @@ app.use(
   })
 );
 
-app.use(express.static("public"));
-app.use(express.json());
+// app.use(express.static("public"));
 
 app.use(
   "/api/docs",

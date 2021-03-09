@@ -23,6 +23,7 @@ import express from "express";
 import { IAppFileService, IProductService } from "../services/interfaces";
 import { IProduct } from "../interfaces/entities";
 import handleAppExceptions from "../utils/handleAppExceptions";
+import formatProduct_Service from "../utils/formatProduct_Service";
 
 @Route("/products")
 @Tags("Product")
@@ -39,17 +40,17 @@ class ProductsController extends Controller {
   // @httpGet("/")
   @SuccessResponse("200", "OK")
   public async getProducts(): Promise<DataResponse> {
-    const results = await this.ps.getProducts();
+    let results = await this.ps.getProducts();
+
     this.response = {
       statusCode: 200,
-      data: results,
+      data: formatProduct_Service(results),
     };
 
     return this.response;
   }
 
   @Get("{id}")
-  // @httpGet("{id}")
   @SuccessResponse("200", "OK")
   @Response<ErrorResponseModel>("404", "Not Found")
   public async getProduct(id: string): Promise<DataResponse> {
@@ -59,7 +60,7 @@ class ProductsController extends Controller {
       if (results.length > 0) {
         return {
           statusCode: 200,
-          data: results,
+          data: formatProduct_Service(results),
         };
       } else {
         return {
@@ -101,7 +102,7 @@ class ProductsController extends Controller {
 
       return {
         statusCode: 201,
-        data: results,
+        data: formatProduct_Service(results),
       };
     } catch (error) {
       return handleAppExceptions(error);
@@ -118,7 +119,7 @@ class ProductsController extends Controller {
     @Request() req: express.Request,
     @Request() res: express.Response
   ): Promise<DataResponse> {
-    const email = "";
+    console.log("controller ran");
     try {
       const results = await this.ps.updateProduct(
         productid,
@@ -127,24 +128,11 @@ class ProductsController extends Controller {
         res.locals.userid
       );
 
-      if (results == null) {
-        this.response = {
-          statusCode: 404,
-          message: "Product not found",
-        };
-      }
-
       this.response = {
         statusCode: 204,
       };
       return this.response;
     } catch (error) {
-      if (error.message.search("Cast") != -1) {
-        return {
-          statusCode: 404,
-          message: "Not Found",
-        };
-      }
       return handleAppExceptions(error);
     }
   }
@@ -165,17 +153,7 @@ class ProductsController extends Controller {
       };
       return this.response;
     } catch (error) {
-      if (error.message.search("Cast") != -1) {
-        return {
-          statusCode: 404,
-          message: "Not Found",
-        };
-      }
-
-      return {
-        statusCode: 500,
-        message: "Something happened",
-      };
+      return handleAppExceptions(error);
     }
   }
 }

@@ -21,6 +21,7 @@ import {
   Put,
   Delete,
 } from "tsoa";
+import formatProduct_Service from "../utils/formatProduct_Service";
 
 @Route("/services")
 @Tags("Service")
@@ -41,7 +42,7 @@ class ServicesController extends Controller {
     const results = await this.ps.getServices();
     this.response = {
       statusCode: 200,
-      data: results,
+      data: formatProduct_Service(results),
     };
 
     return this.response;
@@ -58,7 +59,7 @@ class ServicesController extends Controller {
       if (results.length > 0) {
         return {
           statusCode: 200,
-          data: results,
+          data: formatProduct_Service(results),
         };
       } else {
         return {
@@ -100,7 +101,7 @@ class ServicesController extends Controller {
 
       return {
         statusCode: 201,
-        data: results,
+        data: formatProduct_Service(results),
       };
     } catch (error) {
       return handleAppExceptions(error);

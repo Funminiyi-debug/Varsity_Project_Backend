@@ -8,7 +8,7 @@ import { handleResponse } from "../utils/handleResponse";
 import upload from "../config/multer";
 import validatorMiddleware from "../middlewares/schemaValidator";
 import { identifierSchema, productSchema } from "../validators";
-
+import { formatProductSchema } from "../middlewares/product.middleware";
 const router = express.Router();
 const productService = container.get<ProductService>(Types.IProductService);
 const productController = new ProductsController(productService);
@@ -30,8 +30,9 @@ router.get("/:id", async (req: Request, res: Response) => {
 router.post(
   "/",
   [
-    validatorMiddleware(identifierSchema, productSchema),
     upload.array("images", 4),
+    formatProductSchema,
+    validatorMiddleware(identifierSchema, productSchema),
   ],
   async (req: Request, res: Response) => {
     // product.author = res.locals.user;
@@ -47,8 +48,11 @@ router.post(
 
 router.put(
   "/:id",
+  upload.array("images", 4),
+  formatProductSchema,
   validatorMiddleware(identifierSchema, productSchema),
   async (req: Request, res: Response) => {
+    console.log("this ran in the route");
     const response: DataResponse = await productController.updateProduct(
       req.params.id,
       req.body,
@@ -68,7 +72,7 @@ router.delete(
       req.params.id,
       res
     );
-    return handleResponse;
+    return handleResponse(res, response);
   }
 );
 

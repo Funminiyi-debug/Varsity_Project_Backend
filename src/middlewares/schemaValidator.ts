@@ -17,7 +17,9 @@ export default (schemaId, schemaBody) => {
     }
     if (req.method == "PUT") {
       try {
-        if (req.body.id != req.params.id) {
+        if (req.body.id !== req.params.id) {
+          console.log("from body", req.body);
+          console.log("from params", req.params);
           return res.status(422).json({
             error: "ensure id in params is consistent with entity id",
           });

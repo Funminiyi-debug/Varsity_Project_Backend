@@ -29,7 +29,6 @@ const handleAppExceptions = (error: IAppException): DataResponse => {
             ${error.message}`
       );
       return { statusCode: 500, message: "Server Error" };
-      break;
   }
 };
 export default handleAppExceptions;

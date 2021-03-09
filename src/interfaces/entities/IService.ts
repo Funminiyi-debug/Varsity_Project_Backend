@@ -8,7 +8,7 @@ interface IService {
   school: string;
   price: string;
   delivery: string;
-  otherFields?: IField[];
+  otherFields?: any[];
 }
 
 export default IService;

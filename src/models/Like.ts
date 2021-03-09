@@ -4,10 +4,16 @@ import LikeService from "../services/like.service";
 
 const LikeSchema = new mongoose.Schema(
   {
-    post: { type: mongoose.Schema.Types.ObjectId, required: true },
-    author: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    likeid: { type: mongoose.Schema.Types.ObjectId, ref: "Like" },
-    commentid: { type: mongoose.Schema.Types.ObjectId, ref: "Comment" },
+    author: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    post: { type: mongoose.Schema.Types.ObjectId, ref: "Like" },
+    comment: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Comment",
+    },
   },
   { timestamps: true }
 );

@@ -27,7 +27,7 @@ export default class SubcategoryService implements ISubcategoryService {
   //   get subcategry by id
   async getSubcategory(id: string): Promise<Document<any>[]> {
     try {
-      return await SubCategory.find({ id }).populate("products");
+      return await SubCategory.find({ _id: id }).populate("products");
     } catch (error) {
       console.log(error);
       throw ServerErrorException(error);
