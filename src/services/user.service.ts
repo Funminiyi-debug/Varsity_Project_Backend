@@ -5,6 +5,7 @@ import { IUserService } from "./interfaces";
 import { injectable } from "inversify";
 import VerificationStatus from "../enums/VerificationStatus";
 import { ServerErrorException } from "../exceptions";
+import UsersController from "../controllers/user.controller";
 
 @injectable()
 export default class UserService implements IUserService {
@@ -26,7 +27,7 @@ export default class UserService implements IUserService {
 
   async getUser(id: string) {
     try {
-      const user = await User.findById(id);
+      const user = (await User.findById(id)) as any;
       return user;
     } catch (error) {
       throw ServerErrorException(error);
@@ -50,9 +51,9 @@ export default class UserService implements IUserService {
     }
   }
 
-  async deleteService(id: string, userEmail: string) {
+  async deleteUser(id: string): Promise<Document<any>> {
     try {
-      return (await User.findById(id)).remove();
+      return await (await User.findById(id)).remove();
     } catch (error) {
       throw ServerErrorException(error);
     }

@@ -14,6 +14,7 @@ import {
   SuccessResponse,
   Controller,
   Response,
+  Delete,
 } from "tsoa";
 import { DataResponse, UserCreationRequest } from "../interfaces/DataResponse";
 import ErrorResponseModel from "../interfaces/ErrorResponseModel";
@@ -21,6 +22,7 @@ import { inject, injectable } from "inversify";
 import Types from "../types";
 import { IUserService } from "../services/interfaces";
 import VStatus from "../enums/VerificationStatus";
+import handleAppExceptions from "../utils/handleAppExceptions";
 
 interface VerifyStatusRequest {
   id: string;
@@ -91,5 +93,21 @@ export default class UsersController extends Controller {
       statusCode: 204,
     };
     return this.response;
+  }
+
+  @Delete("{id}")
+  @SuccessResponse("204", "Updated")
+  @Response<ErrorResponseModel>("400", "Bad Data")
+  @Response<ErrorResponseModel>("404", "Not Found")
+  public async deleteUser(@Path() id: string) {
+    try {
+      const data = await this.user.deleteUser(id);
+
+      return {
+        statusCode: 204,
+      } as DataResponse;
+    } catch (error) {
+      return handleAppExceptions(error);
+    }
   }
 }

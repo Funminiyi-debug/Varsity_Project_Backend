@@ -9,4 +9,5 @@ export default interface IUserService {
   updateUser(id: string, entity: IUser);
   changeVerificationStatus(id: string, status: VerificationStatus);
   getUser(id: string);
+  deleteUser(id: string): Promise<Document<any>>;
 }

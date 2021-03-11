@@ -7,5 +7,4 @@ export { default as SubcategoryService } from "./subcategory.service";
 export { default as FeedbackService } from "./feedback.service";
 export { default as CommentService } from "./comment.service";
 export { default as PostService } from "./post.service";
-export { default as ServiceService } from "./service.service";
 export { default as LikeService } from "./like.service";

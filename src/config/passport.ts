@@ -61,6 +61,8 @@ export default function (passport) {
                 { new: true }
               );
 
+              console.log(user);
+
               cb(null, { data: user });
             } else {
               cb(null, { data: user });
@@ -69,7 +71,7 @@ export default function (passport) {
             user = await User.create(newUser);
             user.token = generateJwtToken(user);
             user.verificationStatus = VerificationStatus.NotVerified;
-            user.save();
+            await user.save();
             cb(null, { data: user });
           }
         } catch (err) {

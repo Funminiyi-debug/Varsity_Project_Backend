@@ -3,7 +3,8 @@ import AdStatus from "../../enums/AdStatus";
 import { IField } from "../IField";
 interface IProduct {
   title: string;
-  subcategoryId: string;
+  subcategoryId?: string;
+  categoryId?: string;
   id?: string;
   adStatus: AdStatus;
   school: string;

@@ -1,5 +1,5 @@
 import { Document } from "mongoose";
-import { IProductFilter, IProduct } from "../../interfaces/entities";
+import { IFilter, IProduct } from "../../interfaces/entities";
 import IAppFile from "../../interfaces/entities/IAppFile";
 import { Express } from "express";
 
@@ -9,7 +9,7 @@ export default interface IProductService {
   getProduct(id: string): Promise<Document<any>[]>;
 
   getProductsByCondition(
-    query: IProductFilter,
+    query: IFilter,
     userid: string
   ): Promise<Document<any>[]>;
 
@@ -28,9 +28,9 @@ export default interface IProductService {
 
   deleteProduct(id: string, userEmail: string): Promise<Document<any>>;
 
-  addFeedbacksToProduct(
+  addFeedbackToProduct(
     productid: string,
-    feedbackids: string[],
+    feedbackids: string,
     useremail: string
   );
 }

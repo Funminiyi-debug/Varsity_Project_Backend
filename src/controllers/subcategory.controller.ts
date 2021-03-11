@@ -19,13 +19,12 @@ import {
 import { DataResponse } from "../interfaces/DataResponse";
 import ErrorResponseModel from "../interfaces/ErrorResponseModel";
 import Types from "../types";
-import express from "express";
 import { ISubcategoryService } from "../services/interfaces";
 import { ISubcategory } from "../interfaces/entities";
 import handleAppExceptions from "../utils/handleAppExceptions";
 
 @Route("/subcategories")
-@Tags("subcategory")
+@Tags("Subcategory")
 class SubcategoryController extends Controller {
   constructor(
     @inject(Types.ISubcategoryService)
@@ -39,7 +38,6 @@ class SubcategoryController extends Controller {
   };
 
   @Get("/")
-  // @httpGet("/")
   @SuccessResponse("200", "OK")
   public async getSubcategories(): Promise<DataResponse> {
     const results = await this.subcategoryService.getSubcategories();

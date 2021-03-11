@@ -3,10 +3,10 @@ import helper from "../config/jwtHelper";
 import globals from "node-global-storage";
 import TokenContent from "../interfaces/TokenContent";
 import express from "express";
+import { Console } from "console";
 
 export default {
   ensureAuth: (req, res, next) => {
-    console.log(req.session.user);
     if (!req.session.user) {
       return res.status(401).json({
         success: false,
@@ -30,7 +30,7 @@ export default {
     } else if (req.session.user.verificationStatus === "Restricted") {
       return res.status(401).json({
         success: false,
-        message: "User Restricted from using App",
+        message: "User is Restricted from using the App",
       });
     } else {
       next();
@@ -98,14 +98,10 @@ export default {
 
     // create a promise that decodes the token
     const p = new Promise((resolve, reject) => {
-      helper.verify(
-        token,
-        //req.app.get("varsity api intensify"),
-        (err, decoded) => {
-          if (err) reject(err);
-          resolve(decoded);
-        }
-      );
+      helper.verify(token, (err, decoded) => {
+        if (err) reject(err);
+        resolve(decoded);
+      });
     });
 
     // if it has failed to verify, it will return an error message
