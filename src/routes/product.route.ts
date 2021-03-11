@@ -9,6 +9,7 @@ import upload from "../config/multer";
 import validatorMiddleware from "../middlewares/schemaValidator";
 import { identifierSchema, productSchema } from "../validators";
 import { formatProductSchema } from "../middlewares/product.middleware";
+import { ProductServiceFilter } from "../middlewares/filter.middleware";
 const router = express.Router();
 const productService = container.get<ProductService>(Types.IProductService);
 const productController = new ProductsController(productService);
@@ -26,6 +27,18 @@ router.get("/:id", async (req: Request, res: Response) => {
 
   return handleResponse(res, response);
 });
+
+router
+  .route("/filter")
+  .post(ProductServiceFilter)
+  .get(async (req: Request, res: Response) => {
+    const response: DataResponse = await productController.getProductsByCondition(
+      req.body,
+      res
+    );
+
+    return handleResponse(res, response);
+  });
 
 router.post(
   "/",

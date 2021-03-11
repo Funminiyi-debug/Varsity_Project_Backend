@@ -2,7 +2,7 @@ import UserController from "../controllers/user.controller";
 import UserService from "../services/user.service";
 import express, { Request, Response } from "express";
 import { DataResponse } from "../interfaces/DataResponse";
-import handleResponse from "../utils/response";
+import { handleResponse } from "../utils/handleResponse";
 import { container } from "../containerDI";
 import Types from "../types";
 import middleWare from "../middlewares/auth";

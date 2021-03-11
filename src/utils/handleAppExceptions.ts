@@ -9,10 +9,10 @@ const handleAppExceptions = (error: IAppException): DataResponse => {
     case AppException.ForbiddenException:
       return { statusCode: 409, message: error.message };
     case AppException.ServerErrorException:
-      console.log(
-        `${error.name}:
-             ${error.message}`
-      );
+      // console.log(
+      //   `${error.name}:
+      //        ${error.message}`
+      // );
       return { statusCode: 500, message: "Server Error" };
     case AppException.NotFoundException:
       return { statusCode: 404, message: error.message };
@@ -22,13 +22,14 @@ const handleAppExceptions = (error: IAppException): DataResponse => {
       return { statusCode: 403, message: error.message };
 
     default:
-      console.log(
-        `
-        Unhandled error==============
-        ${error.name}: 
-            ${error.message}`
-      );
+      // console.log(
+      //   `
+      //   Unhandled error==============
+      //   ${error.name}:
+      //       ${error.message}`
+      // );
       return { statusCode: 500, message: "Server Error" };
   }
 };
+
 export default handleAppExceptions;

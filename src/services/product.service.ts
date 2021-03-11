@@ -10,7 +10,7 @@ import {
 } from "./interfaces";
 import Product from "../models/Product";
 import Types from "../types";
-import { IProduct } from "../interfaces/entities";
+import { IProduct, IFilter } from "../interfaces/entities";
 import IAppFile from "../interfaces/entities/IAppFile";
 import {
   BadDataException,
@@ -51,9 +51,47 @@ export default class ProductService implements IProductService {
   }
 
   // search for product
-  async getProductsByCondition(query: IProduct): Promise<Document<any>[]> {
-    return await Product.find(query);
+  async getProductsByCondition(
+    query: IFilter,
+    userid: string
+  ): Promise<Document<any>[]> {
+    const {
+      name,
+      school,
+      priceMax,
+      priceMin,
+      sortBy,
+      otherFields,
+    }: IFilter = query;
+
+    const sortedData =
+      sortBy === "Newest"
+        ? { timestamps: "descending" } // or { _id: -1 }
+        : sortBy === "Highest Price"
+        ? { price: -1 }
+        : sortBy === "Lowest Price"
+        ? { price: 1 }
+        : null;
+
+    const allProducts = Product.find({ author: userid })
+      .populate("author")
+      .populate("subcategory")
+      .populate("images")
+      .populate("Feedback");
+
+    try {
+      return await allProducts
+        .and([
+          { "subcategory.name": name, school, price: { $gte: priceMin } },
+          { price: { $lte: priceMax } },
+        ])
+        .or(otherFields)
+        .sort(sortedData); // or .sort({_id: -1})
+    } catch (error) {
+      throw ServerErrorException(error);
+    }
   }
+
   // create product
   async createProduct(
     product: IProduct,

@@ -1,12 +1,15 @@
 import { Document } from "mongoose";
-import { IService } from "../../interfaces/entities";
+import { IProductFilter, IService } from "../../interfaces/entities";
 
 export default interface IServiceService {
   getServices(): Promise<Document<any>[]>;
 
   getService(id: string): Promise<Document<any>[]>;
 
-  getServicesByCondition(query: IService): Promise<Document<any>[]>;
+  getServicesByCondition(
+    query: IProductFilter,
+    userid: string
+  ): Promise<Document<any>[]>;
 
   createService(
     entity: IService,

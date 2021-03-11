@@ -7,4 +7,4 @@ var helper = JWTHelper.createJWTHelper({
   expiresIn: process.env.ACCESS_TOKEN_LIFE,
 });
 
-export = helper;
+export default helper;

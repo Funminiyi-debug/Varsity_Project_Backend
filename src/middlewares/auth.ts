@@ -1,4 +1,4 @@
-import handleResponse from "../utils/response";
+import { handleResponse } from "../utils/handleResponse";
 import helper from "../config/jwtHelper";
 import globals from "node-global-storage";
 import TokenContent from "../interfaces/TokenContent";

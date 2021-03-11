@@ -9,22 +9,13 @@ enum StatusCode {
 }
 
 export function handleResponse(res: Response, response: DataResponse) {
-  // switch (response.statusCode) {
-  //   case StatusCode.BAD_DATA:
-
-  //     return res
-  //       .status(response.statusCode)
-  //       .json({ success: false, payload: response.data });
-
-  //   default:
-  //     break;
-  // }
   if (response.message == undefined) {
-    return res
+    res
       .status(response.statusCode)
       .json({ success: true, payload: response.data });
+  } else {
+    res
+      .status(response.statusCode)
+      .json({ success: false, message: response.message });
   }
-  return res
-    .status(response.statusCode)
-    .json({ success: false, message: response.message });
 }

@@ -1,6 +1,6 @@
 import { injectable, inject } from "inversify";
 import { Document } from "mongoose";
-import IService from "../interfaces/entities/IService";
+import { IService, IFilter } from "../interfaces/entities";
 import Service from "../models/Service";
 import Types from "../types";
 import {
@@ -47,8 +47,45 @@ export default class ServiceService implements IServiceService {
     return await Service.find({ _id: id });
   }
 
-  async getServicesByCondition(query: IService): Promise<Document<any>[]> {
-    return await Service.find(query);
+  async getServicesByCondition(
+    query: IFilter,
+    userid: string
+  ): Promise<Document<any>[]> {
+    const {
+      name,
+      school,
+      priceMax,
+      priceMin,
+      sortBy,
+      otherFields,
+    }: IFilter = query;
+
+    const sortedData =
+      sortBy === "Newest"
+        ? { timestamps: "descending" } // or { _id: -1 }
+        : sortBy === "Highest Price"
+        ? { price: -1 }
+        : sortBy === "Lowest Price"
+        ? { price: 1 }
+        : null;
+
+    const allServices = Service.find({ author: userid })
+      .populate("author")
+      .populate("category")
+      .populate("images")
+      .populate("feedbacks");
+
+    try {
+      return await allServices
+        .and([
+          { "category.name": name, school, price: { $gte: priceMin } },
+          { price: { $lte: priceMax } },
+        ])
+        .or(otherFields)
+        .sort(sortedData); // or .sort({_id: -1})
+    } catch (error) {
+      throw ServerErrorException(error);
+    }
   }
 
   async createService(

@@ -21,7 +21,7 @@ import ErrorResponseModel from "../interfaces/ErrorResponseModel";
 import Types from "../types";
 import express from "express";
 import { IAppFileService, IProductService } from "../services/interfaces";
-import { IProduct } from "../interfaces/entities";
+import { IProduct, IFilter } from "../interfaces/entities";
 import handleAppExceptions from "../utils/handleAppExceptions";
 import formatProduct_Service from "../utils/formatProduct_Service";
 
@@ -48,6 +48,29 @@ class ProductsController extends Controller {
     };
 
     return this.response;
+  }
+
+  @Post("/filter")
+  @SuccessResponse("201", "Created")
+  @Response<ErrorResponseModel>("400", "Bad Data")
+  @Response<ErrorResponseModel>("409", "product already exists")
+  public async getProductsByCondition(
+    @Body() conditions: IFilter,
+    @Request() res: express.Response
+  ): Promise<DataResponse> {
+    try {
+      const results = await this.ps.getProductsByCondition(
+        conditions,
+        res.locals.userid
+      );
+
+      return {
+        statusCode: 201,
+        data: results,
+      };
+    } catch (error) {
+      return handleAppExceptions(error);
+    }
   }
 
   @Get("{id}")

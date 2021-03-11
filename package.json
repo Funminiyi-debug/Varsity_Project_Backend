@@ -4,7 +4,7 @@
   "description": "versity api",
   "main": "dist/server.js",
   "scripts": {
-    "test": "jest -c ./jest.unit.json",
+    "test": "jest --watchAll -c ./jest.unit.json",
     "test:coverage": "jest --coverage -c ./jest.unit.json",
     "dev": "concurrently \"npm run devStart\" \"nodemon -x tsoa spec\"",
     "start": "tsc && node dist/server.js",

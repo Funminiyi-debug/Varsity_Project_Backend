@@ -5,7 +5,7 @@ import ErrorResponseModel from "../interfaces/ErrorResponseModel";
 import Types from "../types";
 import express from "express";
 import { IAppFileService, IServiceService } from "../services/interfaces";
-import { IService } from "../interfaces/entities";
+import { IService, IFilter } from "../interfaces/entities";
 import handleAppExceptions from "../utils/handleAppExceptions";
 import {
   Controller,
@@ -79,6 +79,29 @@ class ServicesController extends Controller {
         statusCode: 500,
         message: error.message,
       };
+    }
+  }
+
+  @Post("/filter")
+  @SuccessResponse("201", "Created")
+  @Response<ErrorResponseModel>("400", "Bad Data")
+  @Response<ErrorResponseModel>("409", "product already exists")
+  public async getServicesByCondition(
+    @Body() conditions: IFilter,
+    @Request() res: express.Response
+  ): Promise<DataResponse> {
+    try {
+      const results = await this.ps.getServicesByCondition(
+        conditions,
+        res.locals.userid
+      );
+
+      return {
+        statusCode: 201,
+        data: results,
+      };
+    } catch (error) {
+      return handleAppExceptions(error);
     }
   }
 
