@@ -1,5 +1,4 @@
 import { IProduct, IFilter } from "../interfaces/entities";
-
 const ProductServiceFilter = function (req, res, next) {
   const data: IFilter = req.query;
 

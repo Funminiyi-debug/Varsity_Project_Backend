@@ -3,10 +3,10 @@ import helper from "../config/jwtHelper";
 import globals from "node-global-storage";
 import TokenContent from "../interfaces/TokenContent";
 import express from "express";
+import { Console } from "console";
 
 export default {
   ensureAuth: (req, res, next) => {
-    console.log(req.session.user);
     if (!req.session.user) {
       return res.status(401).json({
         success: false,
@@ -18,6 +18,23 @@ export default {
         success: false,
         message: "Please go back to phone registration Stage",
       });
+    } else if (!req.session.user.verifyCode) {
+      return res.status(401).json({
+        success: false,
+        message: "User hasn't verified code yet",
+      });
+    } else if (req.session.user.verificationStatus === "NotVerified") {
+      return res.status(401).json({
+        success: false,
+        message: "Registration Not Completed",
+      });
+    } else if (req.session.user.verificationStatus === "Restricted") {
+      return res.status(401).json({
+        success: false,
+        message: "User is Restricted from using the App",
+      });
+    } else {
+      next();
     }
     if (!req.session.user.verifyCode) {
       return res.status(401).json({
@@ -68,14 +85,10 @@ export default {
 
     // create a promise that decodes the token
     const p = new Promise((resolve, reject) => {
-      helper.verify(
-        token,
-        //req.app.get("varsity api intensify"),
-        (err, decoded) => {
-          if (err) reject(err);
-          resolve(decoded);
-        }
-      );
+      helper.verify(token, (err, decoded) => {
+        if (err) reject(err);
+        resolve(decoded);
+      });
     });
 
     // if it has failed to verify, it will return an error message

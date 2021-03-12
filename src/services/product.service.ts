@@ -7,6 +7,7 @@ import {
   IFeedbackService,
   IAppFileService,
   ISubcategoryService,
+  ICategoryService,
 } from "./interfaces";
 import Product from "../models/Product";
 import Types from "../types";
@@ -19,6 +20,12 @@ import {
   ServerErrorException,
 } from "../exceptions";
 import UnauthorizedException from "../exceptions/UnauthorizedException";
+interface IProductCreate extends IProduct {
+  author: string;
+  images: any[];
+  subcategory: string;
+  category: string;
+}
 
 @injectable()
 export default class ProductService implements IProductService {
@@ -27,21 +34,28 @@ export default class ProductService implements IProductService {
     @inject(Types.IFeedbackService) private feedbackService: IFeedbackService,
     @inject(Types.IAppFileService) private appfileService: IAppFileService,
     @inject(Types.ISubcategoryService)
-    private subcategoryService: ISubcategoryService
+    private subcategoryService: ISubcategoryService,
+    @inject(Types.ICategoryService)
+    private categoryService: ICategoryService
   ) {}
-  addFeedbacksToProduct(
+  async addFeedbackToProduct(
     productid: string,
-    feedbackids: string[],
+    feedbackids: string,
     useremail: string
   ) {
-    throw new Error("Method not implemented.");
+    return await Product.findByIdAndUpdate(productid, {
+      $push: {
+        feedbacks: feedbackids,
+      },
+    });
   }
   async getProducts(): Promise<Document<any>[]> {
     return await Product.find({})
-      .populate("author")
+      .populate("author", { userName: 1, email: 1 })
       .populate("subcategory")
       .populate("images")
-      .populate("Feedback");
+      .populate("feedback")
+      .populate("category");
     // return await this.appfileService.getAllAppFiles();
   }
 
@@ -81,7 +95,7 @@ export default class ProductService implements IProductService {
 
     try {
       return await allProducts
-        .and([
+        .or([
           { "subcategory.name": name, school, price: { $gte: priceMin } },
           { price: { $lte: priceMax } },
         ])
@@ -98,13 +112,16 @@ export default class ProductService implements IProductService {
     files: any,
     userid: string
   ): Promise<Document<any>> {
-    console.log(product);
-    const entity = {
+    const entity: IProductCreate = {
       ...product,
       author: "",
       images: [],
       subcategory: "",
+      category: "",
     };
+
+    const isProduct: boolean = product.subcategoryId != undefined;
+
     // AUTHOR
 
     entity.author = userid;
@@ -132,18 +149,33 @@ export default class ProductService implements IProductService {
     entity.images = imageids;
 
     // SUBCATEGORY
-    const subcategoryExist = await this.subcategoryService.getSubcategory(
-      entity.subcategoryId
-    );
-
-    if (subcategoryExist.length == 0) {
-      imageids.forEach(
-        async (id) => await this.appfileService.deleteAppFile(id)
+    if (isProduct) {
+      const subcategoryExist = await this.subcategoryService.getSubcategory(
+        entity.subcategoryId
       );
-      throw new BadDataException("subcategory does not exist");
-    }
 
-    entity.subcategory = subcategoryExist[0].id;
+      if (subcategoryExist.length == 0) {
+        imageids.forEach(
+          async (id) => await this.appfileService.deleteAppFile(id)
+        );
+        throw new BadDataException("subcategory does not exist");
+      }
+
+      entity.subcategory = subcategoryExist[0].id;
+    } else {
+      // CATEGORY
+      const categoryExist = await this.categoryService.getCategory(
+        entity.categoryId
+      );
+      if (categoryExist.length == 0) {
+        imageids.forEach(
+          async (id) => await this.appfileService.deleteAppFile(id)
+        );
+        throw new BadDataException("category does not exist");
+      }
+
+      entity.category = categoryExist[0].id;
+    }
 
     try {
       const product = await Product.create(entity);
@@ -167,9 +199,10 @@ export default class ProductService implements IProductService {
     product: any,
     userid
   ): Promise<Document<any>> {
-    const entity = {
+    const entity: IProductCreate = {
       ...product,
       subcategory: "",
+      category: "",
       images: [],
     };
 
@@ -184,6 +217,7 @@ export default class ProductService implements IProductService {
 
     if (!exists) throw new NotFoundException("product not found");
 
+    //Product
     const subcategoryExist = await this.subcategoryService.getSubcategory(
       entity.subcategoryId
     );
@@ -192,6 +226,17 @@ export default class ProductService implements IProductService {
       entity.subcategory = exists.subcategoryId;
     } else {
       entity.subcategory = subcategoryExist[0].id;
+    }
+
+    //Service
+    const categoryExist = await this.categoryService.getCategory(
+      entity.categoryId
+    );
+
+    if (categoryExist.length == 0) {
+      entity.category = exists.categoryId;
+    } else {
+      entity.category = categoryExist[0].id;
     }
 
     // IMAGE

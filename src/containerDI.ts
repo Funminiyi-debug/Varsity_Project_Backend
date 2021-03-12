@@ -11,7 +11,6 @@ import {
   CommentService,
   LikeService,
   PostService,
-  ServiceService,
 } from "./services";
 import {
   IUserService,
@@ -23,7 +22,6 @@ import {
   IFeedbackService,
   ICommentService,
   IPostService,
-  IServiceService,
   ILikeService,
 } from "./services/interfaces";
 
@@ -41,6 +39,5 @@ container
   .bind<INotificationService>(Types.INotificationService)
   .to(NotificationService);
 container.bind<IPostService>(Types.IPostService).to(PostService);
-container.bind<IServiceService>(Types.IServiceService).to(ServiceService);
 container.bind<ILikeService>(Types.ILikeService).to(LikeService);
 export { container };

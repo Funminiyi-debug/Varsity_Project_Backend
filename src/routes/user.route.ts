@@ -34,4 +34,9 @@ router.put(
   }
 );
 
+router.delete("/:id", async (req: Request, res: Response) => {
+  const response = await Users.deleteUser(req.params.id);
+
+  return handleResponse(res, response);
+});
 export default router;
