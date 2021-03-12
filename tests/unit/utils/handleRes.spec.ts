@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { handleResponse } from "../../../utils/handleResponse";
+import { handleResponse } from "../../../src/utils/handleResponse";
 
 describe("handle response data to be sent to the client", () => {
   let mockResponse: Partial<Response>;

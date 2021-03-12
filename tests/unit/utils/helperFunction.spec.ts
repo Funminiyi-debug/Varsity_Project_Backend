@@ -1,5 +1,5 @@
-import * as helper from "../../../utils/helperFunction";
-import Jwt from "../../../config/jwtHelper";
+import * as helper from "../../../src/utils/helperFunction";
+import Jwt from "../../../src/config/jwtHelper";
 import mongoose from "mongoose";
 import "jest";
 

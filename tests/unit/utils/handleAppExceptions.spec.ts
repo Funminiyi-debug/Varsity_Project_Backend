@@ -1,4 +1,4 @@
-import handleAppExceptions from "../../../utils/handleAppExceptions";
+import handleAppExceptions from "../../../src/utils/handleAppExceptions";
 import "jest";
 
 describe("handle app exceptions", () => {

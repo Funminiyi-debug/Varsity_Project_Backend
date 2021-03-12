@@ -12,62 +12,32 @@ export default {
         success: false,
         message: "User Not yet Created by Google or Facebook",
       });
-    } else if (!req.session.user.phoneCode) {
+    }
+    if (!req.session.user.phoneCode) {
       return res.status(401).json({
         success: false,
         message: "Please go back to phone registration Stage",
       });
-    } else if (!req.session.user.verifyCode) {
+    }
+    if (!req.session.user.verifyCode) {
       return res.status(401).json({
         success: false,
         message: "User hasn't verified code yet",
       });
-    } else if (req.session.user.verificationStatus === "NotVerified") {
+    }
+    if (req.session.user.verificationStatus === "NotVerified") {
       return res.status(401).json({
         success: false,
         message: "Registration Not Completed",
       });
-    } else if (req.session.user.verificationStatus === "Restricted") {
+    }
+    if (req.session.user.verificationStatus === "Restricted") {
       return res.status(401).json({
         success: false,
         message: "User Restricted from using App",
       });
-    } else {
-      next();
     }
-  },
-  ensureSmsAuth: (req, res, next) => {
-    console.log(req.session.user);
-    if (req.session.user) {
-      next();
-    } else {
-      return res.status(401).json({
-        success: false,
-        message: "User Not yet Created by Google or Facebook",
-      });
-    }
-  },
-  ensureVerifyCodeAuth: (req, res, next) => {
-    console.log(req.session.user);
-    if (req.session.user.verifyCode) {
-      next();
-    } else {
-      return res.status(401).json({
-        success: false,
-        message: "User hasn't verified code yet",
-      });
-    }
-  },
-  ensureSmsCodeAuth: (req, res, next) => {
-    console.log(req.session.user);
-    if (req.session.user.phoneCode) {
-      next();
-    } else {
-      return res.status(401).json({
-        success: false,
-        message: "Please go back to phone registration Stage",
-      });
-    }
+    next();
   },
   authMiddleware: (req, res, next) => {
     const approvedRoutesWithoutAuth = [
