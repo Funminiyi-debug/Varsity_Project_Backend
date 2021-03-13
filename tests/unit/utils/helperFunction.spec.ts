@@ -38,6 +38,5 @@ describe("helper functions", () => {
         expect(decoded).toMatchObject(payload);
       }
     });
-    // const decoded = Jwt.verify(token);
   });
 });

@@ -55,6 +55,10 @@ class ProductsController extends Controller {
 
       return this.response;
     } catch (error) {
+      console.log(
+        "=============================================================================================",
+        error
+      );
       return handleAppExceptions(error);
     }
   }

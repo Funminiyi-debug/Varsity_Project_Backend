@@ -84,3 +84,6 @@ app.use("api/feedbacks", feedbackMoodule);
 server.listen(port, () => {
   console.log(`subscriber connected to ${port}`);
 });
+
+//used in testing Env. for integration testing
+module.exports = server;

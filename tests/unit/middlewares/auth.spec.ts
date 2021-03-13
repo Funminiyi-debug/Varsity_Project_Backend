@@ -229,7 +229,9 @@ describe("JWT Middleware", () => {
 
     let mockRequest: any = {
       originalUrl: "/api/auth/facebook/callback",
-      authorization: `Bearer ${token}`,
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
     };
     ensureAuth(
       mockRequest as any,
@@ -244,8 +246,10 @@ describe("JWT Middleware", () => {
     const token = undefined;
 
     let mockRequest: any = {
-      originalUrl: "/api/auth/facebook/callback",
-      authorization: `Bearer ${token}`,
+      originalUrl: "/api/",
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
     };
     ensureAuth(
       mockRequest as any,
@@ -253,6 +257,6 @@ describe("JWT Middleware", () => {
       nextFunction as NextFunction
     );
 
-    expect(nextFunction).toBeCalled();
+    expect(nextFunction).not.toBeCalled();
   });
 });
