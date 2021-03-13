@@ -38,31 +38,7 @@ class ProductsController extends Controller {
 
   @Get("/")
   @SuccessResponse("200", "OK")
-<<<<<<< HEAD
-  public async getProducts(): Promise<DataResponse> {
-    try {
-      let results = await this.ps.getProducts();
-      this.response = {
-        statusCode: 200,
-        data: formatProduct_Service(results),
-      };
-      return this.response;
-    } catch (error) {
-      return handleAppExceptions(error);
-    }
-  }
-
-  @Post("/filter")
-  @SuccessResponse("201", "Created")
-  @Response<ErrorResponseModel>("400", "Bad Data")
-  @Response<ErrorResponseModel>("409", "product already exists")
-  public async getProductsByCondition(
-    @Body() conditions: IFilter,
-    @Request() res: express.Response
-  ): Promise<DataResponse> {
-=======
   public async getProducts(@Request() query: IFilter): Promise<DataResponse> {
->>>>>>> refs/remotes/origin/master
     try {
       let results: any = {};
       if (query.name != undefined) {
