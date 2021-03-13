@@ -40,14 +40,16 @@ class ProductsController extends Controller {
   // @httpGet("/")
   @SuccessResponse("200", "OK")
   public async getProducts(): Promise<DataResponse> {
-    let results = await this.ps.getProducts();
-
-    this.response = {
-      statusCode: 200,
-      data: formatProduct_Service(results),
-    };
-
-    return this.response;
+    try {
+      let results = await this.ps.getProducts();
+      this.response = {
+        statusCode: 200,
+        data: formatProduct_Service(results),
+      };
+      return this.response;
+    } catch (error) {
+      return handleAppExceptions(error);
+    }
   }
 
   @Post("/filter")
@@ -69,6 +71,10 @@ class ProductsController extends Controller {
         data: results,
       };
     } catch (error) {
+      console.log(
+        "=============================================================================================",
+        error
+      );
       return handleAppExceptions(error);
     }
   }

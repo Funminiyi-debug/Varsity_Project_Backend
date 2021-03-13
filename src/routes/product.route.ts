@@ -15,16 +15,25 @@ const router = express.Router();
 const productService = container.get<ProductService>(Types.IProductService);
 const productController = new ProductsController(productService);
 
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", ProductServiceFilter, async (req: Request, res: Response) => {
   console.log(req.query);
   if (req.query) {
-    return handleResponse(
-      res,
-      await productController.getProductsByCondition(req.query as IFilter, res)
+    console.log("here is the query data", req.query);
+    const response: DataResponse = await productController.getProductsByCondition(
+      req.query as IFilter,
+      res
     );
+    res.status(201).send(response);
+    console.log("which data is this", response);
+    // return handleResponse(
+    //   res,
+    //   await productController.getProductsByCondition(req.query as IFilter, res)
+    // );
   } else {
     const response: DataResponse = await productController.getProducts();
-    return handleResponse(res, response);
+    //return handleResponse(res, response);
+    res.status(201).send(response);
+    console.log(response);
   }
 });
 
