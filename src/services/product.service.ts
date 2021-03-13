@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { Document } from "mongoose";
 import { inject, injectable } from "inversify";
 import { Express } from "express";
@@ -20,6 +21,7 @@ import {
   ServerErrorException,
 } from "../exceptions";
 import UnauthorizedException from "../exceptions/UnauthorizedException";
+import "../utils/flatArray";
 interface IProductCreate extends IProduct {
   author: string;
   images: any[];
@@ -65,11 +67,8 @@ export default class ProductService implements IProductService {
   }
 
   // search for product
-  async getProductsByCondition(
-    query: IFilter,
-    userid: string
-  ): Promise<Document<any>[]> {
-    const {
+  async getProductsByCondition(query: IFilter): Promise<Document<any>[]> {
+    let {
       name,
       school,
       priceMax,
@@ -77,7 +76,8 @@ export default class ProductService implements IProductService {
       sortBy,
       otherFields,
     }: IFilter = query;
-
+    if (otherFields == undefined) otherFields = [];
+    console.log("query from service ", query);
     const sortedData =
       sortBy === "Newest"
         ? { timestamps: "descending" } // or { _id: -1 }
@@ -85,25 +85,31 @@ export default class ProductService implements IProductService {
         ? { price: -1 }
         : sortBy === "Lowest Price"
         ? { price: 1 }
-        : null;
+        : { price: 1 };
 
-    const allProducts = Product.find({ author: userid })
+    const allProducts = Product.find()
       .populate("author")
-      .populate("subcategory")
+      .populate({ path: "subcategory" })
+      .populate({ path: "category" })
       .populate("images")
       .populate("Feedback");
 
-    try {
-      return await allProducts
-        .or([
-          { "subcategory.name": name, school, price: { $gte: priceMin } },
-          { price: { $lte: priceMax } },
-        ])
-        .or(otherFields)
-        .sort(sortedData); // or .sort({_id: -1})
-    } catch (error) {
-      throw ServerErrorException(error);
-    }
+    return await allProducts.or(
+      [
+        // {
+        //   "subcategory.name": name,
+        // },
+        // {
+        //   "category.name": name,
+        // },
+        { school: school },
+        { price: { $gte: priceMin || 0, $lte: priceMax || 1000000000000 } },
+
+        otherFields,
+      ].flat(Infinity)
+    );
+    // .or(otherFields)
+    // .sort(sortedData);
   }
 
   // create product
