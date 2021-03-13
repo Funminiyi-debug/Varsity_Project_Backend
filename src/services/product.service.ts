@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { Document } from "mongoose";
 import { inject, injectable } from "inversify";
 import { Express } from "express";
@@ -22,6 +21,7 @@ import {
 } from "../exceptions";
 import UnauthorizedException from "../exceptions/UnauthorizedException";
 import "../utils/flatArray";
+import checkCondition from "./filters/checkName";
 interface IProductCreate extends IProduct {
   author: string;
   images: any[];
@@ -55,7 +55,7 @@ export default class ProductService implements IProductService {
     return await Product.find({})
       .populate("author", { userName: 1, email: 1 })
       .populate("subcategory")
-      .populate("images")
+      .populate({ path: "images" })
       .populate("feedback")
       .populate("category");
     // return await this.appfileService.getAllAppFiles();
@@ -77,7 +77,6 @@ export default class ProductService implements IProductService {
       otherFields,
     }: IFilter = query;
     if (otherFields == undefined) otherFields = [];
-    console.log("query from service ", query);
     const sortedData =
       sortBy === "Newest"
         ? { timestamps: "descending" } // or { _id: -1 }
@@ -87,30 +86,69 @@ export default class ProductService implements IProductService {
         ? { price: 1 }
         : { price: 1 };
 
-    const allProducts = Product.find()
-      .populate("author")
-      .populate("subcategory")
-      .populate("category")
-      .populate("images")
-      .populate("Feedback");
+    // const allProducts = Product.find()
+    //   .populate("author")
+    //   .populate("subcategory")
+    //   .populate("category")
+    //   .populate("images")
+    //   .populate("Feedback");
 
-    return await allProducts
-      .or(
-        [
-          {
-            "subcategory.name": name,
-          },
-          {
-            "category.name": name,
-          },
-          { school: school },
-          { price: { $gte: priceMin || 0, $lte: priceMax || 1000000000000 } },
+    // return await allProducts
+    //   .or(
+    //     [
+    //       {
+    //         "subcategory.name": name,
+    //       },
+    //       {
+    //         "category.name": name,
+    //       },
+    //       { school: school },
+    //       { price: { $gte: priceMin || 0, $lte: priceMax || 1000000000000 } },
 
-          otherFields,
-        ].flat(Infinity)
-      )
-      // .or(otherFields)
-      .sort(sortedData);
+    //       otherFields,
+    //     ].flat(Infinity)
+    //   )
+    //   // .or(otherFields)
+    //   .sort(sortedData);
+    priceMax = priceMax == undefined ? 100000000000 : priceMax;
+    priceMin = priceMin == undefined ? 0 : priceMin;
+    // school = school || "";
+    // name = name ;
+
+    const allProducts = (await Product.find()
+      .populate({ path: "author", select: "userName email" })
+      .populate({ path: "subcategory", select: "name" })
+      .populate({ path: "category", select: "name" })
+      .populate({ path: "images", select: "mimetype" })
+      .populate("Feedback")) as any[];
+
+    const isProduct = allProducts.filter(
+      (element) =>
+        element.subcategory != null || element.subcategory != undefined
+    );
+    const isService = allProducts.filter(
+      (element) => element.category != null || element.category != undefined
+    );
+
+    const products: Document<any>[] = isProduct.filter(
+      (element) =>
+        checkCondition(element.subcategory.name, name) &&
+        priceMax > element.price &&
+        element.price > priceMin &&
+        checkCondition(element.school, school)
+    );
+
+    const services: Document<any>[] = isService.filter(
+      (element) =>
+        checkCondition(element.category.name, name) &&
+        priceMax > element.price &&
+        element.price > priceMin &&
+        checkCondition(element.school, school)
+    );
+    // @ts-ignore
+    const toReturn = [...products, ...services].flat(Infinity);
+
+    return toReturn;
   }
 
   // create product
