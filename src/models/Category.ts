@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 import CategoryType from "../enums/CategoryType";
 import { ServerErrorException } from "../exceptions";
 import Product from "./Product";
-import Service from "./Service";
 import SubCategory from "./SubCategory";
 
 function requiredIf(model, type) {
@@ -21,10 +20,10 @@ const CategorySchema = new mongoose.Schema({
     },
   ],
 
-  services: [
+  products: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Service",
+      ref: "Product",
       required: function requiredIf() {
         this.categoryType == CategoryType.Services;
       },
@@ -40,7 +39,6 @@ const CategorySchema = new mongoose.Schema({
 
 CategorySchema.pre("remove", function (next) {
   SubCategory.remove({ category: this._id }).exec();
-  Service.remove({ category: this._id }).exec();
   return next();
 });
 

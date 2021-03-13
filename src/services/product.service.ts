@@ -162,6 +162,7 @@ export default class ProductService implements IProductService {
       }
 
       entity.subcategory = subcategoryExist[0].id;
+      delete entity.category;
     } else {
       // CATEGORY
       const categoryExist = await this.categoryService.getCategory(
@@ -175,6 +176,7 @@ export default class ProductService implements IProductService {
       }
 
       entity.category = categoryExist[0].id;
+      delete entity.subcategory;
     }
 
     try {

@@ -18,7 +18,6 @@ const FeedbackSchema = new mongoose.Schema(
     likes: { type: Number, default: 0 },
     replies: [{ type: Schema.Types.ObjectId, ref: "Feedback" }],
     productId: { type: Schema.Types.ObjectId, ref: "Product" },
-    serviceId: { type: Schema.Types.ObjectId, ref: "Service" },
     feedbackId: { type: Schema.Types.ObjectId, ref: "Feedback" },
     feedbacks: [{ type: Schema.Types.ObjectId, ref: "Feedback" }],
   },

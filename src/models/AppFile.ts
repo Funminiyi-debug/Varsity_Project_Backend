@@ -4,7 +4,6 @@ const AppFileSchema = new mongoose.Schema(
   {
     post: { type: mongoose.Schema.Types.ObjectId, ref: "Post" },
     product: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
-    service: { type: mongoose.Schema.Types.ObjectId, ref: "Service" },
     name: { type: String, required: true },
     data: { type: Buffer },
     mimetype: { type: String },

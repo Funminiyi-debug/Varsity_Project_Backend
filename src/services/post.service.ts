@@ -36,7 +36,9 @@ export default class PostService implements IPostService {
 
   async getPosts(): Promise<Document<any>[]> {
     try {
-      return await Post.find({});
+      return await Post.find({})
+        .populate("author", { userName: 1, email: 1 })
+        .populate("images");
     } catch (error) {
       throw ServerErrorException(error);
     }
@@ -44,7 +46,9 @@ export default class PostService implements IPostService {
 
   async getPost(id: string): Promise<Document<any>[]> {
     try {
-      return await Post.find({ _id: id });
+      return await Post.find({ _id: id })
+        .populate("author", { userName: 1, email: 1 })
+        .populate("images");
     } catch (error) {
       throw ServerErrorException(error);
     }
