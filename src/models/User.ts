@@ -70,7 +70,6 @@ UserShema.pre("remove", function (next) {
   AppFile.remove({ postid: this._id }).exec();
   Product.remove({ author: this._id }).exec();
   Feedback.remove({ author: this._id }).exec();
-
   next();
 });
 

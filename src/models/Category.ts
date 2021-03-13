@@ -29,12 +29,6 @@ const CategorySchema = new mongoose.Schema({
       },
     },
   ],
-
-  categoryType: {
-    type: String,
-    enum: [CategoryType.Product, CategoryType.Services],
-    required: true,
-  },
 });
 
 CategorySchema.pre("remove", function (next) {
