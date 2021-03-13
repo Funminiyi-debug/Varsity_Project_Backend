@@ -72,7 +72,6 @@ router.put(
   formatProductSchema,
   validatorMiddleware(identifierSchema, productSchema),
   async (req: Request, res: Response) => {
-    console.log("this ran in the route");
     const response: DataResponse = await productController.updateProduct(
       req.params.id,
       req.body,

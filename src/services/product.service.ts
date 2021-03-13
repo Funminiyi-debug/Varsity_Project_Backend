@@ -89,27 +89,28 @@ export default class ProductService implements IProductService {
 
     const allProducts = Product.find()
       .populate("author")
-      .populate({ path: "subcategory" })
-      .populate({ path: "category" })
+      .populate("subcategory")
+      .populate("category")
       .populate("images")
       .populate("Feedback");
 
-    return await allProducts.or(
-      [
-        // {
-        //   "subcategory.name": name,
-        // },
-        // {
-        //   "category.name": name,
-        // },
-        { school: school },
-        { price: { $gte: priceMin || 0, $lte: priceMax || 1000000000000 } },
+    return await allProducts
+      .or(
+        [
+          {
+            "subcategory.name": name,
+          },
+          {
+            "category.name": name,
+          },
+          { school: school },
+          { price: { $gte: priceMin || 0, $lte: priceMax || 1000000000000 } },
 
-        otherFields,
-      ].flat(Infinity)
-    );
-    // .or(otherFields)
-    // .sort(sortedData);
+          otherFields,
+        ].flat(Infinity)
+      )
+      // .or(otherFields)
+      .sort(sortedData);
   }
 
   // create product
