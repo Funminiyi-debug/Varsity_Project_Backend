@@ -29,7 +29,7 @@ router.post(
   "/",
   [
     validatorMiddleware(identifierSchema, postSchema),
-    upload.array("images", 4),
+    // upload.array("images", 4),
   ],
   async (req: Request, res: Response) => {
     // product.author = res.locals.user;

@@ -24,6 +24,9 @@ const CategorySchema = new mongoose.Schema({
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Product",
+      required: function requiredIf() {
+        this.categoryType == CategoryType.Services;
+      },
     },
   ],
 });

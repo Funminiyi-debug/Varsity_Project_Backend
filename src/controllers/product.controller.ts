@@ -37,8 +37,8 @@ class ProductsController extends Controller {
   };
 
   @Get("/")
-  // @httpGet("/")
   @SuccessResponse("200", "OK")
+<<<<<<< HEAD
   public async getProducts(): Promise<DataResponse> {
     try {
       let results = await this.ps.getProducts();
@@ -60,16 +60,24 @@ class ProductsController extends Controller {
     @Body() conditions: IFilter,
     @Request() res: express.Response
   ): Promise<DataResponse> {
+=======
+  public async getProducts(@Request() query: IFilter): Promise<DataResponse> {
+>>>>>>> refs/remotes/origin/master
     try {
-      const results = await this.ps.getProductsByCondition(
-        conditions,
-        res.locals.userid
-      );
+      let results: any = {};
+      if (query.name != undefined) {
+        results = await this.ps.getProductsByCondition(query);
+        console.log("based on conodition", results);
+      } else {
+        results = await this.ps.getProducts();
+      }
 
-      return {
-        statusCode: 201,
-        data: results,
+      this.response = {
+        statusCode: 200,
+        data: formatProduct_Service(results),
       };
+
+      return this.response;
     } catch (error) {
       console.log(
         "=============================================================================================",
@@ -78,6 +86,28 @@ class ProductsController extends Controller {
       return handleAppExceptions(error);
     }
   }
+
+  // @Get("/filter")
+  // @SuccessResponse("200", "Success")
+  // @Response<ErrorResponseModel>("404", "product not found")
+  // public async getProductsByCondition(
+  //   @Query() conditions: IFilter,
+  //   @Request() res: express.Response
+  // ): Promise<DataResponse> {
+  //   try {
+  //     const results = await this.ps.getProductsByCondition(
+  //       conditions,
+  //       res.locals.userid
+  //     );
+
+  //     return {
+  //       statusCode: 201,
+  //       data: results,
+  //     };
+  //   } catch (error) {
+  //     return handleAppExceptions(error);
+  //   }
+  // }
 
   @Get("{id}")
   @SuccessResponse("200", "OK")

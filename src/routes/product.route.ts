@@ -15,6 +15,7 @@ const router = express.Router();
 const productService = container.get<ProductService>(Types.IProductService);
 const productController = new ProductsController(productService);
 
+<<<<<<< HEAD
 router.get("/", ProductServiceFilter, async (req: Request, res: Response) => {
   console.log(req.query);
   if (req.query) {
@@ -35,6 +36,18 @@ router.get("/", ProductServiceFilter, async (req: Request, res: Response) => {
     res.status(201).send(response);
     console.log(response);
   }
+=======
+router.get("/", async (req: Request, res: Response) => {
+  // if (req.query.name != undefined) {
+  //   return handleResponse(
+  //     res,
+  //     await productController.getProductsByCondition(req.query as IFilter, res)
+  //   );
+  // } else {
+  const response: DataResponse = await productController.getProducts(req.query);
+  return handleResponse(res, response);
+  // }
+>>>>>>> refs/remotes/origin/master
 });
 
 router.get("/:id", async (req: Request, res: Response) => {
@@ -82,7 +95,6 @@ router.put(
   formatProductSchema,
   validatorMiddleware(identifierSchema, productSchema),
   async (req: Request, res: Response) => {
-    console.log("this ran in the route");
     const response: DataResponse = await productController.updateProduct(
       req.params.id,
       req.body,

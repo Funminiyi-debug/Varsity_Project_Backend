@@ -7,7 +7,12 @@ import PostType from "../enums/PostType";
 const OptionsSchema = new mongoose.Schema({
   name: { type: String, required: true },
   votes: { type: Number, default: 0 },
-  voter: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "User" },
+  voters: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      /*required: true,*/ ref: "User",
+    },
+  ],
 });
 
 const PostSchema = new mongoose.Schema(

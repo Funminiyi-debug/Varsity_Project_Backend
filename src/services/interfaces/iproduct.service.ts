@@ -8,10 +8,7 @@ export default interface IProductService {
 
   getProduct(id: string): Promise<Document<any>[]>;
 
-  getProductsByCondition(
-    query: IFilter,
-    userid: string
-  ): Promise<Document<any>[]>;
+  getProductsByCondition(query: IFilter): Promise<Document<any>[]>;
 
   createProduct(
     entity: IProduct,

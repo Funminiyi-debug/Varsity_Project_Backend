@@ -72,7 +72,6 @@ router.delete("/", async (req, res) => {
 
       // method 2
       let deleted = await item.remove();
-      console.log("deleted", deleted);
       return deleted;
     } catch (error) {
       console.log(error);
