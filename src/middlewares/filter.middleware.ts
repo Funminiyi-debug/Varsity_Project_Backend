@@ -8,9 +8,17 @@ const ProductServiceFilter = function (req, res, next) {
     priceMin: data.priceMin,
     priceMax: data.priceMax,
     sortBy: data.sortBy,
+    delivery: data.delivery,
   };
 
-  const allNecessaryKeys = ["name", "school", "priceMin", "priceMax", "sortBy"];
+  const allNecessaryKeys = [
+    "name",
+    "school",
+    "pricemin",
+    "pricemax",
+    "sortby",
+    "delivery",
+  ];
 
   const otherFields = Object.keys(data)
     .map((key) => {
@@ -24,7 +32,7 @@ const ProductServiceFilter = function (req, res, next) {
 
   dbEntity.otherFields = otherFields;
 
-  req.body = { ...dbEntity };
+  req.query = { ...dbEntity };
   next();
 };
 

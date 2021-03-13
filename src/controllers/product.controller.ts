@@ -41,11 +41,12 @@ class ProductsController extends Controller {
   public async getProducts(@Request() query: IFilter): Promise<DataResponse> {
     try {
       let results: any = {};
-      if (query.name != undefined) {
+      console.log(Object.keys(query).length === 0);
+      if (Object.keys(query).length !== 0) {
         results = await this.ps.getProductsByCondition(query);
-        console.log("based on conodition", results);
       } else {
         results = await this.ps.getProducts();
+        console.log(results);
       }
 
       this.response = {

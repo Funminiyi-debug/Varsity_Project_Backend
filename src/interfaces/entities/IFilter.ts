@@ -4,6 +4,7 @@ interface IFilter {
   priceMin?: number;
   priceMax?: number;
   sortBy?: any;
+  delivery?: string;
   otherFields?: any[];
 }
 

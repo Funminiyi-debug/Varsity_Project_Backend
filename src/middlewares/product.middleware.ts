@@ -23,6 +23,7 @@ const formatProductSchema = (req, res, next) => {
     "id",
     "title",
     "subcategoryid",
+    "categoryid",
     "adstatus",
     "school",
     "price",

@@ -15,13 +15,8 @@ const router = express.Router();
 const productService = container.get<ProductService>(Types.IProductService);
 const productController = new ProductsController(productService);
 
-router.get("/", async (req: Request, res: Response) => {
-  // if (req.query.name != undefined) {
-  //   return handleResponse(
-  //     res,
-  //     await productController.getProductsByCondition(req.query as IFilter, res)
-  //   );
-  // } else {
+router.get("/", ProductServiceFilter, async (req: Request, res: Response) => {
+  console.log("req.query from route", req.query);
   const response: DataResponse = await productController.getProducts(req.query);
   return handleResponse(res, response);
   // }
