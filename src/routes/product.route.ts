@@ -10,13 +10,11 @@ import validatorMiddleware from "../middlewares/schemaValidator";
 import { identifierSchema, productSchema } from "../validators";
 import { formatProductSchema } from "../middlewares/product.middleware";
 import { ProductServiceFilter } from "../middlewares/filter.middleware";
-import { IFilter } from "../interfaces/entities";
 const router = express.Router();
 const productService = container.get<ProductService>(Types.IProductService);
 const productController = new ProductsController(productService);
 
 router.get("/", ProductServiceFilter, async (req: Request, res: Response) => {
-  console.log("req.query from route", req.query);
   const response: DataResponse = await productController.getProducts(req.query);
   return handleResponse(res, response);
   // }
@@ -29,18 +27,6 @@ router.get("/:id", async (req: Request, res: Response) => {
 
   return handleResponse(res, response);
 });
-
-// router
-//   .route("/filter")
-//   .post(ProductServiceFilter)
-//   .get(async (req: Request, res: Response) => {
-//     const response: DataResponse = await productController.getProductsByCondition(
-//       req.body,
-//       res
-//     );
-
-//     return handleResponse(res, response);
-// });
 
 router.post(
   "/",

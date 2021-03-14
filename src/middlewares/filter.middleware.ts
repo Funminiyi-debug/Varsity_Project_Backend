@@ -9,6 +9,7 @@ const ProductServiceFilter = function (req, res, next) {
     priceMax: data.priceMax,
     sortBy: data.sortBy,
     delivery: data.delivery,
+    searchTerm: data.searchTerm,
   };
 
   const allNecessaryKeys = [
@@ -18,6 +19,7 @@ const ProductServiceFilter = function (req, res, next) {
     "pricemax",
     "sortby",
     "delivery",
+    "searchterm",
   ];
 
   const otherFields = Object.keys(data)

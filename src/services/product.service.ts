@@ -19,6 +19,7 @@ import {
 } from "../exceptions";
 import "../utils/flatArray";
 import checkCondition, { checkPriceRange } from "../utils/checkCondition";
+import { title } from "process";
 interface IProductCreate extends IProduct {
   author: string;
   images: any[];
@@ -37,6 +38,87 @@ export default class ProductService implements IProductService {
     @inject(Types.ICategoryService)
     private categoryService: ICategoryService
   ) {}
+
+  async searchProduct(searchTerm: string): Promise<Document<any>[]> {
+    const allProducts = await Product.find()
+      .populate({ path: "author", select: "userName email" })
+      .populate({ path: "subcategory", select: "name" })
+      .populate({ path: "category", select: "name" })
+      .populate({ path: "images", select: "mimetype" })
+      .populate("Feedback");
+
+    searchTerm = searchTerm.toLowerCase();
+
+    // function checkConditions(element: any) {
+    //   const condition = Object.keys(element)
+    //     .map((key) => {
+    //       console.log("the key", key);
+    //       if (element[key] == undefined) {
+    //         return false;
+    //       }
+    //       if (key != "otherFields") {
+    //         if (typeof element[key] != "object") {
+    //           return element[key].toString().toLowerCase().includes(searchTerm);
+    //         } else {
+    //           return Object.keys(element[key]).map((item) => {
+    //             return element[key][item]
+    //               .toString()
+    //               .toLowerCase()
+    //               .includes(searchTerm);
+    //           });
+    //         }
+    //       } else {
+    //         return element[key].map((field) => {
+    //           Object.keys(field).map((key2) => {
+    //             return field[key2].toLowerCase().includes(searchTerm);
+    //           });
+    //         });
+    //       }
+    //     })
+    //     .flat(Infinity)
+    //     .some((item) => item == true);
+
+    //   return condition;
+    // }
+
+    function checkConditions(element: any) {
+      const {
+        subcategory,
+        category,
+        author,
+        school,
+        price,
+        otherFields,
+      } = element;
+      let isProduct = false;
+      let isService = false;
+      if (element.subcategory != undefined) {
+        isProduct = true;
+      }
+      if (element.category != undefined) {
+        isService = true;
+      }
+
+      const others = Object.values(otherFields);
+
+      return (
+        (isProduct && subcategory.name.toLowerCase().includes(searchTerm)) ||
+        (isService && category.name.toLowerCase().includes(searchTerm)) ||
+        (author != null &&
+          author.userName.toLowerCase().includes(searchTerm)) ||
+        school.toLowerCase().includes(searchTerm) ||
+        price.toLowerCase().includes(searchTerm) ||
+        otherFields.some((item) =>
+          Object.values(item).some((val) =>
+            val.toString().toLowerCase().includes(searchTerm)
+          )
+        )
+      );
+    }
+    const toReturn = allProducts.filter(checkConditions);
+
+    return toReturn;
+  }
   async addFeedbackToProduct(
     productid: string,
     feedbackids: string,
