@@ -19,7 +19,7 @@ const FeedbackSchema = new mongoose.Schema(
   {
     message: { type: String, required: true },
     feedbackStatus: {
-      type: Number,
+      type: String,
       enum: [
         FeedbackStatus.Positive,
         FeedbackStatus.Neutral,

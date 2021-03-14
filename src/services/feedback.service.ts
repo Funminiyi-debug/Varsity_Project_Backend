@@ -15,22 +15,34 @@ export default class FeedbackService implements IFeedbackService {
     feedbackid: string,
     userid: string
   ): Promise<Document<any>> {
-    const feedback: any = Feedback.findById(feedbackid);
+    const feedback: any = await Feedback.findById(feedbackid);
 
     if (!feedback) throw new NotFoundException("feedback not found");
 
     const like = { voter: userid };
+
+    const exists = feedback.likes
+      // .map((element) => Object.values(element))
+      .some((val) => val["voter"] == userid);
+
+    if (exists) throw new ConflictException("User has already liked feedback");
     feedback.likes = [...feedback.likes, like];
 
     return await feedback.save();
   }
   async getFeedbacks(): Promise<Document<any>[]> {
-    return await Feedback.find({});
+    return await Feedback.find({})
+      .populate({ path: "author", select: "userName email" })
+      .populate({ path: "product", select: " school title category" })
+      .populate("replies");
   }
 
   async getFeedback(id: string): Promise<Document<any>[]> {
     try {
-      return await Feedback.find({ _id: id });
+      return await Feedback.find({ _id: id })
+        .populate({ path: "author", select: "userName email" })
+        .populate({ path: "product", select: " school title category" })
+        .populate("replies");
     } catch (error) {
       console.log(error);
       throw new ServerErrorException(error);
@@ -59,7 +71,10 @@ export default class FeedbackService implements IFeedbackService {
       entity.author = userid;
       entity.product = request.productid;
 
-      const feedback = await Feedback.create(entity);
+      const feedback = await (await Feedback.create(entity))
+        .populate({ path: "author", select: "userName email" })
+        .populate({ path: "product", select: " school title category" })
+        .populate("replies");
 
       if (request.feedbackid != undefined) {
         await Feedback.findByIdAndUpdate(entity.feedback, {

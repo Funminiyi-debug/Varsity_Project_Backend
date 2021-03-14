@@ -48,7 +48,7 @@ router.put(
     return handleResponse(res, response);
   }
 );
-router.put("like-feedback/:id", async (req: Request, res: Response) => {
+router.put("/like-feedback/:id", async (req: Request, res: Response) => {
   const response: DataResponse = await feedbackController.likeFeedback(
     req.params.id,
     res.locals.userid

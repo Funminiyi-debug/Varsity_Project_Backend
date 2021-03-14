@@ -135,7 +135,7 @@ class FeedbackController extends Controller {
 
   @Put("/like-feedback/{feedbackid}")
   @SuccessResponse("200", "Success")
-  @SuccessResponse("404", "Not found")
+  @Response<ErrorResponseModel>("404", "Not found")
   public async likeFeedback(
     @Path() feedbackid: string,
     @Request() userid: string

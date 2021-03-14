@@ -85,7 +85,7 @@ app.use("/api/products", productModule);
 app.use("/api/subcategories", subcategoryModule);
 app.use("/api/users", userModule);
 app.use("/api/posts", postModule);
-app.use("api/feedbacks", feedbackMoodule);
+app.use("/api/feedbacks", feedbackMoodule);
 //io.on("connection", require("./routes/socket"));
 
 server.listen(port, () => {

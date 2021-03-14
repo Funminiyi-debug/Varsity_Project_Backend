@@ -66,6 +66,7 @@ export default {
     const approved = approvedRoutesWithoutAuth.find((routes) =>
       req.originalUrl.startsWith(routes)
     );
+    res.locals.url = req.originalUrl;
     if (approved != undefined) {
       next();
       return;
