@@ -1,15 +1,15 @@
 import { IProduct, IFilter } from "../interfaces/entities";
 const ProductServiceFilter = function (req, res, next) {
-  const data: IFilter = req.query;
+  const data = req.query;
 
   const dbEntity: IFilter = {
     name: data.name,
     school: data.school,
-    priceMin: data.priceMin,
-    priceMax: data.priceMax,
-    sortBy: data.sortBy,
+    priceMin: data.pricemin,
+    priceMax: data.pricemax,
+    sortBy: data.sortby,
     delivery: data.delivery,
-    searchTerm: data.searchTerm,
+    searchTerm: data.searchterm,
   };
 
   const allNecessaryKeys = [

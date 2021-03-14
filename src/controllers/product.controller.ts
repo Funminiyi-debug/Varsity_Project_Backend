@@ -39,12 +39,14 @@ class ProductsController extends Controller {
   @Get("/")
   @SuccessResponse("200", "OK")
   public async getProducts(@Request() query: IFilter): Promise<DataResponse> {
+    // @Query() const searchTerm = query.searchTerm;
     try {
       let results: any = {};
 
       if (query.searchTerm != undefined) {
         results = await this.ps.searchProduct(query.searchTerm);
       } else if (Object.keys(query).length !== 0) {
+        console.log("this also ran");
         results = await this.ps.getProductsByCondition(query);
       } else {
         results = await this.ps.getProducts();
@@ -58,10 +60,7 @@ class ProductsController extends Controller {
 
       return this.response;
     } catch (error) {
-      console.log(
-        "=============================================================================================",
-        error
-      );
+      console.log(error);
       return handleAppExceptions(error);
     }
   }

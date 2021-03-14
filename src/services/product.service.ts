@@ -44,7 +44,7 @@ export default class ProductService implements IProductService {
       .populate({ path: "author", select: "userName email" })
       .populate({ path: "subcategory", select: "name" })
       .populate({ path: "category", select: "name" })
-      .populate({ path: "images", select: "mimetype" })
+      .populate({ path: "images" })
       .populate("Feedback");
 
     searchTerm = searchTerm.toLowerCase();
@@ -98,8 +98,6 @@ export default class ProductService implements IProductService {
       if (element.category != undefined) {
         isService = true;
       }
-
-      const others = Object.values(otherFields);
 
       return (
         (isProduct && subcategory.name.toLowerCase().includes(searchTerm)) ||
@@ -177,7 +175,7 @@ export default class ProductService implements IProductService {
       .populate({ path: "author", select: "userName email" })
       .populate({ path: "subcategory", select: "name" })
       .populate({ path: "category", select: "name" })
-      .populate({ path: "images", select: "mimetype" })
+      .populate({ path: "images" })
       .populate("Feedback")
       .sort(sortedData)) as any[];
 
