@@ -11,6 +11,19 @@ import {
 
 @injectable()
 export default class FeedbackService implements IFeedbackService {
+  async likeFeedback(
+    feedbackid: string,
+    userid: string
+  ): Promise<Document<any>> {
+    const feedback: any = Feedback.findById(feedbackid);
+
+    if (!feedback) throw new NotFoundException("feedback not found");
+
+    const like = { voter: userid };
+    feedback.likes = [...feedback.likes, like];
+
+    return await feedback.save();
+  }
   async getFeedbacks(): Promise<Document<any>[]> {
     return await Feedback.find({});
   }
@@ -25,13 +38,36 @@ export default class FeedbackService implements IFeedbackService {
   }
 
   async createFeedback(request: IFeed, userid: string): Promise<Document<any>> {
-    const { productid, serviceid } = request;
-    if (productid && serviceid) throw new ConflictException("ids conflict");
-    else if (productid) delete request.serviceid;
-    else if (serviceid) delete request.productid;
+    const { productid } = request;
+    interface ICreateFeed extends IFeed {
+      author: string;
+      product: string;
+      feedback: string;
+    }
     try {
-      const feedback = new Feedback(request);
-      return await feedback.save();
+      const entity: ICreateFeed = {
+        ...request,
+        author: "",
+        product: "",
+        feedback: undefined,
+      };
+
+      if (request.feedbackid != undefined) {
+        entity.feedback = request.feedbackid;
+      }
+
+      entity.author = userid;
+      entity.product = request.productid;
+
+      const feedback = await Feedback.create(entity);
+
+      if (request.feedbackid != undefined) {
+        await Feedback.findByIdAndUpdate(entity.feedback, {
+          $push: { replies: feedback._id },
+        });
+      }
+
+      return feedback;
     } catch (error) {
       console.log(error);
       throw ServerErrorException(error);

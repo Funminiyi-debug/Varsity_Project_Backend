@@ -52,7 +52,7 @@ const ProductSchema = new mongoose.Schema(
 
 ProductSchema.pre("remove", async function () {
   AppFile.remove({ subcategoryId: this._id }).exec();
-  Feedback.remove({ productId: this._id }).exec();
+  Feedback.remove({ product: this._id }).exec();
 });
 
 const Product = mongoose.model("Product", ProductSchema);

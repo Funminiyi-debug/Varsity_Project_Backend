@@ -46,11 +46,9 @@ class ProductsController extends Controller {
       if (query.searchTerm != undefined) {
         results = await this.ps.searchProduct(query.searchTerm);
       } else if (Object.keys(query).length !== 0) {
-        console.log("this also ran");
         results = await this.ps.getProductsByCondition(query);
       } else {
         results = await this.ps.getProducts();
-        console.log(results);
       }
 
       this.response = {

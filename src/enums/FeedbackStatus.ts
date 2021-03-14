@@ -1,7 +1,7 @@
 enum FeedbackStatus {
-  Mad,
-  Indifferent,
-  Happy,
+  Negative,
+  Neutral,
+  Positive,
 }
 
 export default FeedbackStatus;
