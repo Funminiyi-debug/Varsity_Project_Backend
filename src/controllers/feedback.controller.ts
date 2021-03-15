@@ -65,24 +65,15 @@ class FeedbackController extends Controller {
         };
       }
     } catch (error) {
-      console.log(error.message);
-      if (error.message.search("Cast") != -1) {
-        return {
-          statusCode: 404,
-          message: "Not Found",
-        };
-      }
-      return {
-        statusCode: 500,
-        message: error.message,
-      };
+      console.log(error);
+      return handleAppExceptions(error);
     }
   }
 
   @Post("/")
   @SuccessResponse("201", "Created")
   @Response<ErrorResponseModel>("400", "Bad Data")
-  @Response<ErrorResponseModel>("409", "product already exists")
+  @Response<ErrorResponseModel>("409", "feedback already exists")
   public async createFeedback(
     @Body() feedback: IFeed,
     @Request() res: express.Response
@@ -139,6 +130,26 @@ class FeedbackController extends Controller {
         statusCode: 500,
         message: "Something happened",
       };
+    }
+  }
+
+  @Put("/like-feedback/{feedbackid}")
+  @SuccessResponse("200", "Success")
+  @Response<ErrorResponseModel>("404", "Not found")
+  public async likeFeedback(
+    @Path() feedbackid: string,
+    @Request() userid: string
+  ): Promise<DataResponse> {
+    try {
+      const results = await this.fb.likeFeedback(feedbackid, userid);
+
+      return {
+        statusCode: 200,
+        data: results,
+      };
+    } catch (error) {
+      console.log(error);
+      return handleAppExceptions(error);
     }
   }
 

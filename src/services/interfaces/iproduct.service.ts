@@ -25,6 +25,8 @@ export default interface IProductService {
 
   deleteProduct(id: string, userEmail: string): Promise<Document<any>>;
 
+  searchProduct(searchTerm: string): Promise<Document<any>[]>;
+
   addFeedbackToProduct(
     productid: string,
     feedbackids: string,

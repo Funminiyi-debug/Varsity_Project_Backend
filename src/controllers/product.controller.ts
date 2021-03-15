@@ -39,11 +39,14 @@ class ProductsController extends Controller {
   @Get("/")
   @SuccessResponse("200", "OK")
   public async getProducts(@Request() query: IFilter): Promise<DataResponse> {
+    // @Query() const searchTerm = query.searchTerm;
     try {
       let results: any = {};
-      if (query.name != undefined) {
+
+      if (query.searchTerm != undefined) {
+        results = await this.ps.searchProduct(query.searchTerm);
+      } else if (Object.keys(query).length !== 0) {
         results = await this.ps.getProductsByCondition(query);
-        console.log("based on conodition", results);
       } else {
         results = await this.ps.getProducts();
       }
@@ -55,31 +58,13 @@ class ProductsController extends Controller {
 
       return this.response;
     } catch (error) {
+<<<<<<< HEAD
+=======
+      console.log(error);
+>>>>>>> c8a83c24e1a90dd0288643010384be84331ee0c2
       return handleAppExceptions(error);
     }
   }
-
-  // @Get("/filter")
-  // @SuccessResponse("200", "Success")
-  // @Response<ErrorResponseModel>("404", "product not found")
-  // public async getProductsByCondition(
-  //   @Query() conditions: IFilter,
-  //   @Request() res: express.Response
-  // ): Promise<DataResponse> {
-  //   try {
-  //     const results = await this.ps.getProductsByCondition(
-  //       conditions,
-  //       res.locals.userid
-  //     );
-
-  //     return {
-  //       statusCode: 201,
-  //       data: results,
-  //     };
-  //   } catch (error) {
-  //     return handleAppExceptions(error);
-  //   }
-  // }
 
   @Get("{id}")
   @SuccessResponse("200", "OK")

@@ -70,6 +70,13 @@ app.use(
 );
 // REDIS
 app.use(authMiddleware.authMiddleware);
+
+app.use(function (req, res, next) {
+  for (var key in req.query) {
+    req.query[key.toLowerCase()] = req.query[key];
+  }
+  next();
+});
 // app.use(redisMiddleware);
 
 app.use("/api/auth", authModule);
@@ -78,7 +85,7 @@ app.use("/api/products", productModule);
 app.use("/api/subcategories", subcategoryModule);
 app.use("/api/users", userModule);
 app.use("/api/posts", postModule);
-app.use("api/feedbacks", feedbackMoodule);
+app.use("/api/feedbacks", feedbackMoodule);
 //io.on("connection", require("./routes/socket"));
 
 server.listen(port, () => {

@@ -15,4 +15,6 @@ export default interface IFeedbackService {
   ): Promise<Document<any>>;
 
   deleteFeedback(id: string, userid: string): Promise<Document<any>>;
+
+  likeFeedback(feedbackid: string, userid: string): Promise<Document<any>>;
 }

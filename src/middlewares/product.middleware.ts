@@ -23,7 +23,11 @@ const formatProductSchema = (req, res, next) => {
     "id",
     "title",
     "subcategoryid",
+<<<<<<< HEAD
     "categoryId",
+=======
+    "categoryid",
+>>>>>>> c8a83c24e1a90dd0288643010384be84331ee0c2
     "adstatus",
     "school",
     "price",

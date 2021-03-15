@@ -76,7 +76,7 @@ export default class PostService implements IPostService {
 
     if (entity.postType == PostType.Poll) {
       const exists = await Post.find({
-        question: entity.title,
+        question: entity.question,
         author: entity.author,
         sector: entity.sector,
       });

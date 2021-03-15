@@ -1,6 +1,5 @@
 import { Document } from "mongoose";
 import { inject, injectable } from "inversify";
-import { Express } from "express";
 import {
   IProductService,
   IUserService,
@@ -12,16 +11,15 @@ import {
 import Product from "../models/Product";
 import Types from "../types";
 import { IProduct, IFilter } from "../interfaces/entities";
-import IAppFile from "../interfaces/entities/IAppFile";
 import {
   BadDataException,
   ConflictException,
   NotFoundException,
   ServerErrorException,
 } from "../exceptions";
-import UnauthorizedException from "../exceptions/UnauthorizedException";
 import "../utils/flatArray";
-import checkCondition from "./filters/checkName";
+import checkCondition, { checkPriceRange } from "../utils/checkCondition";
+import { title } from "process";
 interface IProductCreate extends IProduct {
   author: string;
   images: any[];
@@ -40,6 +38,85 @@ export default class ProductService implements IProductService {
     @inject(Types.ICategoryService)
     private categoryService: ICategoryService
   ) {}
+
+  async searchProduct(searchTerm: string): Promise<Document<any>[]> {
+    const allProducts = await Product.find()
+      .populate({ path: "author", select: "userName email" })
+      .populate({ path: "subcategory", select: "name" })
+      .populate({ path: "category", select: "name" })
+      .populate({ path: "images" })
+      .populate("Feedback");
+
+    searchTerm = searchTerm.toLowerCase();
+
+    // function checkConditions(element: any) {
+    //   const condition = Object.keys(element)
+    //     .map((key) => {
+    //       console.log("the key", key);
+    //       if (element[key] == undefined) {
+    //         return false;
+    //       }
+    //       if (key != "otherFields") {
+    //         if (typeof element[key] != "object") {
+    //           return element[key].toString().toLowerCase().includes(searchTerm);
+    //         } else {
+    //           return Object.keys(element[key]).map((item) => {
+    //             return element[key][item]
+    //               .toString()
+    //               .toLowerCase()
+    //               .includes(searchTerm);
+    //           });
+    //         }
+    //       } else {
+    //         return element[key].map((field) => {
+    //           Object.keys(field).map((key2) => {
+    //             return field[key2].toLowerCase().includes(searchTerm);
+    //           });
+    //         });
+    //       }
+    //     })
+    //     .flat(Infinity)
+    //     .some((item) => item == true);
+
+    //   return condition;
+    // }
+
+    function checkConditions(element: any) {
+      const {
+        subcategory,
+        category,
+        author,
+        school,
+        price,
+        otherFields,
+      } = element;
+      let isProduct = false;
+      let isService = false;
+      if (element.subcategory != undefined) {
+        isProduct = true;
+      }
+      if (element.category != undefined) {
+        isService = true;
+      }
+
+      return (
+        (isProduct && subcategory.name.toLowerCase().includes(searchTerm)) ||
+        (isService && category.name.toLowerCase().includes(searchTerm)) ||
+        (author != null &&
+          author.userName.toLowerCase().includes(searchTerm)) ||
+        school.toLowerCase().includes(searchTerm) ||
+        price.toLowerCase().includes(searchTerm) ||
+        otherFields.some((item) =>
+          Object.values(item).some((val) =>
+            val.toString().toLowerCase().includes(searchTerm)
+          )
+        )
+      );
+    }
+    const toReturn = allProducts.filter(checkConditions);
+
+    return toReturn;
+  }
   async addFeedbackToProduct(
     productid: string,
     feedbackids: string,
@@ -74,43 +151,22 @@ export default class ProductService implements IProductService {
       priceMax,
       priceMin,
       sortBy,
+      delivery,
       otherFields,
     }: IFilter = query;
+
     if (otherFields == undefined) otherFields = [];
     const sortedData =
       sortBy === "Newest"
         ? { timestamps: "descending" } // or { _id: -1 }
         : sortBy === "Highest Price"
-        ? { price: -1 }
-        : sortBy === "Lowest Price"
         ? { price: 1 }
-        : { price: 1 };
+        : sortBy === "Lowest Price"
+        ? { price: -1 }
+        : { timestamps: "descending" };
 
-    // const allProducts = Product.find()
-    //   .populate("author")
-    //   .populate("subcategory")
-    //   .populate("category")
-    //   .populate("images")
-    //   .populate("Feedback");
-
-    // return await allProducts
-    //   .or(
-    //     [
-    //       {
-    //         "subcategory.name": name,
-    //       },
-    //       {
-    //         "category.name": name,
-    //       },
-    //       { school: school },
-    //       { price: { $gte: priceMin || 0, $lte: priceMax || 1000000000000 } },
-
-    //       otherFields,
-    //     ].flat(Infinity)
-    //   )
-    //   // .or(otherFields)
-    //   .sort(sortedData);
-    priceMax = priceMax == undefined ? 100000000000 : priceMax;
+    sortBy = sortBy == undefined ? "" : sortBy;
+    priceMax = priceMax == undefined ? Number.MAX_SAFE_INTEGER : priceMax;
     priceMin = priceMin == undefined ? 0 : priceMin;
     // school = school || "";
     // name = name ;
@@ -119,8 +175,9 @@ export default class ProductService implements IProductService {
       .populate({ path: "author", select: "userName email" })
       .populate({ path: "subcategory", select: "name" })
       .populate({ path: "category", select: "name" })
-      .populate({ path: "images", select: "mimetype" })
-      .populate("Feedback")) as any[];
+      .populate({ path: "images" })
+      .populate("Feedback")
+      .sort(sortedData)) as any[];
 
     const isProduct = allProducts.filter(
       (element) =>
@@ -133,22 +190,54 @@ export default class ProductService implements IProductService {
     const products: Document<any>[] = isProduct.filter(
       (element) =>
         checkCondition(element.subcategory.name, name) &&
-        priceMax > element.price &&
-        element.price > priceMin &&
-        checkCondition(element.school, school)
+        checkPriceRange(element.price, priceMax, priceMin) &&
+        checkCondition(element.school, school) &&
+        checkCondition(element.delivery, delivery)
     );
 
     const services: Document<any>[] = isService.filter(
       (element) =>
         checkCondition(element.category.name, name) &&
-        priceMax > element.price &&
-        element.price > priceMin &&
-        checkCondition(element.school, school)
+        checkPriceRange(element.price, priceMax, priceMin) &&
+        checkCondition(element.school, school) &&
+        checkCondition(element.delivery, delivery)
     );
-    // @ts-ignore
-    const toReturn = [...products, ...services].flat(Infinity);
 
-    return toReturn;
+    let toReturn = [...products, ...services].flat(Infinity);
+
+    // check other conditions
+    if (otherFields.length > 0) {
+      toReturn = toReturn.filter((element: any) => {
+        const check: boolean = element.otherFields
+          .map((item) => {
+            const condition = Object.keys(item).every((key) => {
+              const position = otherFields.findIndex((field) => {
+                return Object.keys(field).every((key2) => {
+                  return key2 == key;
+                });
+              });
+              if (position >= 0) {
+                return checkCondition(
+                  item[key].toString(),
+                  otherFields[position][key]
+                );
+              }
+
+              return false;
+            });
+            return condition;
+          })
+          .some((element) => element == true);
+
+        return check;
+      });
+    }
+
+    return toReturn.sort((a: any, b: any) => {
+      if (sortBy.toLowerCase() == "lowest price") return a.price - b.price;
+      if (sortBy.toLowerCase() == "highest price") return b.price - a.price;
+      return a.updatedAt > b.updatedAt ? 1 : -1;
+    });
   }
 
   // create product
