@@ -6,11 +6,7 @@ export default interface IPostService {
 
   getPost(id: string): Promise<Document<any>[]>;
 
-  createPost(
-    entity: IPost,
-    files: any[],
-    userid: string
-  ): Promise<Document<any>>;
+  createPost(entity: IPost, files: any, userid: string): Promise<Document<any>>;
 
   updatePost(id: string, entity: any, userid: string): Promise<Document<any>>;
 

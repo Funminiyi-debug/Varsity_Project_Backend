@@ -17,6 +17,7 @@ export default class PostService implements IPostService {
     @inject(Types.IUserService) private userService: IUserService,
     @inject(Types.IFeedbackService) private appfileService: IAppFileService
   ) {}
+  // vote on poll type posts
   async votePoll(
     postid: string,
     userid: string,
@@ -38,6 +39,8 @@ export default class PostService implements IPostService {
 
     return await post.save();
   }
+
+  // like post
   async likePost(postid: string, userid: string): Promise<Document<any>> {
     const post: any = await Post.findById(postid);
 
@@ -53,6 +56,8 @@ export default class PostService implements IPostService {
 
     return await post.save();
   }
+
+  // share post
   async sharePost(postid: string) {
     const post: any = await Post.findById(postid);
 
@@ -63,6 +68,7 @@ export default class PostService implements IPostService {
     return await post.save();
   }
 
+  //add comment to post
   async addCommentToPost(commentid: string, postid: string): Promise<boolean> {
     let post = (await Post.findById(postid)) as any;
     if (post) {
@@ -74,6 +80,7 @@ export default class PostService implements IPostService {
     return false;
   }
 
+  //get all posts
   async getPosts(): Promise<Document<any>[]> {
     try {
       return await Post.find({})
@@ -85,6 +92,7 @@ export default class PostService implements IPostService {
     }
   }
 
+  // get one post by id
   async getPost(id: string): Promise<Document<any>[]> {
     try {
       return await Post.find({ _id: id })
@@ -96,6 +104,7 @@ export default class PostService implements IPostService {
     }
   }
 
+  // create new post
   async createPost(
     post: IPost,
     files: any[],
@@ -155,6 +164,7 @@ export default class PostService implements IPostService {
     }
   }
 
+  // update previous posts
   async updatePost(
     postid: string,
     post: any,
@@ -183,6 +193,7 @@ export default class PostService implements IPostService {
     }
   }
 
+  // delete post
   async deletePost(id: string, userid: string): Promise<Document<any>> {
     try {
       const post = (await Post.find({ _id: id, author: userid }))[0];

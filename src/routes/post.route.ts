@@ -28,13 +28,14 @@ router.get("/:id", async (req: Request, res: Response) => {
 router.post(
   "/",
   [
+    upload.array("images", 4),
     validatorMiddleware(identifierSchema, postSchema),
-    // upload.array("images", 4),
   ],
   async (req: Request, res: Response) => {
     // product.author = res.locals.user;
     const response: DataResponse = await postController.createPost(
       req.body,
+      req,
       res
     );
 
@@ -42,6 +43,7 @@ router.post(
   }
 );
 
+// update all posts
 router.put(
   "/:id",
   validatorMiddleware(identifierSchema, postSchema),
@@ -56,6 +58,7 @@ router.put(
   }
 );
 
+// delete post
 router.delete(
   "/:id",
   validatorMiddleware(identifierSchema, postSchema),
@@ -67,5 +70,33 @@ router.delete(
     return handleResponse(res, response);
   }
 );
+
+// vote poll
+router.patch("/vote-poll/:id", async (req: Request, res: Response) => {
+  const response: DataResponse = await postController.votePoll(
+    req.params.id,
+    res.locals.userid,
+    req.body
+  );
+
+  return handleResponse(res, response);
+});
+
+// like  post
+router.patch("/like-post/:id", async (req: Request, res: Response) => {
+  const response: DataResponse = await postController.likePost(
+    req.params.id,
+    res.locals.userid
+  );
+
+  return handleResponse(res, response);
+});
+
+// like  post
+router.patch("/share-post/:id", async (req: Request, res: Response) => {
+  const response: DataResponse = await postController.sharePost(req.params.id);
+
+  return handleResponse(res, response);
+});
 
 export default router;

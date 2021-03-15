@@ -20,9 +20,11 @@ import { DataResponse } from "../interfaces/DataResponse";
 import ErrorResponseModel from "../interfaces/ErrorResponseModel";
 import Types from "../types";
 import express from "express";
-import { IAppFileService, IPostService } from "../services/interfaces";
+import { IPostService } from "../services/interfaces";
 import { IPost } from "../interfaces/entities";
 import handleAppExceptions from "../utils/handleAppExceptions";
+import { Params, Patch } from "@decorators/express";
+import { getPositionOfLineAndCharacter } from "typescript";
 
 @Route("/posts")
 @Tags("Post")
@@ -88,11 +90,16 @@ class PostController extends Controller {
   @Response<ErrorResponseModel>("409", "product already exists")
   public async createPost(
     @Body() post: IPost,
+    @Request() req: express.Request,
     @Request() res: express.Response
   ): Promise<DataResponse> {
     // await this.handleFile(req);
     try {
-      const results = await this.ps.createPost(post, res.locals.userid);
+      const results = await this.ps.createPost(
+        post,
+        req.files,
+        res.locals.userid
+      );
 
       return {
         statusCode: 201,
@@ -169,6 +176,57 @@ class PostController extends Controller {
         statusCode: 500,
         message: "Something happened",
       };
+    }
+  }
+
+  @Patch("postid")
+  @SuccessResponse("200", "OK")
+  @Response<ErrorResponseModel>("404", "Poll not found")
+  public async votePoll(
+    @Params("postid") postid: string,
+    @Request() userid: string,
+    @Body() optionid: string
+  ): Promise<DataResponse> {
+    try {
+      const results = await this.ps.votePoll(postid, userid, optionid);
+
+      return { statusCode: 200, data: results, message: "Vote Succeeded" };
+    } catch (error) {
+      console.log(error);
+      return handleAppExceptions(error);
+    }
+  }
+
+  @Patch("postid")
+  @SuccessResponse("200", "OK")
+  @Response<ErrorResponseModel>("404", "Post not found")
+  public async likePost(
+    @Params("postid") postid: string,
+    @Request() userid: string
+  ): Promise<DataResponse> {
+    try {
+      const results = await this.ps.likePost(postid, userid);
+
+      return { statusCode: 200, data: results, message: "Post has been liked" };
+    } catch (error) {
+      console.log(error);
+      return handleAppExceptions(error);
+    }
+  }
+
+  @Patch("postid")
+  @SuccessResponse("200", "OK")
+  @Response<ErrorResponseModel>("404", "Post not found")
+  public async sharePost(
+    @Params("postid") postid: string
+  ): Promise<DataResponse> {
+    try {
+      const results = await this.ps.sharePost(postid);
+
+      return { statusCode: 200, data: results };
+    } catch (error) {
+      console.log(error);
+      return handleAppExceptions(error);
     }
   }
 
