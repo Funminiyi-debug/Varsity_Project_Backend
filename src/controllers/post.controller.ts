@@ -15,6 +15,7 @@ import {
   Hidden,
   Query,
   Delete,
+  Patch,
 } from "tsoa";
 import { DataResponse } from "../interfaces/DataResponse";
 import ErrorResponseModel from "../interfaces/ErrorResponseModel";
@@ -23,8 +24,6 @@ import express from "express";
 import { IPostService } from "../services/interfaces";
 import { IPost } from "../interfaces/entities";
 import handleAppExceptions from "../utils/handleAppExceptions";
-import { Params, Patch } from "@decorators/express";
-import { getPositionOfLineAndCharacter } from "typescript";
 
 @Route("/posts")
 @Tags("Post")
@@ -179,11 +178,11 @@ class PostController extends Controller {
     }
   }
 
-  @Patch("postid")
+  @Patch("/vote-poll/{postid}")
   @SuccessResponse("200", "OK")
   @Response<ErrorResponseModel>("404", "Poll not found")
   public async votePoll(
-    @Params("postid") postid: string,
+    @Path("postid") postid: string,
     @Request() userid: string,
     @Body() optionid: string
   ): Promise<DataResponse> {
@@ -197,11 +196,11 @@ class PostController extends Controller {
     }
   }
 
-  @Patch("postid")
+  @Patch("/like-post/{postid}")
   @SuccessResponse("200", "OK")
   @Response<ErrorResponseModel>("404", "Post not found")
   public async likePost(
-    @Params("postid") postid: string,
+    @Path("postid") postid: string,
     @Request() userid: string
   ): Promise<DataResponse> {
     try {
@@ -214,11 +213,11 @@ class PostController extends Controller {
     }
   }
 
-  @Patch("postid")
+  @Patch("/share-post/{postid}")
   @SuccessResponse("200", "OK")
   @Response<ErrorResponseModel>("404", "Post not found")
   public async sharePost(
-    @Params("postid") postid: string
+    @Path("postid") postid: string
   ): Promise<DataResponse> {
     try {
       const results = await this.ps.sharePost(postid);

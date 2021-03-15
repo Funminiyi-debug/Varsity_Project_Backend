@@ -15,7 +15,6 @@ import PostType from "../enums/PostType";
 @injectable()
 export default class PostService implements IPostService {
   constructor(
-    @inject(Types.IUserService) private userService: IUserService,
     @inject(Types.IFeedbackService) private appfileService: IAppFileService
   ) {}
   // vote on poll type posts
@@ -25,21 +24,52 @@ export default class PostService implements IPostService {
     optionid: string
   ): Promise<Document<any>> {
     const post: any = await Post.findById(postid);
+
+    let voters = [];
+    let alreadyExist = false;
+    const dummy = post.options.map(async (element) => {
+      if (element._id.equals(optionid)) {
+        const alreadyExists = element.voters.some((val) => val == userid);
+        voters = element.voters;
+
+        alreadyExist = alreadyExists;
+
+        // element.votes += 1;
+
+        // element.voters = [...element.voters, userid];
+      }
+
+      return element;
+    });
+
     if (!post) throw new NotFoundException("Post not found");
+
+    if (post.postType != PostType.Poll) {
+      throw new UnprocessedEntityException("You can only vote on a poll");
+    }
+    if (alreadyExist) {
+      throw new UnprocessedEntityException("User has already voted");
+    }
 
     if (Date.now > post.pollExpiryDate) {
       throw new UnprocessedEntityException("Poll date has expired");
     }
-    const votedPost = post.options.map((option) => {
-      if (option._id == optionid) {
-        option.votes += 1;
-        option.voters = [...option.voters, userid];
-      }
 
-      return option;
-    });
+    const updated = await Post.findOneAndUpdate(
+      {
+        _id: postid,
+        "options._id": optionid,
+      },
+      {
+        $set: {
+          "options.$.votes": voters.length + 1,
+          "options.$.voters": [...voters, userid],
+        },
+      },
+      { new: true }
+    );
 
-    post.options = votedPost;
+    console.log(updated);
 
     return await post.save();
   }

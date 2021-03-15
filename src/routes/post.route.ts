@@ -76,7 +76,7 @@ router.patch("/vote-poll/:id", async (req: Request, res: Response) => {
   const response: DataResponse = await postController.votePoll(
     req.params.id,
     res.locals.userid,
-    req.body
+    req.body.optionid
   );
 
   return handleResponse(res, response);

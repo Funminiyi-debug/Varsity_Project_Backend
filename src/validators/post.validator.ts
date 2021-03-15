@@ -28,7 +28,7 @@ const PostSchema = Joi.object().keys({
   }),
   pollExpiryDate: Joi.alternatives().conditional("postType", {
     is: PostType.Poll,
-    then: Joi.date().min(5).max(125).required(),
+    then: Joi.date().required(),
   }),
 });
 
