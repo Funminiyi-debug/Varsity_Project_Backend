@@ -4,6 +4,15 @@ import User from "../../src/models/User";
 import * as helper from "../../src/utils/helperFunction";
 var server;
 
+var user = new User({
+  lastName: "testing0",
+  firstName: "testing1",
+  userName: "testing3",
+  email: "test@gmail.com",
+  token: "token0123456789",
+  verificationStatus: "NotVerified",
+});
+
 describe("Users Routes - /api/users", () => {
   beforeAll(() => {
     server = require("../../src/server");
@@ -62,31 +71,44 @@ describe("Users Routes - /api/users", () => {
       expect(res.status).toBe(401);
     });
 
-    // it("Should return ", async () => {
-    //   const res = await request(server)
-    //     .put("/api/users/604bc5c7b338f924a0da2fa7")
-    //     .send({ verificationStatus: "Restricted" })
-    //     .set("Authorization", `Bearer ${token}`);
+    it("Should return 204, Admin updating user profile", async () => {
+      const res = await request(server)
+        .put(`/api/users/update/${payload._id}`)
+        .send({ id: payload._id, verificationStatus: "Verified" })
+        .set("Authorization", `Bearer ${token}`);
 
-    //   expect(res.status).toBe(204);
-    // });
+      expect(res.status).toBe(204);
+    });
+
+    it("Should return 204, User updating his/her profile ", async () => {
+      const res = await request(server)
+        .put(`/api/users/${payload._id}`)
+        .send({ userName: "Adexson" })
+        .set("Authorization", `Bearer ${token}`);
+
+      expect(res.status).toBe(204);
+    });
   });
 
   describe("DELETE /:id", () => {
     it("Should return unauthorized error(401)", async () => {
       const res = await request(server)
-        .delete("/api/users/604cae4535c8a01a04a18c05")
+        .delete("/api/users/604e9371eff0470ba4c5bdd0")
         .send({ verificationStatus: "Restricted" });
       expect(res.status).toBe(401);
     });
 
-    /** 
     it("Should return 204 success message", async () => {
+      //new user created for testing
+      user = await user.save();
+
       const res = await request(server)
-        .delete("/api/users/604cae4535c8a01a04a18c05")
+        .delete(`/api/users/${user._id}`)
         .set("Authorization", `Bearer ${token}`);
       expect(res.status).toBe(204);
+
+      //then delete the user
+      await User.findByIdAndDelete(user._id);
     });
-    */
   });
 });

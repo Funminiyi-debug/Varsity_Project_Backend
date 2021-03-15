@@ -17,7 +17,6 @@ const productController = new ProductsController(productService);
 router.get("/", ProductServiceFilter, async (req: Request, res: Response) => {
   const response: DataResponse = await productController.getProducts(req.query);
   return handleResponse(res, response);
-  // }
 });
 
 router.get("/:id", async (req: Request, res: Response) => {

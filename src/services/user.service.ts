@@ -1,9 +1,9 @@
 import { Document } from "mongoose";
-import { IUser } from "../interfaces/entities";
+import { IUser, IVerify } from "../interfaces/entities";
 import User from "../models/User";
 import { IUserService } from "./interfaces";
 import { injectable } from "inversify";
-import VerificationStatus from "../enums/VerificationStatus";
+// import VerificationStatus from "../enums/VerificationStatus";
 import { ServerErrorException } from "../exceptions";
 import UsersController from "../controllers/user.controller";
 
@@ -17,12 +17,20 @@ export default class UserService implements IUserService {
     }
   }
 
-  updateUser(id: string, entity: IUser) {
-    throw new Error("Method not implemented.");
+  async updateUser(id: string, entity: IUser) {
+    try {
+      return await User.findByIdAndUpdate(id, entity);
+    } catch (error) {
+      throw ServerErrorException(error);
+    }
   }
 
-  changeVerificationStatus(id: string, status: VerificationStatus) {
-    throw new Error("Method not implemented.");
+  async updateVerificationStatus(id: string, status: IVerify) {
+    try {
+      return await User.findByIdAndUpdate(id, status);
+    } catch (error) {
+      throw ServerErrorException(error);
+    }
   }
 
   async getUser(id: string) {

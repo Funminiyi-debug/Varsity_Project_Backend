@@ -23,6 +23,7 @@ import Types from "../types";
 import { IUserService } from "../services/interfaces";
 import VStatus from "../enums/VerificationStatus";
 import handleAppExceptions from "../utils/handleAppExceptions";
+import { IUser } from "../interfaces/entities";
 
 interface VerifyStatusRequest {
   id: string;
@@ -65,14 +66,45 @@ export default class UsersController extends Controller {
   @SuccessResponse("204", "Updated")
   @Response<ErrorResponseModel>("400", "Bad Data")
   @Response<ErrorResponseModel>("404", "Not Found")
-  public async updateUser(
+  public async updateVerificationStatus(
     @Path() id: string,
     @Body() request: VerifyStatusRequest
   ): Promise<any> {
-    const results = await this.user.changeVerificationStatus(
+    const results = await this.user.updateVerificationStatus(
       id,
       request.status
     );
+
+    this.setStatus(201);
+    if (results == null) {
+      this.response = {
+        statusCode: 404,
+        message: "User not found",
+      };
+    }
+
+    if (results == undefined) {
+      this.response = {
+        statusCode: 500,
+        message: "Something happened",
+      };
+    }
+
+    this.response = {
+      statusCode: 204,
+    };
+    return this.response;
+  }
+
+  @Put("/")
+  @SuccessResponse("204", "Updated")
+  @Response<ErrorResponseModel>("400", "Bad Data")
+  @Response<ErrorResponseModel>("404", "Not Found")
+  public async updateUser(
+    @Path() id: string,
+    @Body() request: IUser
+  ): Promise<any> {
+    const results = await this.user.updateUser(id, request);
 
     this.setStatus(201);
     if (results == null) {
