@@ -14,11 +14,7 @@ const router = express.Router();
 const productService = container.get<ProductService>(Types.IProductService);
 const productController = new ProductsController(productService);
 
-<<<<<<< HEAD
-router.get("/", async (req: Request, res: Response) => {
-=======
 router.get("/", ProductServiceFilter, async (req: Request, res: Response) => {
->>>>>>> c8a83c24e1a90dd0288643010384be84331ee0c2
   const response: DataResponse = await productController.getProducts(req.query);
   return handleResponse(res, response);
 });

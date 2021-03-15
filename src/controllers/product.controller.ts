@@ -58,10 +58,7 @@ class ProductsController extends Controller {
 
       return this.response;
     } catch (error) {
-<<<<<<< HEAD
-=======
       console.log(error);
->>>>>>> c8a83c24e1a90dd0288643010384be84331ee0c2
       return handleAppExceptions(error);
     }
   }
