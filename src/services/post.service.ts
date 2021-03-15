@@ -1,27 +1,67 @@
 import { injectable, inject } from "inversify";
 import { Document } from "mongoose";
-import {
-  IAppFileService,
-  ICommentService,
-  ILikeService,
-  IPostService,
-  IUserService,
-} from "./interfaces";
+import { IAppFileService, IPostService, IUserService } from "./interfaces";
 import Types from "../types";
 import Post from "../models/Post";
 import { IPost } from "../interfaces/entities";
 import {
-  BadDataException,
   ConflictException,
   ServerErrorException,
   NotFoundException,
 } from "../exceptions";
 import PostType from "../enums/PostType";
-import UnauthorizedException from "../exceptions/UnauthorizedException";
 
 @injectable()
 export default class PostService implements IPostService {
-  constructor(@inject(Types.IUserService) private userService: IUserService) {}
+  constructor(
+    @inject(Types.IUserService) private userService: IUserService,
+    @inject(Types.IFeedbackService) private appfileService: IAppFileService
+  ) {}
+  async votePoll(
+    postid: string,
+    userid: string,
+    optionid: string
+  ): Promise<Document<any>> {
+    const post: any = await Post.findById(postid);
+    if (!post) throw new NotFoundException("Post not found");
+
+    const votedPost = post.options.map((option) => {
+      if (option._id == optionid) {
+        option.votes += 1;
+        option.voters = [...option.voters, userid];
+      }
+
+      return option;
+    });
+
+    post.options = votedPost;
+
+    return await post.save();
+  }
+  async likePost(postid: string, userid: string): Promise<Document<any>> {
+    const post: any = await Post.findById(postid);
+
+    if (!post) throw new NotFoundException("Post not found");
+
+    const like = { liker: userid };
+
+    const exists = post.likes.some((val) => val["liker"] == userid);
+
+    if (exists) throw ConflictException("User has already liked post");
+
+    post.likes = [...post.likes, like];
+
+    return await post.save();
+  }
+  async sharePost(postid: string) {
+    const post: any = await Post.findById(postid);
+
+    if (!post) throw new NotFoundException("Post not found");
+
+    post.shares += 1;
+
+    return await post.save();
+  }
 
   async addCommentToPost(commentid: string, postid: string): Promise<boolean> {
     let post = (await Post.findById(postid)) as any;
@@ -38,7 +78,8 @@ export default class PostService implements IPostService {
     try {
       return await Post.find({})
         .populate("author", { userName: 1, email: 1 })
-        .populate("images");
+        .populate("images")
+        .populate("comments");
     } catch (error) {
       throw ServerErrorException(error);
     }
@@ -48,16 +89,22 @@ export default class PostService implements IPostService {
     try {
       return await Post.find({ _id: id })
         .populate("author", { userName: 1, email: 1 })
-        .populate("images");
+        .populate("images")
+        .populate("comments");
     } catch (error) {
       throw ServerErrorException(error);
     }
   }
 
-  async createPost(post: IPost, userid: string): Promise<Document<any>> {
+  async createPost(
+    post: IPost,
+    files: any[],
+    userid: string
+  ): Promise<Document<any>> {
     const entity = {
       ...post,
       author: "",
+      images: [],
     };
     // AUTHOR
     entity.author = userid;
@@ -81,7 +128,23 @@ export default class PostService implements IPostService {
         sector: entity.sector,
       });
 
+      entity.options = entity.options.map((option) => {
+        return { name: option };
+      });
+
       if (exists.length > 0) throw new ConflictException("Post already exist");
+    }
+
+    if (files != undefined) {
+      // images
+      const imageids = await Promise.all([
+        ...files.map(async (file) => {
+          const appfile = await this.appfileService.addAppFile(file);
+          return appfile.id;
+        }),
+      ]);
+
+      entity.images = imageids;
     }
 
     try {
@@ -103,7 +166,7 @@ export default class PostService implements IPostService {
     };
 
     // Check if product exists
-    const exists = await Post.find({ _id: postid, author: userid });
+    const exists: any = await Post.find({ _id: postid, author: userid });
 
     if (!exists) throw new NotFoundException("post not found");
 
@@ -122,7 +185,6 @@ export default class PostService implements IPostService {
 
   async deletePost(id: string, userid: string): Promise<Document<any>> {
     try {
-      // return ()[0].remove();
       const post = (await Post.find({ _id: id, author: userid }))[0];
       if (post) return await post.remove();
       throw new NotFoundException("post not found");

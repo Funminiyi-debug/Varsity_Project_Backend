@@ -4,6 +4,6 @@ export default interface IPost {
   postType?: string;
   question?: string;
   sector: string;
-  options?: string;
-  pollExpiryDate?: string;
+  options?: any[];
+  pollExpiryDate?: Date;
 }

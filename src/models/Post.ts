@@ -4,6 +4,8 @@ import AppFile from "./AppFile";
 import { optionalWithLength } from "./modelValidators";
 import PostType from "../enums/PostType";
 
+const Schema = mongoose.Schema;
+
 const OptionsSchema = new mongoose.Schema({
   name: { type: String, required: true },
   votes: { type: Number, default: 0 },
@@ -13,6 +15,10 @@ const OptionsSchema = new mongoose.Schema({
       /*required: true,*/ ref: "User",
     },
   ],
+});
+
+const LikeSchema = new mongoose.Schema({
+  liker: { type: Schema.Types.ObjectId, required: true, ref: "User" },
 });
 
 const PostSchema = new mongoose.Schema(
@@ -28,7 +34,7 @@ const PostSchema = new mongoose.Schema(
 
     // end of post type
     author: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Like" }],
+    likes: [LikeSchema],
     comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
     shares: { type: Number, default: 0 },
     images: [{ type: mongoose.Schema.Types.ObjectId, ref: "AppFile" }],

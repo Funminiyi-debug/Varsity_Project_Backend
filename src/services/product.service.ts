@@ -140,7 +140,12 @@ export default class ProductService implements IProductService {
 
   // get product
   async getProduct(id: string): Promise<Document<any>[]> {
-    return await Product.find({ _id: id });
+    return await Product.find({ _id: id })
+      .populate("author", { userName: 1, email: 1 })
+      .populate("subcategory")
+      .populate({ path: "images" })
+      .populate("feedback")
+      .populate("category");
   }
 
   // search for product

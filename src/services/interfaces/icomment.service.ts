@@ -6,7 +6,11 @@ export default interface ICommentService {
 
   getComment(id: string): Promise<Document<any>[]>;
 
-  createComment(entity: IComment, userid: string): Promise<Document<any>>;
+  createComment(
+    entity: IComment,
+    files: any[],
+    userid: string
+  ): Promise<Document<any>>;
 
   updateComment(
     id: string,
@@ -15,4 +19,6 @@ export default interface ICommentService {
   ): Promise<Document<any>>;
 
   deleteComment(id: string): Promise<Document<any>>;
+  likeComment(commentid: string, userid: string): Promise<Document<any>>;
+  shareComment(commentid: string);
 }
