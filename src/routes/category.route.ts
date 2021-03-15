@@ -17,10 +17,13 @@ const categoryService = container.get<CategoryService>(Types.ICategoryService);
 const categoryController = new CategoriesController(categoryService);
 
 router.get("/", async (req: Request, res: Response) => {
+  console.log(req.query.name);
   if (req.query.name != undefined) {
+    console.log(req.query.name);
     const category = await Category.findOne({
-      name: atob(req.query.name as string),
+      name: atob(req.query.name as string), //req.query.name, //atob(req.query.name as string),
     });
+    console.log(category);
     return res.status(200).json({ success: true, payload: category });
   }
   const response: DataResponse = await categoryController.getCategories();
@@ -38,7 +41,7 @@ router.get("/:id", async (req: Request, res: Response) => {
 
 router.post(
   "/",
-  validatorMiddleware(identifierSchema, categorySchema),
+  // validatorMiddleware(identifierSchema, categorySchema),
   async (req: Request, res: Response) => {
     const response: DataResponse = await categoryController.createCategory(
       req.body

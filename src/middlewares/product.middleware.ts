@@ -23,11 +23,13 @@ const formatProductSchema = (req, res, next) => {
     "id",
     "title",
     "subcategoryid",
+    "categoryId",
     "adstatus",
     "school",
     "price",
     "delivery",
   ];
+
   const otherFields = Object.keys(data)
     .map((key) => {
       if (!allNecessaryKeys.includes(key.toLowerCase())) {

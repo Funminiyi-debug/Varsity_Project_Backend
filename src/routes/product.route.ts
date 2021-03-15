@@ -16,15 +16,8 @@ const productService = container.get<ProductService>(Types.IProductService);
 const productController = new ProductsController(productService);
 
 router.get("/", async (req: Request, res: Response) => {
-  // if (req.query.name != undefined) {
-  //   return handleResponse(
-  //     res,
-  //     await productController.getProductsByCondition(req.query as IFilter, res)
-  //   );
-  // } else {
   const response: DataResponse = await productController.getProducts(req.query);
   return handleResponse(res, response);
-  // }
 });
 
 router.get("/:id", async (req: Request, res: Response) => {

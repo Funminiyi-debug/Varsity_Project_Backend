@@ -8,6 +8,7 @@ import Types from "../types";
 import middleWare from "../middlewares/auth";
 import validatorMiddleware from "../middlewares/schemaValidator";
 import { userSchema, identifierSchema } from "../validators";
+import adminUpdateUserSchema from "../validators/adminUpdateUser.validator";
 
 const router = express.Router();
 const userService = container.get<UserService>(Types.IUserService);
@@ -26,13 +27,23 @@ router.get("/:id", async (req: Request, res: Response) => {
 });
 
 router.put(
-  "/:id",
-  validatorMiddleware(identifierSchema, userSchema),
+  "/update/:id",
+  validatorMiddleware(identifierSchema, adminUpdateUserSchema),
   async (req: Request, res: Response) => {
-    const data = await Users.updateUser(req.params.id, req.body);
-    res.status(201).json({ sucess: "ok", data: data });
+    const data = await Users.updateVerificationStatus(req.params.id, req.body);
+    return handleResponse(res, data);
   }
 );
+
+router.put("/:id", async (req: Request, res: Response) => {
+  const { error } = userSchema.validate(req.body);
+  console.log(error);
+  if (error) {
+    return res.status(422).json(error.details);
+  }
+  const data = await Users.updateUser(res.locals.userid, req.body);
+  return handleResponse(res, data);
+});
 
 router.delete("/:id", async (req: Request, res: Response) => {
   const response = await Users.deleteUser(req.params.id);
