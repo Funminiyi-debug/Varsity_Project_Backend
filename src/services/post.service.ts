@@ -8,6 +8,7 @@ import {
   ConflictException,
   ServerErrorException,
   NotFoundException,
+  UnprocessedEntityException,
 } from "../exceptions";
 import PostType from "../enums/PostType";
 
@@ -26,6 +27,9 @@ export default class PostService implements IPostService {
     const post: any = await Post.findById(postid);
     if (!post) throw new NotFoundException("Post not found");
 
+    if (Date.now > post.pollExpiryDate) {
+      throw new UnprocessedEntityException("Poll date has expired");
+    }
     const votedPost = post.options.map((option) => {
       if (option._id == optionid) {
         option.votes += 1;

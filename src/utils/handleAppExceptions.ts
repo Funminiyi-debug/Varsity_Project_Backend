@@ -16,6 +16,8 @@ const handleAppExceptions = (error: IAppException): DataResponse => {
       return { statusCode: 500, message: "Server Error" };
     case AppException.NotFoundException:
       return { statusCode: 404, message: error.message };
+    case AppException.UnprocessedEntityException:
+      return { statusCode: 422, message: error.message };
     case AppException.ConflictException:
       return { statusCode: 409, message: error.message };
     case AppException.UnauthorizedException:
