@@ -1,4 +1,4 @@
-import { injectable, inject } from "inversify";
+import { injectable, inject, postConstruct } from "inversify";
 import { Document } from "mongoose";
 import { IAppFileService, IPostService, IUserService } from "./interfaces";
 import Types from "../types";
@@ -11,6 +11,9 @@ import {
   UnprocessedEntityException,
 } from "../exceptions";
 import PostType from "../enums/PostType";
+import IPostFilter from "../interfaces/entities/IPostFilter";
+import PostSortBy from "../enums/PostSortBy";
+import { Body } from "@decorators/express";
 
 @injectable()
 export default class PostService implements IPostService {
@@ -237,5 +240,41 @@ export default class PostService implements IPostService {
     } catch (error) {
       throw error;
     }
+  }
+
+  async getPostByCondition(query: IPostFilter): Promise<Document<any>[]> {
+    const post: any[] = await Post.find({ sector: query.sector })
+      .populate("author", { userName: 1, email: 1 })
+      .populate("images")
+      .populate("comments");
+
+    if (query.sortBy != undefined) {
+      post.sort((a, b) => {
+        if (
+          query.sortBy.toLowerCase() == PostSortBy.HighestComment.toLowerCase()
+        ) {
+          return b.comments.length - a.comments.length;
+        }
+
+        if (
+          query.sortBy.toLowerCase() == PostSortBy.LowestComment.toLowerCase()
+        ) {
+          return a.comments.length - b.comments.length;
+        }
+
+        return a.updatedAt > b.updatedAt ? 1 : -1;
+      });
+    }
+
+    return post;
+  }
+
+  async searchPost(searchTerm: string): Promise<Document<any>[]> {
+    const post: any[] = await Post.find({ $text: { $search: searchTerm } })
+      .populate("author", { userName: 1, email: 1 })
+      .populate("images")
+      .populate("comments");
+
+    return post;
   }
 }

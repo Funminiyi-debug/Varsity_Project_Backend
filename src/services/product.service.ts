@@ -38,7 +38,9 @@ export default class ProductService implements IProductService {
   ) {}
 
   async searchProduct(searchTerm: string): Promise<Document<any>[]> {
-    const allProducts = await Product.find()
+    const allProducts = await Product.find({
+      $text: { $search: searchTerm },
+    })
       .populate({ path: "author", select: "userName email" })
       .populate({ path: "subcategory", select: "name" })
       .populate({ path: "category", select: "name" })
@@ -46,38 +48,6 @@ export default class ProductService implements IProductService {
       .populate("Feedback");
 
     searchTerm = searchTerm.toLowerCase();
-
-    // function checkConditions(element: any) {
-    //   const condition = Object.keys(element)
-    //     .map((key) => {
-    //       console.log("the key", key);
-    //       if (element[key] == undefined) {
-    //         return false;
-    //       }
-    //       if (key != "otherFields") {
-    //         if (typeof element[key] != "object") {
-    //           return element[key].toString().toLowerCase().includes(searchTerm);
-    //         } else {
-    //           return Object.keys(element[key]).map((item) => {
-    //             return element[key][item]
-    //               .toString()
-    //               .toLowerCase()
-    //               .includes(searchTerm);
-    //           });
-    //         }
-    //       } else {
-    //         return element[key].map((field) => {
-    //           Object.keys(field).map((key2) => {
-    //             return field[key2].toLowerCase().includes(searchTerm);
-    //           });
-    //         });
-    //       }
-    //     })
-    //     .flat(Infinity)
-    //     .some((item) => item == true);
-
-    //   return condition;
-    // }
 
     function checkConditions(element: any) {
       const {
@@ -102,8 +72,6 @@ export default class ProductService implements IProductService {
         (isService && category.name.toLowerCase().includes(searchTerm)) ||
         (author != null &&
           author.userName.toLowerCase().includes(searchTerm)) ||
-        school.toLowerCase().includes(searchTerm) ||
-        price.toLowerCase().includes(searchTerm) ||
         otherFields.some((item) =>
           Object.values(item).some((val) =>
             val.toString().toLowerCase().includes(searchTerm)
@@ -174,7 +142,16 @@ export default class ProductService implements IProductService {
     // school = school || "";
     // name = name ;
 
-    const allProducts = (await Product.find()
+    const allProducts = (await Product.find({
+      // "category.name": query.name,
+      // "subcategory.name": query.name,
+      // $or: [
+      //   { school: query.school, delivery: delivery, name: "Accommodation" },
+      // ],
+      // school: query.school,
+      // delivery: delivery,
+    })
+      // price: { $gte: priceMin, $lte: priceMax },
       .populate({ path: "author", select: "userName email" })
       .populate({ path: "subcategory", select: "name" })
       .populate({ path: "category", select: "name" })
@@ -201,9 +178,7 @@ export default class ProductService implements IProductService {
     const services: Document<any>[] = isService.filter(
       (element) =>
         checkCondition(element.category.name, name) &&
-        checkPriceRange(element.price, priceMax, priceMin) &&
-        checkCondition(element.school, school) &&
-        checkCondition(element.delivery, delivery)
+        checkPriceRange(element.price, priceMax, priceMin)
     );
 
     let toReturn = [...products, ...services].flat(Infinity);
