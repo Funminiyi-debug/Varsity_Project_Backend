@@ -4,18 +4,24 @@ import AppFile from "./AppFile";
 import { optionalWithLength } from "./modelValidators";
 import PostType from "../enums/PostType";
 
-const OptionsSchema = new mongoose.Schema({
+const Schema = mongoose.Schema;
+
+const OptionsSchema = new Schema({
   name: { type: String, required: true },
   votes: { type: Number, default: 0 },
   voters: [
     {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       /*required: true,*/ ref: "User",
     },
   ],
 });
 
-const PostSchema = new mongoose.Schema(
+const LikeSchema = new Schema({
+  liker: { type: Schema.Types.ObjectId, required: true, ref: "User" },
+});
+
+const PostSchema = new Schema(
   {
     // post type
     title: {
@@ -27,11 +33,11 @@ const PostSchema = new mongoose.Schema(
     },
 
     // end of post type
-    author: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Like" }],
-    comments: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comment" }],
+    author: { type: Schema.Types.ObjectId, ref: "User" },
+    likes: [LikeSchema],
+    comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
     shares: { type: Number, default: 0 },
-    images: [{ type: mongoose.Schema.Types.ObjectId, ref: "AppFile" }],
+    images: [{ type: Schema.Types.ObjectId, ref: "AppFile" }],
 
     // for polls
     postType: {

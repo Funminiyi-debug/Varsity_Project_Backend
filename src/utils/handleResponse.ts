@@ -31,7 +31,7 @@ export function handleResponse(res: Response, response: DataResponse) {
 
     case StatusCode.CREATED:
       return res
-        .header("Location", `${res.locals.url}${response.data._id}`)
+        .header("Location", `${res.locals.url}/${response.data._id}`)
         .status(response.statusCode)
         .json({
           success: true,

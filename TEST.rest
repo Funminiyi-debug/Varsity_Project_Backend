@@ -1,5 +1,17 @@
 GET http://localhost:3001/api/categories
 Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI2MDM3OTZjNGVmOGI4MjE2MTBmNGJhMGYiLCJlbWFpbCI6InRoZS5yZWFsLmVsLmhvbnJhZG9AZ21haWwuY29tIiwiaWF0IjoxNjE0MjU1ODEyLCJleHAiOjE2MTYwNTU4MTJ9.fRZ64SEBtFL84l0kxFloK32loe_84o-Lme5ZAIo9ZKU
-##
 
+####
 
+GET http://localhost:3001/api/posts
+ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI2MDM3OTZjNGVmOGI4MjE2MTBmNGJhMGYiLCJlbWFpbCI6InRoZS5yZWFsLmVsLmhvbnJhZG9AZ21haWwuY29tIiwiaWF0IjoxNjE0MjU1ODEyLCJleHAiOjE2MTYwNTU4MTJ9.fRZ64SEBtFL84l0kxFloK32loe_84o-Lme5ZAIo9ZKU
+
+###
+
+PATCH http://localhost:3001/api/posts/vote-poll/604f554cd814fc40e8b15dae
+ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJfaWQiOiI2MDM3OTZjNGVmOGI4MjE2MTBmNGJhMGYiLCJlbWFpbCI6InRoZS5yZWFsLmVsLmhvbnJhZG9AZ21haWwuY29tIiwiaWF0IjoxNjE0MjU1ODEyLCJleHAiOjE2MTYwNTU4MTJ9.fRZ64SEBtFL84l0kxFloK32loe_84o-Lme5ZAIo9ZKU
+Content-Type: application/json
+
+{ 
+    "optionid": "604f554cd814fc40e8b15daf"
+}

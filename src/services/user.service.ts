@@ -6,6 +6,7 @@ import { injectable } from "inversify";
 // import VerificationStatus from "../enums/VerificationStatus";
 import { ServerErrorException } from "../exceptions";
 import UsersController from "../controllers/user.controller";
+import VerificationStatus from "../enums/VerificationStatus";
 
 @injectable()
 export default class UserService implements IUserService {
@@ -25,9 +26,9 @@ export default class UserService implements IUserService {
     }
   }
 
-  async updateVerificationStatus(id: string, status: IVerify) {
+  async updateVerificationStatus(id: string, status: VerificationStatus) {
     try {
-      return await User.findByIdAndUpdate(id, status);
+      return await User.findByIdAndUpdate(id, { verificationStatus: status });
     } catch (error) {
       throw ServerErrorException(error);
     }

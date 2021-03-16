@@ -1,4 +1,5 @@
 import { Document } from "mongoose";
+import VerificationStatus from "../../enums/VerificationStatus";
 // import VerificationStatus from "../../enums/VerificationStatus";
 import { IUser } from "../../interfaces/entities";
 
@@ -7,7 +8,7 @@ export default interface IUserService {
   getByEmail(email: string): Promise<Document<IUser>>;
   getUsers();
   updateUser(id: string, entity: IUser);
-  updateVerificationStatus(id: string, status: any);
+  updateVerificationStatus(id: string, status: VerificationStatus);
   getUser(id: string);
   deleteUser(id: string): Promise<Document<any>>;
 }

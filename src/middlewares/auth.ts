@@ -71,8 +71,7 @@ export default {
       next();
       return;
     }
-    // read the token from header or url
-    //const token = req.headers["x-access-token"] || req.query.token;
+
     const authHeader = req.headers.authorization;
     let token: any;
     if (authHeader) token = authHeader.split(" ")[1];

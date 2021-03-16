@@ -30,8 +30,6 @@ interface IProductCreate extends IProduct {
 @injectable()
 export default class ProductService implements IProductService {
   constructor(
-    @inject(Types.IUserService) private userService: IUserService,
-    @inject(Types.IFeedbackService) private feedbackService: IFeedbackService,
     @inject(Types.IAppFileService) private appfileService: IAppFileService,
     @inject(Types.ISubcategoryService)
     private subcategoryService: ISubcategoryService,
@@ -140,7 +138,12 @@ export default class ProductService implements IProductService {
 
   // get product
   async getProduct(id: string): Promise<Document<any>[]> {
-    return await Product.find({ _id: id });
+    return await Product.find({ _id: id })
+      .populate("author", { userName: 1, email: 1 })
+      .populate("subcategory")
+      .populate({ path: "images" })
+      .populate("feedback")
+      .populate("category");
   }
 
   // search for product
