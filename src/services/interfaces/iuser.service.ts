@@ -11,4 +11,5 @@ export default interface IUserService {
   updateVerificationStatus(id: string, status: VerificationStatus);
   getUser(id: string);
   deleteUser(id: string): Promise<Document<any>>;
+  saveAd(item: any, userid: string): Promise<Document<any>>;
 }

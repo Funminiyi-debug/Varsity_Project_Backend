@@ -60,7 +60,7 @@ app.use(
 // app.use(express.static("public"));
 
 app.use(
-  "/api/docs",
+  "/docs",
   swaggerUi.serve,
   swaggerUi.setup(undefined, {
     swaggerOptions: {
@@ -77,7 +77,7 @@ app.use(function (req, res, next) {
   }
   next();
 });
-// app.use(redisMiddleware);
+app.use(redisMiddleware);
 
 app.use("/api/auth", authModule);
 app.use("/api/categories", categoryModule);

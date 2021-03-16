@@ -84,7 +84,8 @@ export default class PostService implements IPostService {
 
     const exists = post.likes.some((val) => val["liker"] == userid);
 
-    if (exists) throw ConflictException("User has already liked post");
+    if (exists)
+      throw new UnprocessedEntityException("User has already liked post");
 
     post.likes = [...post.likes, like];
 

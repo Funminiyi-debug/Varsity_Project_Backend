@@ -6,7 +6,7 @@ import { handleResponse } from "../utils/handleResponse";
 import { container } from "../containerDI";
 import Types from "../types";
 import atob from "atob";
-import cacheData from "../utils/cache-data";
+import { cacheData, flushCache, refreshCache } from "../utils/cache-data";
 import ICategory from "../interfaces/entities/ICategory";
 import validatorMiddleware from "../middlewares/schemaValidator";
 import { categorySchema, identifierSchema } from "../validators";
@@ -17,17 +17,14 @@ const categoryService = container.get<CategoryService>(Types.ICategoryService);
 const categoryController = new CategoriesController(categoryService);
 
 router.get("/", async (req: Request, res: Response) => {
-  console.log(req.query.name);
   if (req.query.name != undefined) {
-    console.log(req.query.name);
     const category = await Category.findOne({
       name: atob(req.query.name as string), //req.query.name, //atob(req.query.name as string),
     });
-    console.log(category);
     return res.status(200).json({ success: true, payload: category });
   }
   const response: DataResponse = await categoryController.getCategories();
-  // cacheData(req.originalUrl, response);
+  cacheData(req.originalUrl, response);
   return handleResponse(res, response);
 });
 
@@ -47,6 +44,7 @@ router.post(
       req.body
     );
 
+    refreshCache(req.originalUrl);
     return handleResponse(res, response);
   }
 );
@@ -59,6 +57,8 @@ router.put(
       req.params.id,
       req.body
     );
+
+    refreshCache(req.originalUrl);
 
     return handleResponse(res, response);
   }
@@ -81,7 +81,7 @@ router.delete("/", async (req, res) => {
       console.log("unable to delete");
     }
   });
-
+  flushCache();
   const data = await Promise.all([...response]);
   // Category.deleteOne({ })
   return res.status(200).json({ message: "deleted", response: data });

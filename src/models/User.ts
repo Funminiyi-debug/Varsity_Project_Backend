@@ -60,6 +60,12 @@ const UserShema = new mongoose.Schema(
       ],
       default: VerificationStatus.NotVerified,
     },
+    savedAds: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+      },
+    ],
   },
   { timestamps: true }
 );

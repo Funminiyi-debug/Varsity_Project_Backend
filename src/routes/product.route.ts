@@ -10,12 +10,15 @@ import validatorMiddleware from "../middlewares/schemaValidator";
 import { identifierSchema, productSchema } from "../validators";
 import { formatProductSchema } from "../middlewares/product.middleware";
 import { ProductServiceFilter } from "../middlewares/filter.middleware";
+import { cacheData, refreshCache, flushCache } from "../utils/cache-data";
 const router = express.Router();
 const productService = container.get<ProductService>(Types.IProductService);
 const productController = new ProductsController(productService);
 
 router.get("/", ProductServiceFilter, async (req: Request, res: Response) => {
   const response: DataResponse = await productController.getProducts(req.query);
+  cacheData(req.originalUrl, response);
+
   return handleResponse(res, response);
 });
 
@@ -23,6 +26,7 @@ router.get("/:id", async (req: Request, res: Response) => {
   const response: DataResponse = await productController.getProduct(
     req.params.id
   );
+  cacheData(req.originalUrl, response);
 
   return handleResponse(res, response);
 });
@@ -41,6 +45,7 @@ router.post(
       req,
       res
     );
+    refreshCache(req.originalUrl);
 
     return handleResponse(res, response);
   }
@@ -58,7 +63,7 @@ router.put(
       req,
       res
     );
-
+    refreshCache(req.originalUrl);
     return handleResponse(res, response);
   }
 );
@@ -71,6 +76,9 @@ router.delete(
       req.params.id,
       res
     );
+
+    flushCache();
+
     return handleResponse(res, response);
   }
 );

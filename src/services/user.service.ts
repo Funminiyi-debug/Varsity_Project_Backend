@@ -1,20 +1,29 @@
 import { Document } from "mongoose";
 import { IUser, IVerify } from "../interfaces/entities";
 import User from "../models/User";
-import { IUserService } from "./interfaces";
-import { injectable } from "inversify";
+import { IProductService, IUserService } from "./interfaces";
+import { inject, injectable } from "inversify";
 // import VerificationStatus from "../enums/VerificationStatus";
-import { ServerErrorException } from "../exceptions";
+import { NotFoundException, ServerErrorException } from "../exceptions";
 import UsersController from "../controllers/user.controller";
 import VerificationStatus from "../enums/VerificationStatus";
+import handleAppExceptions from "../utils/handleAppExceptions";
+import UnauthorizedException from "../exceptions/UnauthorizedException";
+import SavedAds from "../models/SavedAds";
+import Types from "../types";
+import Product from "../models/Product";
 
 @injectable()
 export default class UserService implements IUserService {
+  /**
+   *
+   */
+  constructor() {}
   async getUsers() {
     try {
-      return await User.find({});
+      return await User.find({}).populate("savedAds");
     } catch (error) {
-      throw ServerErrorException(error);
+      throw new ServerErrorException(error);
     }
   }
 
@@ -22,24 +31,25 @@ export default class UserService implements IUserService {
     try {
       return await User.findByIdAndUpdate(id, entity);
     } catch (error) {
-      throw ServerErrorException(error);
+      throw new ServerErrorException(error);
     }
   }
 
   async updateVerificationStatus(id: string, status: VerificationStatus) {
     try {
-      return await User.findByIdAndUpdate(id, { verificationStatus: status });
+      return await User.findByIdAndUpdate(id, {
+        $set: { verificationStatus: status },
+      });
     } catch (error) {
-      throw ServerErrorException(error);
+      throw new ServerErrorException(error);
     }
   }
 
   async getUser(id: string) {
     try {
-      const user = (await User.findById(id)) as any;
-      return user;
+      return await User.findById(id).populate("savedAds");
     } catch (error) {
-      throw ServerErrorException(error);
+      throw new ServerErrorException(error);
     }
   }
 
@@ -47,7 +57,7 @@ export default class UserService implements IUserService {
     try {
       return await User.find(query);
     } catch (error) {
-      throw ServerErrorException(error);
+      throw new ServerErrorException(error);
     }
   }
 
@@ -56,7 +66,7 @@ export default class UserService implements IUserService {
       const user = await User.findOne({ email });
       return user;
     } catch (error) {
-      throw ServerErrorException(error);
+      throw new ServerErrorException(error);
     }
   }
 
@@ -64,7 +74,29 @@ export default class UserService implements IUserService {
     try {
       return await (await User.findById(id)).remove();
     } catch (error) {
-      throw ServerErrorException(error);
+      throw new ServerErrorException(error);
+    }
+  }
+
+  async saveAd(productid: string, userid: string): Promise<Document<any>> {
+    try {
+      const user = await this.getUser(userid);
+
+      if (!user) throw new UnauthorizedException("You have to be logged In");
+
+      const product = await Product.findById(productid);
+
+      if (!product) throw new NotFoundException("ad not found");
+
+      const savedAd = await User.findByIdAndUpdate(user._id, {
+        $addToSet: { savedAds: productid },
+      });
+
+      return await savedAd.save();
+    } catch (error) {
+      console.log(error);
+
+      throw error;
     }
   }
 }

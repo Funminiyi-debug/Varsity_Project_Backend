@@ -3,7 +3,7 @@ import { DataResponse } from "../interfaces/DataResponse";
 import { handleResponse } from "../utils/handleResponse";
 import { container } from "../containerDI";
 import Types from "../types";
-import cacheData from "../utils/cache-data";
+import { cacheData } from "../utils/cache-data";
 import SubcategoryController from "../controllers/subcategory.controller";
 import { SubcategoryService } from "../services";
 import validatorMiddleware from "../middlewares/schemaValidator";

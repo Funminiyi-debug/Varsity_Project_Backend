@@ -62,6 +62,7 @@ export default {
       "/api/auth/facebook",
       "/api/auth/google/callback",
       "/api/auth/facebook/callback",
+      "/docs",
     ];
     const approved = approvedRoutesWithoutAuth.find((routes) =>
       req.originalUrl.startsWith(routes)

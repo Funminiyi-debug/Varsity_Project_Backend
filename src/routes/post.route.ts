@@ -8,6 +8,7 @@ import upload from "../config/multer";
 import validatorMiddleware from "../middlewares/schemaValidator";
 import { identifierSchema, postSchema } from "../validators";
 import { PostService } from "../services";
+import { cacheData } from "../utils/cache-data";
 
 const router = express.Router();
 const postService = container.get<PostService>(Types.IPostService);
@@ -15,12 +16,13 @@ const postController = new PostController(postService);
 
 router.get("/", async (req: Request, res: Response) => {
   const response: DataResponse = await postController.getPosts();
-
+  cacheData(req.originalUrl, response);
   return handleResponse(res, response);
 });
 
 router.get("/:id", async (req: Request, res: Response) => {
   const response: DataResponse = await postController.getPost(req.params.id);
+  cacheData(req.originalUrl, response);
 
   return handleResponse(res, response);
 });
@@ -38,7 +40,7 @@ router.post(
       req,
       res
     );
-
+    cacheData(req.originalUrl, response);
     return handleResponse(res, response);
   }
 );

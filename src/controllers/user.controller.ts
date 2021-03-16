@@ -24,6 +24,7 @@ import { IUserService } from "../services/interfaces";
 import VStatus from "../enums/VerificationStatus";
 import handleAppExceptions from "../utils/handleAppExceptions";
 import { IUser } from "../interfaces/entities";
+import SavedAds from "../models/SavedAds";
 
 interface VerifyStatusRequest {
   id: string;
@@ -55,11 +56,15 @@ export default class UsersController extends Controller {
   @Get("{id}")
   @Response<ErrorResponseModel>("400", "Bad Data")
   public async getUser(id: string): Promise<DataResponse> {
-    const user = dummydata.filter((result: any) => result.userId == id);
-    return {
-      statusCode: 200,
-      data: await this.user.getUser(id), //await this.user.getUser(id),
-    };
+    try {
+      const user = dummydata.filter((result: any) => result.userId == id);
+      return {
+        statusCode: 200,
+        data: await this.user.getUser(id), //await this.user.getUser(id),
+      };
+    } catch (error) {
+      return { statusCode: 500 };
+    }
   }
 
   @Put("/verify-status/{id}")
@@ -138,6 +143,22 @@ export default class UsersController extends Controller {
       return {
         statusCode: 204,
       } as DataResponse;
+    } catch (error) {
+      return handleAppExceptions(error);
+    }
+  }
+
+  @Post("save-ad")
+  @SuccessResponse("201", "Created")
+  @Response<ErrorResponseModel>("422", "Bad Data")
+  public async savedAd(@Request() userid: string, @Body() item) {
+    try {
+      const data = await this.user.saveAd(item.productid, userid);
+
+      return {
+        statusCode: 200,
+        data: data,
+      };
     } catch (error) {
       return handleAppExceptions(error);
     }

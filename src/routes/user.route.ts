@@ -9,6 +9,7 @@ import middleWare from "../middlewares/auth";
 import validatorMiddleware from "../middlewares/schemaValidator";
 import { userSchema, identifierSchema } from "../validators";
 import adminUpdateUserSchema from "../validators/adminUpdateUser.validator";
+import { flushCache, refreshCache } from "../utils/cache-data";
 
 const router = express.Router();
 const userService = container.get<UserService>(Types.IUserService);
@@ -47,6 +48,16 @@ router.put("/:id", async (req: Request, res: Response) => {
 
 router.delete("/:id", async (req: Request, res: Response) => {
   const response = await Users.deleteUser(req.params.id);
+
+  flushCache();
+  return handleResponse(res, response);
+});
+
+router.post("/save-ad", async (req: Request, res: Response) => {
+  const response: DataResponse = await Users.savedAd(
+    res.locals.userid,
+    req.body
+  );
 
   return handleResponse(res, response);
 });
