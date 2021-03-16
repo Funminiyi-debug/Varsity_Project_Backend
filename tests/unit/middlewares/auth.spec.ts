@@ -153,6 +153,9 @@ describe("Google & Facebook Authentication Middlewares", () => {
     mockResponse = {
       json: jest.fn(),
       status: jest.fn(),
+      locals: {
+        url: "/",
+      },
     };
   });
   let ensureAuth = authMiddleware.authMiddleware;
@@ -215,6 +218,9 @@ describe("JWT Middleware", () => {
     mockResponse = {
       json: jest.fn(),
       status: jest.fn(),
+      locals: {
+        url: "/",
+      },
     };
   });
   let ensureAuth = authMiddleware.authMiddleware;

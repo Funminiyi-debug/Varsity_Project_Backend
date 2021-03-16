@@ -116,6 +116,8 @@ class SubcategoryController extends Controller {
           statusCode: 404,
           message: "Product not found",
         };
+        //added by dami
+        return this.response;
       }
 
       this.response = {

@@ -87,6 +87,10 @@ class FeedbackController extends Controller {
         data: results,
       };
     } catch (error) {
+      console.log(
+        ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",
+        error
+      );
       return handleAppExceptions(error);
     }
   }
@@ -112,6 +116,8 @@ class FeedbackController extends Controller {
           statusCode: 404,
           message: "Feedback not found",
         };
+
+        return this.response;
       }
 
       this.response = {

@@ -120,6 +120,8 @@ class PostController extends Controller {
           statusCode: 404,
           message: "Post not found",
         };
+
+        return this.response;
       }
 
       this.response = {
@@ -151,7 +153,7 @@ class PostController extends Controller {
   ): Promise<DataResponse> {
     const email = "";
     try {
-      const results = await this.ps.deletePost(id, res.locals.email);
+      const results = await this.ps.deletePost(id, res.locals.userid);
 
       this.response = {
         statusCode: 204,

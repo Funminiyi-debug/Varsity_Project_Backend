@@ -64,32 +64,34 @@ router.put(
   }
 );
 
-router.delete("/", async (req, res) => {
-  const items = await Category.find();
-  const response = items.map(async (item) => {
-    try {
-      // method 1 worked
-      // come back here later
-      // let deleted = await Category.deleteOne({ _id: item._id });
-      // let deleted = await Category.remove({ _id: item._id });
+router.delete("/:id", async (req, res) => {
+  // const items = await Category.find();
+  // const response = items.map(async (item) => {
+  //   try {
+  //     // method 1 worked
+  //     // come back here later
+  //     // let deleted = await Category.deleteOne({ _id: item._id });
+  //     // let deleted = await Category.remove({ _id: item._id });
 
-      // method 2
-      let deleted = await item.remove();
-      return deleted;
-    } catch (error) {
-      console.log(error);
-      console.log("unable to delete");
-    }
-  });
+  //     // method 2
+  //     let deleted = await item.remove();
+  //     return deleted;
+  //   } catch (error) {
+  //     console.log(error);
+  //     console.log("unable to delete");
+  //   }
+  // });
 
-  const data = await Promise.all([...response]);
-  // Category.deleteOne({ })
-  return res.status(200).json({ message: "deleted", response: data });
+  // const data = await Promise.all([...response]);
+  // // Category.deleteOne({ })
+  // return res.status(200).json({ message: "deleted", response: data });
 
-  /**    ********Original*********
-  const response2: DataResponse = await categoryController.deleteCategory(req.params.id);
+  /**    ********Original**********/
+  const response2: DataResponse = await categoryController.deleteCategory(
+    req.params.id
+  );
   return handleResponse(res, response2);
-  */
+  /***/
 });
 
 export default router;

@@ -23,12 +23,12 @@ import Types from "../types";
 import { IUserService } from "../services/interfaces";
 import VStatus from "../enums/VerificationStatus";
 import handleAppExceptions from "../utils/handleAppExceptions";
-import { IUser } from "../interfaces/entities";
+import { IUser, IVerify } from "../interfaces/entities";
 
-interface VerifyStatusRequest {
-  id: string;
-  status: VStatus;
-}
+// interface VerifyStatusRequest {
+//   id: string;
+//   status: VStatus;
+// }
 
 @Route("users")
 @Tags("User")
@@ -62,13 +62,13 @@ export default class UsersController extends Controller {
     };
   }
 
-  @Put("{id}")
+  @Put("update/{id}")
   @SuccessResponse("204", "Updated")
   @Response<ErrorResponseModel>("400", "Bad Data")
   @Response<ErrorResponseModel>("404", "Not Found")
   public async updateVerificationStatus(
     @Path() id: string,
-    @Body() request: VerifyStatusRequest
+    @Body() request: IVerify
   ): Promise<any> {
     const results = await this.user.updateVerificationStatus(
       id,
@@ -96,7 +96,7 @@ export default class UsersController extends Controller {
     return this.response;
   }
 
-  @Put("/")
+  @Put("{id}")
   @SuccessResponse("204", "Updated")
   @Response<ErrorResponseModel>("400", "Bad Data")
   @Response<ErrorResponseModel>("404", "Not Found")
