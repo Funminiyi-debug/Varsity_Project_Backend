@@ -23,12 +23,8 @@ import Types from "../types";
 import { IUserService } from "../services/interfaces";
 import VStatus from "../enums/VerificationStatus";
 import handleAppExceptions from "../utils/handleAppExceptions";
-<<<<<<< HEAD
-import { IUser } from "../interfaces/entities";
-import SavedAds from "../models/SavedAds";
-=======
 import { IUser, IVerify } from "../interfaces/entities";
->>>>>>> 6b3e2cb04c91352c60583c8109674fbaa360ecfa
+import SavedAds from "../models/SavedAds";
 
 // interface VerifyStatusRequest {
 //   id: string;
