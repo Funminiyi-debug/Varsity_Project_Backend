@@ -37,7 +37,7 @@ router.put(
 
 router.put("/:id", async (req: Request, res: Response) => {
   const { error } = userSchema.validate(req.body);
-  console.log(error);
+
   if (error) {
     return res.status(422).json(error.details);
   }

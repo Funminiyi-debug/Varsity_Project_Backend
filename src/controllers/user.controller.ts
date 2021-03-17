@@ -81,6 +81,8 @@ export default class UsersController extends Controller {
         statusCode: 404,
         message: "User not found",
       };
+
+      return this.response;
     }
 
     if (results == undefined) {
@@ -88,6 +90,8 @@ export default class UsersController extends Controller {
         statusCode: 500,
         message: "Something happened",
       };
+
+      return this.response;
     }
 
     this.response = {
@@ -112,6 +116,7 @@ export default class UsersController extends Controller {
         statusCode: 404,
         message: "User not found",
       };
+      return this.response;
     }
 
     if (results == undefined) {
@@ -119,6 +124,7 @@ export default class UsersController extends Controller {
         statusCode: 500,
         message: "Something happened",
       };
+      return this.response;
     }
 
     this.response = {
@@ -133,8 +139,7 @@ export default class UsersController extends Controller {
   @Response<ErrorResponseModel>("404", "Not Found")
   public async deleteUser(@Path() id: string) {
     try {
-      const data = await this.user.deleteUser(id);
-
+      await this.user.deleteUser(id);
       return {
         statusCode: 204,
       } as DataResponse;

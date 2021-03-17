@@ -1,18 +1,38 @@
 import { Document } from "mongoose";
-import { IUser, IVerify } from "../interfaces/entities";
+import { IUser } from "../interfaces/entities";
 import User from "../models/User";
-import { IUserService } from "./interfaces";
-import { injectable } from "inversify";
-// import VerificationStatus from "../enums/VerificationStatus";
+import {
+  ICommentService,
+  IFeedbackService,
+  IPostService,
+  IProductService,
+  IUserService,
+} from "./interfaces";
+import { inject, injectable } from "inversify";
+import Types from "../types";
 import { ServerErrorException } from "../exceptions";
 import UsersController from "../controllers/user.controller";
 import VerificationStatus from "../enums/VerificationStatus";
 
 @injectable()
 export default class UserService implements IUserService {
+  constructor(
+    @inject(Types.IPostService) private postService: IPostService,
+    @inject(Types.ICommentService) private commentService: ICommentService,
+    @inject(Types.IFeedbackService) private feedbackService: IFeedbackService,
+    @inject(Types.IProductService) private productService: IProductService
+  ) {}
   async getUsers() {
     try {
       return await User.find({});
+    } catch (error) {
+      throw ServerErrorException(error);
+    }
+  }
+
+  async getUserById(userid) {
+    try {
+      return await User.findById(userid);
     } catch (error) {
       throw ServerErrorException(error);
     }
@@ -66,5 +86,14 @@ export default class UserService implements IUserService {
     } catch (error) {
       throw ServerErrorException(error);
     }
+  }
+
+  //user profiles @dami
+  private async getUserProfileDetails(userid) {
+    const userPosts = this.postService.getPostsByUser(userid);
+    const userLikesOnPost = this.postService.getPostsLikedByUser(userid);
+    const UsersCommentsOnPost = this.commentService.getCommentsByUser(userid);
+    const UserFeedbacks = this.feedbackService.getFeedbacksByUser(userid);
+    const receivedFeedbacks = this.productService.getFeedBacksOnProduct(userid);
   }
 }

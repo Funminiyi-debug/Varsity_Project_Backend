@@ -138,6 +138,29 @@ export default class PostService implements IPostService {
     }
   }
 
+  // get one post by user
+  async getPostsByUser(userid: string): Promise<Document<any>[]> {
+    try {
+      return await Post.find({ author: userid })
+        .populate("author", { userName: 1, email: 1 })
+        .populate("images")
+        .populate("comments");
+    } catch (error) {
+      throw ServerErrorException(error);
+    }
+  }
+
+  async getPostsLikedByUser(userid: string): Promise<Document<any>[]> {
+    try {
+      return await Post.find({ "likes.author": userid })
+        .populate("author", { userName: 1, email: 1 })
+        .populate("images")
+        .populate("comments");
+    } catch (error) {
+      throw ServerErrorException(error);
+    }
+  }
+
   // create new post
   async createPost(
     post: IPost,
