@@ -1,10 +1,23 @@
 import { Document } from "mongoose";
-import { IUser, IVerify } from "../interfaces/entities";
+import { IUser } from "../interfaces/entities";
 import User from "../models/User";
+<<<<<<< HEAD
 import { IProductService, IUserService } from "./interfaces";
 import { inject, injectable } from "inversify";
 // import VerificationStatus from "../enums/VerificationStatus";
 import { NotFoundException, ServerErrorException } from "../exceptions";
+=======
+import {
+  ICommentService,
+  IFeedbackService,
+  IPostService,
+  IProductService,
+  IUserService,
+} from "./interfaces";
+import { inject, injectable } from "inversify";
+import Types from "../types";
+import { ServerErrorException } from "../exceptions";
+>>>>>>> 6b3e2cb04c91352c60583c8109674fbaa360ecfa
 import UsersController from "../controllers/user.controller";
 import VerificationStatus from "../enums/VerificationStatus";
 import handleAppExceptions from "../utils/handleAppExceptions";
@@ -15,15 +28,32 @@ import Product from "../models/Product";
 
 @injectable()
 export default class UserService implements IUserService {
+<<<<<<< HEAD
   /**
    *
    */
   constructor() {}
+=======
+  constructor(
+    @inject(Types.IPostService) private postService: IPostService,
+    @inject(Types.ICommentService) private commentService: ICommentService,
+    @inject(Types.IFeedbackService) private feedbackService: IFeedbackService,
+    @inject(Types.IProductService) private productService: IProductService
+  ) {}
+>>>>>>> 6b3e2cb04c91352c60583c8109674fbaa360ecfa
   async getUsers() {
     try {
       return await User.find({}).populate("savedAds");
     } catch (error) {
       throw new ServerErrorException(error);
+    }
+  }
+
+  async getUserById(userid) {
+    try {
+      return await User.findById(userid);
+    } catch (error) {
+      throw ServerErrorException(error);
     }
   }
 
@@ -98,5 +128,14 @@ export default class UserService implements IUserService {
 
       throw error;
     }
+  }
+
+  //user profiles @dami
+  private async getUserProfileDetails(userid) {
+    const userPosts = this.postService.getPostsByUser(userid);
+    const userLikesOnPost = this.postService.getPostsLikedByUser(userid);
+    const UsersCommentsOnPost = this.commentService.getCommentsByUser(userid);
+    const UserFeedbacks = this.feedbackService.getFeedbacksByUser(userid);
+    const receivedFeedbacks = this.productService.getFeedBacksOnProduct(userid);
   }
 }

@@ -117,6 +117,15 @@ export default class ProductService implements IProductService {
       .populate("category");
   }
 
+  async getFeedBacksOnProduct(userid: string): Promise<Document<any>[]> {
+    return await Product.find({ "feedbacks.author": !userid })
+      .populate("author", { userName: 1, email: 1 })
+      .populate("subcategory")
+      .populate({ path: "images" })
+      .populate("feedback")
+      .populate("category");
+  }
+
   // search for product
   async getProductsByCondition(query: IFilter): Promise<Document<any>[]> {
     let {

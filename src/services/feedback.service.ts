@@ -49,6 +49,18 @@ export default class FeedbackService implements IFeedbackService {
     }
   }
 
+  async getFeedbacksByUser(userid: string): Promise<Document<any>[]> {
+    try {
+      return await Feedback.find({ author: userid })
+        .populate({ path: "author", select: "userName email" })
+        .populate({ path: "product", select: " school title category" })
+        .populate("replies");
+    } catch (error) {
+      console.log(error);
+      throw new ServerErrorException(error);
+    }
+  }
+
   async createFeedback(request: IFeed, userid: string): Promise<Document<any>> {
     const { productid } = request;
     interface ICreateFeed extends IFeed {

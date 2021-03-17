@@ -6,6 +6,10 @@ export default interface ICommentService {
 
   getComment(id: string): Promise<Document<any>[]>;
 
+  getCommentsByUser(userid: string): Promise<Document<any>[]>;
+
+  getCommentsLikedByUser(userid: string): Promise<Document<any>[]>;
+
   createComment(
     entity: IComment,
     files: any[],

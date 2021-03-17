@@ -47,6 +47,34 @@ export default class CommentService implements ICommentService {
     }
   }
 
+  async getCommentsByUser(userid: string): Promise<Document<any>[]> {
+    try {
+      return await Comment.find({ author: userid })
+        .populate("comments")
+        .populate("commentid")
+        .populate({ path: "author", select: "userName email" })
+        .populate("images")
+        .populate("post");
+    } catch (error) {
+      console.log(error);
+      throw ServerErrorException(error);
+    }
+  }
+
+  async getCommentsLikedByUser(userid: string): Promise<Document<any>[]> {
+    try {
+      return await Comment.find({ "likes.author": userid })
+        .populate("comments")
+        .populate("commentid")
+        .populate({ path: "author", select: "userName email" })
+        .populate("images")
+        .populate("post");
+    } catch (error) {
+      console.log(error);
+      throw ServerErrorException(error);
+    }
+  }
+
   async createComment(
     request: IComment,
     files: any[],

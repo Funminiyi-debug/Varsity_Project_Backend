@@ -23,13 +23,17 @@ import Types from "../types";
 import { IUserService } from "../services/interfaces";
 import VStatus from "../enums/VerificationStatus";
 import handleAppExceptions from "../utils/handleAppExceptions";
+<<<<<<< HEAD
 import { IUser } from "../interfaces/entities";
 import SavedAds from "../models/SavedAds";
+=======
+import { IUser, IVerify } from "../interfaces/entities";
+>>>>>>> 6b3e2cb04c91352c60583c8109674fbaa360ecfa
 
-interface VerifyStatusRequest {
-  id: string;
-  status: VStatus;
-}
+// interface VerifyStatusRequest {
+//   id: string;
+//   status: VStatus;
+// }
 
 @Route("users")
 @Tags("User")
@@ -73,7 +77,7 @@ export default class UsersController extends Controller {
   @Response<ErrorResponseModel>("404", "Not Found")
   public async updateVerificationStatus(
     @Path() id: string,
-    @Body() request: VerifyStatusRequest
+    @Body() request: IVerify
   ): Promise<any> {
     const results = await this.user.updateVerificationStatus(
       id,
@@ -86,6 +90,8 @@ export default class UsersController extends Controller {
         statusCode: 404,
         message: "User not found",
       };
+
+      return this.response;
     }
 
     if (results == undefined) {
@@ -93,6 +99,8 @@ export default class UsersController extends Controller {
         statusCode: 500,
         message: "Something happened",
       };
+
+      return this.response;
     }
 
     this.response = {
@@ -117,6 +125,7 @@ export default class UsersController extends Controller {
         statusCode: 404,
         message: "User not found",
       };
+      return this.response;
     }
 
     if (results == undefined) {
@@ -124,6 +133,7 @@ export default class UsersController extends Controller {
         statusCode: 500,
         message: "Something happened",
       };
+      return this.response;
     }
 
     this.response = {
@@ -138,8 +148,7 @@ export default class UsersController extends Controller {
   @Response<ErrorResponseModel>("404", "Not Found")
   public async deleteUser(@Path() id: string) {
     try {
-      const data = await this.user.deleteUser(id);
-
+      await this.user.deleteUser(id);
       return {
         statusCode: 204,
       } as DataResponse;

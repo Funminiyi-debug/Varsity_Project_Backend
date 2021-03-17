@@ -13,6 +13,10 @@ export default (schemaId, schemaBody) => {
         validation = await schemaBody.validateAsync(req.body);
       } catch (err) {
         error.details = err;
+        console.log(
+          ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",
+          err
+        );
       }
     }
     if (req.method == "PUT") {

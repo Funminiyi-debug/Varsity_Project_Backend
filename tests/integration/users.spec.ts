@@ -54,12 +54,21 @@ describe("Users Routes - /api/users", () => {
       expect(res.status).toBe(401);
     });
 
-    it("GET Should return 200 success message", async () => {
-      const res = await request(server)
-        .get("/api/users/604bc5c7b338f924a0da2fa7")
-        .set("Authorization", `Bearer ${token}`);
+    it("GET Should return 200(success) or 404(user not found)", async () => {
+      const user = await User.find({});
+      if (user.length === 0) {
+        const res = await request(server)
+          .get("/api/users/604bc5c7b338f924a0da2fa7")
+          .set("Authorization", `Bearer ${token}`);
 
-      expect(res.status).toBe(200);
+        expect(res.status).toBe(404);
+      } else {
+        const res = await request(server)
+          .get(`/api/users/${user[0]._id}`)
+          .set("Authorization", `Bearer ${token}`);
+
+        expect(res.status).toBe(200);
+      }
     });
   });
 
@@ -71,22 +80,42 @@ describe("Users Routes - /api/users", () => {
       expect(res.status).toBe(401);
     });
 
-    it("Should return 204, Admin updating user profile", async () => {
-      const res = await request(server)
-        .put(`/api/users/update/${payload._id}`)
-        .send({ id: payload._id, verificationStatus: "Verified" })
-        .set("Authorization", `Bearer ${token}`);
+    it("Should return 204(Admin updated User status) or 404(user not found) ", async () => {
+      const user = await User.find({});
+      if (user.length === 0) {
+        const res = await request(server)
+          .put("/api/users/update/67b5a43bd21098cv765b6")
+          .send({ id: payload._id, verificationStatus: "Verified" })
+          .set("Authorization", `Bearer ${token}`);
 
-      expect(res.status).toBe(204);
+        expect(res.status).toBe(204);
+      } else {
+        const res = await request(server)
+          .put(`/api/users/update/${payload._id}`) // Only a verified user can make an update
+          .send({ id: payload._id, verificationStatus: "Verified" })
+          .set("Authorization", `Bearer ${token}`);
+
+        expect(res.status).toBe(204);
+      }
     });
 
-    it("Should return 204, User updating his/her profile ", async () => {
-      const res = await request(server)
-        .put(`/api/users/${payload._id}`)
-        .send({ userName: "Adexson" })
-        .set("Authorization", `Bearer ${token}`);
+    it("Should return 204(User updated profile) or 404(user not found) ", async () => {
+      const user = await User.find({});
+      if (user.length === 0) {
+        const res = await request(server)
+          .put("/api/users/update/67b5a43bd21098cv765b6")
+          .send({ id: payload._id, verificationStatus: "Verified" })
+          .set("Authorization", `Bearer ${token}`);
 
-      expect(res.status).toBe(204);
+        expect(res.status).toBe(404);
+      } else {
+        const res = await request(server)
+          .put(`/api/users/${user[0]._id}`)
+          .send({ userName: "Adexson" })
+          .set("Authorization", `Bearer ${token}`);
+
+        expect(res.status).toBe(204);
+      }
     });
   });
 

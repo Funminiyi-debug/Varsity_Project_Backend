@@ -86,7 +86,7 @@ export default class CategoryService implements ICategoryService {
   public async deleteCategory(id: string): Promise<Document<any>> {
     //return await Category.findByIdAndDelete(id);
     try {
-      return (await Category.findById(id)).remove();
+      return await (await Category.findById(id)).remove();
     } catch (error) {
       throw ServerErrorException(error);
     }

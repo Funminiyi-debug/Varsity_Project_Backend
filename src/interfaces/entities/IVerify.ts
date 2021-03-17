@@ -1,7 +1,7 @@
-import verify from "../../enums/VerificationStatus";
+import VStatus from "../../enums/VerificationStatus";
 
 interface IVerify {
-  verificationStatus: verify;
+  status: VStatus;
 }
 
 export default IVerify;

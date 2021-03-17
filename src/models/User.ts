@@ -5,6 +5,7 @@ import AppFile from "./AppFile";
 import Product from "./Product";
 import Feedback from "./Feedback";
 import VerificationStatus from "../enums/VerificationStatus";
+import { number } from "joi";
 
 const UserShema = new mongoose.Schema(
   {
@@ -49,6 +50,14 @@ const UserShema = new mongoose.Schema(
     token: {
       type: String,
       required: true,
+    },
+    followers: {
+      type: Number,
+      default: 0,
+    },
+    following: {
+      type: Number,
+      default: 0,
     },
     verificationStatus: {
       type: String,

@@ -10,6 +10,8 @@ export default interface IProductService {
 
   getProductsByCondition(query: IFilter): Promise<Document<any>[]>;
 
+  getFeedBacksOnProduct(userid: string): Promise<Document<any>[]>;
+
   createProduct(
     entity: IProduct,
     files: any,

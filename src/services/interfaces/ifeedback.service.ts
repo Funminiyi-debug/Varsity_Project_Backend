@@ -6,6 +6,8 @@ export default interface IFeedbackService {
 
   getFeedback(id: string): Promise<Document<any>[]>;
 
+  getFeedbacksByUser(userid: string): Promise<Document<any>[]>;
+
   createFeedback(entity: IFeed, userid: string): Promise<Document<any>>;
 
   updateFeedback(
