@@ -1,16 +1,23 @@
-import { injectable } from "inversify";
+import { inject, injectable } from "inversify";
 import { Document } from "mongoose";
 import Feedback from "../models/Feedback";
 import { IFeed } from "../interfaces/entities";
-import { IFeedbackService } from "./interfaces";
+import { IFeedbackService, IProductService } from "./interfaces";
 import {
   ConflictException,
   NotFoundException,
   ServerErrorException,
 } from "../exceptions";
+import Types from "../types";
 
 @injectable()
 export default class FeedbackService implements IFeedbackService {
+  /**
+   *
+   */
+  constructor(
+    @inject(Types.IProductService) private productService: IProductService
+  ) {}
   async likeFeedback(
     feedbackid: string,
     userid: string
@@ -49,9 +56,21 @@ export default class FeedbackService implements IFeedbackService {
     }
   }
 
-  async getFeedbacksByUser(userid: string): Promise<Document<any>[]> {
+  async getFeedbacksSentByUser(userid: string): Promise<Document<any>[]> {
     try {
       return await Feedback.find({ author: userid })
+        .populate({ path: "author", select: "userName email" })
+        .populate({ path: "product", select: " school title category" })
+        .populate("replies");
+    } catch (error) {
+      console.log(error);
+      throw new ServerErrorException(error);
+    }
+  }
+
+  async getFeedbacksReceivedByUser(userid: string): Promise<Document<any>[]> {
+    try {
+      return await Feedback.find({ author: { $not: { $in: userid } } })
         .populate({ path: "author", select: "userName email" })
         .populate({ path: "product", select: " school title category" })
         .populate("replies");
@@ -93,6 +112,12 @@ export default class FeedbackService implements IFeedbackService {
           $push: { replies: feedback._id },
         });
       }
+
+      await this.productService.addFeedbackToProduct(
+        entity.productid,
+        feedback._id,
+        ""
+      );
 
       return feedback;
     } catch (error) {

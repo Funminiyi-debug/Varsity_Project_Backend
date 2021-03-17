@@ -181,10 +181,7 @@ class PostController extends Controller {
         };
       }
 
-      return {
-        statusCode: 500,
-        message: "Something happened",
-      };
+      return handleAppExceptions(error);
     }
   }
 

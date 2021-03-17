@@ -12,7 +12,7 @@ export default interface ICommentService {
 
   createComment(
     entity: IComment,
-    files: any[],
+    files: any,
     userid: string
   ): Promise<Document<any>>;
 
@@ -22,7 +22,7 @@ export default interface ICommentService {
     userid: string
   ): Promise<Document<any>>;
 
-  deleteComment(id: string): Promise<Document<any>>;
+  deleteComment(id: string, userid: string): Promise<Document<any>>;
   likeComment(commentid: string, userid: string): Promise<Document<any>>;
   shareComment(commentid: string);
 }

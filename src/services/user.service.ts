@@ -34,14 +34,6 @@ export default class UserService implements IUserService {
     }
   }
 
-  async getUserById(userid) {
-    try {
-      return await User.findById(userid);
-    } catch (error) {
-      throw ServerErrorException(error);
-    }
-  }
-
   async updateUser(id: string, entity: IUser) {
     try {
       return await User.findByIdAndUpdate(id, entity);
@@ -60,11 +52,16 @@ export default class UserService implements IUserService {
     }
   }
 
-  async getUser(id: string) {
+  async getUser(userid: string) {
     try {
-      return await User.findById(id).populate("savedAds");
+      const user = await (await User.findById(userid)).toObject();
+      const userProfileData = await this.getUserProfileDetails(userid);
+      return {
+        ...user,
+        ...userProfileData,
+      };
     } catch (error) {
-      throw new ServerErrorException(error);
+      throw ServerErrorException(error);
     }
   }
 
@@ -117,10 +114,28 @@ export default class UserService implements IUserService {
 
   //user profiles @dami
   private async getUserProfileDetails(userid) {
-    const userPosts = this.postService.getPostsByUser(userid);
-    const userLikesOnPost = this.postService.getPostsLikedByUser(userid);
-    const UsersCommentsOnPost = this.commentService.getCommentsByUser(userid);
-    const UserFeedbacks = this.feedbackService.getFeedbacksByUser(userid);
-    const receivedFeedbacks = this.productService.getFeedBacksOnProduct(userid);
+    const userPosts = await this.postService.getPostsByUser(userid);
+    const userLikesOnPost = await this.postService.getPostsLikedByUser(userid);
+    const usersCommentsOnPost = await this.commentService.getCommentsByUser(
+      userid
+    );
+    const userFeedbacks = await this.feedbackService.getFeedbacksSentByUser(
+      userid
+    );
+    const allOtherFeedbacks = await this.feedbackService.getFeedbacksReceivedByUser(
+      userid
+    );
+
+    const receivedFeedbacks = await this.productService.getProductFeedbacksByUser(
+      userid
+    );
+
+    return {
+      userPosts,
+      userLikesOnPost,
+      usersCommentsOnPost,
+      userFeedbacks,
+      receivedFeedbacks,
+    };
   }
 }

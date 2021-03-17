@@ -15,7 +15,7 @@ const postService = container.get<PostService>(Types.IPostService);
 const postController = new PostController(postService);
 
 router.get("/", async (req: Request, res: Response) => {
-  const response: DataResponse = await postController.getPosts();
+  const response: DataResponse = await postController.getPosts(req.query);
   cacheData(req.originalUrl, response);
   return handleResponse(res, response);
 });

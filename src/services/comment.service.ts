@@ -9,6 +9,11 @@ import {
   ServerErrorException,
 } from "../exceptions";
 import Types from "../types";
+interface ICreateComment extends IComment {
+  post: string;
+  images: string[];
+  author: string;
+}
 
 @injectable()
 export default class CommentService implements ICommentService {
@@ -80,11 +85,6 @@ export default class CommentService implements ICommentService {
     files: any[],
     userid: string
   ): Promise<Document<any>> {
-    interface ICreateComment extends IComment {
-      post: string;
-      images: string[];
-      author: string;
-    }
     try {
       const entity: ICreateComment = {
         ...request,
@@ -156,9 +156,9 @@ export default class CommentService implements ICommentService {
     }
   }
 
-  async deleteComment(id: string): Promise<Document<any>> {
+  async deleteComment(id: string, userid: string): Promise<Document<any>> {
     try {
-      const comment = await Comment.findById(id);
+      const comment = await Comment.findOne({ _id: id, author: userid });
 
       if (!comment) throw new NotFoundException("comment not found");
       return await comment.remove();

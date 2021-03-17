@@ -19,7 +19,6 @@ import {
 } from "../exceptions";
 import "../utils/flatArray";
 import checkCondition, { checkPriceRange } from "../utils/checkCondition";
-import { title } from "process";
 interface IProductCreate extends IProduct {
   author: string;
   images: any[];
@@ -47,8 +46,8 @@ export default class ProductService implements IProductService {
       .populate({ path: "author", select: "userName email" })
       .populate({ path: "subcategory", select: "name" })
       .populate({ path: "category", select: "name" })
-      .populate({ path: "images" })
-      .populate("Feedback");
+      .populate({ path: "images", select: "mimetype name" })
+      .populate("feedbacks");
 
     searchTerm = searchTerm.toLowerCase();
 
@@ -92,7 +91,7 @@ export default class ProductService implements IProductService {
     useremail: string
   ) {
     return await Product.findByIdAndUpdate(productid, {
-      $push: {
+      $addToSet: {
         feedbacks: feedbackids,
       },
     });
@@ -101,29 +100,53 @@ export default class ProductService implements IProductService {
     return await Product.find({})
       .populate("author", { userName: 1, email: 1 })
       .populate("subcategory")
-      .populate({ path: "images" })
+      //   .populate({ path: "images", select: "mimetype" })
       .populate("feedback")
-      .populate("category");
+      .populate("category")
+      .populate("feedbacks");
+
     // return await this.appfileService.getAllAppFiles();
   }
 
   // get product
   async getProduct(id: string): Promise<Document<any>[]> {
-    return await Product.find({ _id: id })
+    return await Product.find({})
       .populate("author", { userName: 1, email: 1 })
       .populate("subcategory")
-      .populate({ path: "images" })
+      // .populate({ path: "images", select: "mimetype" })
       .populate("feedback")
-      .populate("category");
+      .populate("category")
+      .populate("feedbacks");
   }
 
-  async getFeedBacksOnProduct(userid: string): Promise<Document<any>[]> {
-    return await Product.find({ "feedbacks.author": !userid })
+  // async getProductFeedbacksByUser(userid: string): Promise<Document<any>[]> {
+  //   return await Product.find({
+  //     author: userid,
+  //     feedbacks: {
+  //       $elemMatch: { feedback: { author: { $not: { $in: userid } } } },
+  //     },
+  //   })
+  //     .populate("author", { userName: 1, email: 1 })
+  //     .populate("subcategory")
+  //     //   .populate({ path: "images", select: "mimetype name" })
+  //     .populate("feedback")
+  //     .populate("category");
+  // }
+
+  async getProductFeedbacksByUser(userid: string): Promise<Document<any>[]> {
+    return await Product.find({
+      author: userid,
+      "feedbacks.author": { $not: { $in: userid } },
+      // feedbacks: {
+      //   $elemMatch: { feedback: { author: { $not: { $in: userid } } } },
+      // },
+    })
       .populate("author", { userName: 1, email: 1 })
       .populate("subcategory")
-      .populate({ path: "images" })
+      //   .populate({ path: "images", select: "mimetype name" })
       .populate("feedback")
-      .populate("category");
+      .populate("category")
+      .populate("feedbacks");
   }
 
   // search for product
@@ -164,8 +187,8 @@ export default class ProductService implements IProductService {
       .populate({ path: "author", select: "userName email" })
       .populate({ path: "subcategory", select: "name" })
       .populate({ path: "category", select: "name" })
-      .populate({ path: "images" })
-      .populate("Feedback")
+      //   .populate({ path: "images" })
+      .populate("feedbacks")
       .sort(sortedData)) as any[];
 
     const isProduct = allProducts.filter(
@@ -393,9 +416,11 @@ export default class ProductService implements IProductService {
     userid: string
   ): Promise<Document<any>> {
     try {
-      const product = (
-        await Product.find({ _id: productid, author: userid })
-      )[0];
+      // return await Product.deleteMany();
+      const product = await Product.findOne({
+        _id: productid,
+        author: userid,
+      });
       if (product) return await product.remove();
       throw new NotFoundException("product not found");
     } catch (error) {

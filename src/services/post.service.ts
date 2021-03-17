@@ -257,6 +257,7 @@ export default class PostService implements IPostService {
   // delete post
   async deletePost(id: string, userid: string): Promise<Document<any>> {
     try {
+      // return await Post.deleteMany();
       const post = (await Post.find({ _id: id, author: userid }))[0];
       if (post) return await post.remove();
       throw new NotFoundException("post not found");

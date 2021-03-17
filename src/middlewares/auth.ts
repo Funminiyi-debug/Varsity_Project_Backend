@@ -4,6 +4,7 @@ import globals from "node-global-storage";
 import TokenContent from "../interfaces/TokenContent";
 import express from "express";
 import { Console } from "console";
+import User from "../models/User";
 
 export default {
   ensureAuth: (req, res, next) => {
@@ -102,7 +103,11 @@ export default {
     };
 
     // process the promise
-    p.then((decoded: TokenContent) => {
+    p.then(async (decoded: TokenContent) => {
+      const user = await User.findById(decoded._id);
+      if (!user) {
+        return res.status(404).json({ message: "User does not exist" });
+      }
       res.locals.userid = decoded._id;
       res.locals.email = decoded.email;
       next();
