@@ -243,7 +243,13 @@ export default class PostService implements IPostService {
   }
 
   async getPostByCondition(query: IPostFilter): Promise<Document<any>[]> {
+    let { takeCount, pageNo } = query;
+    takeCount = takeCount == undefined ? 10 : takeCount;
+    pageNo = pageNo == undefined ? 1 : pageNo;
+    const skip = (pageNo - 1) * takeCount;
     const post: any[] = await Post.find({ sector: query.sector })
+      .limit(takeCount)
+      .skip(skip)
       .populate("author", { userName: 1, email: 1 })
       .populate("images")
       .populate("comments");

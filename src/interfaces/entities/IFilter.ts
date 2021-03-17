@@ -6,6 +6,8 @@ interface IFilter {
   sortBy?: any;
   searchTerm?: string;
   delivery?: string;
+  pageNo?: number;
+  takeCount?: number;
   otherFields?: any[];
 }
 

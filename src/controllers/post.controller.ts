@@ -24,6 +24,7 @@ import express from "express";
 import { IPostService } from "../services/interfaces";
 import { IPost } from "../interfaces/entities";
 import handleAppExceptions from "../utils/handleAppExceptions";
+import IPostFilter from "../interfaces/entities/IPostFilter";
 
 @Route("/posts")
 @Tags("Post")
@@ -39,8 +40,15 @@ class PostController extends Controller {
   @Get("/")
   // @httpGet("/")
   @SuccessResponse("200", "OK")
-  public async getPosts(): Promise<DataResponse> {
-    const results = await this.ps.getPosts();
+  public async getPosts(@Request() query: IPostFilter): Promise<DataResponse> {
+    let results: any = {};
+    if (query.searchTerm != undefined) {
+      results = await this.ps.searchPost(query.searchTerm);
+    } else if (Object.keys(query).length !== 0) {
+      results = await this.ps.getPostByCondition(query);
+    } else {
+      results = await this.ps.getPosts();
+    }
     this.response = {
       statusCode: 200,
       data: results,

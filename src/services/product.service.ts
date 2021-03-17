@@ -38,6 +38,9 @@ export default class ProductService implements IProductService {
   ) {}
 
   async searchProduct(searchTerm: string): Promise<Document<any>[]> {
+    //  takeCount = takeCount == undefined ? 10 : takeCount;
+    //  pageNo = pageNo == undefined ? 1 : pageNo;
+    //  const skip = (pageNo - 1) * takeCount;
     const allProducts = await Product.find({
       $text: { $search: searchTerm },
     })
@@ -124,6 +127,8 @@ export default class ProductService implements IProductService {
       sortBy,
       delivery,
       otherFields,
+      takeCount,
+      pageNo,
     }: IFilter = query;
 
     if (otherFields == undefined) otherFields = [];
@@ -139,18 +144,13 @@ export default class ProductService implements IProductService {
     sortBy = sortBy == undefined ? "" : sortBy;
     priceMax = priceMax == undefined ? Number.MAX_SAFE_INTEGER : priceMax;
     priceMin = priceMin == undefined ? 0 : priceMin;
-    // school = school || "";
-    // name = name ;
+    takeCount = takeCount == undefined ? 10 : takeCount;
+    pageNo = pageNo == undefined ? 1 : pageNo;
+    const skip = (pageNo - 1) * takeCount;
 
-    const allProducts = (await Product.find({
-      // "category.name": query.name,
-      // "subcategory.name": query.name,
-      // $or: [
-      //   { school: query.school, delivery: delivery, name: "Accommodation" },
-      // ],
-      // school: query.school,
-      // delivery: delivery,
-    })
+    const allProducts = (await Product.find({})
+      .limit(takeCount)
+      .skip(skip)
       // price: { $gte: priceMin, $lte: priceMax },
       .populate({ path: "author", select: "userName email" })
       .populate({ path: "subcategory", select: "name" })

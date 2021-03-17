@@ -1,5 +1,6 @@
 import { Document } from "mongoose";
 import { IPost } from "../../interfaces/entities";
+import IPostFilter from "../../interfaces/entities/IPostFilter";
 
 export default interface IPostService {
   getPosts(): Promise<Document<any>[]>;
@@ -17,6 +18,10 @@ export default interface IPostService {
   likePost(postid: string, userid: string): Promise<Document<any>>;
 
   sharePost(postid: string);
+
+  searchPost(searchTerm: string): Promise<Document<any>[]>;
+
+  getPostByCondition(query: IPostFilter): Promise<Document<any>[]>;
 
   votePoll(
     postid: string,
