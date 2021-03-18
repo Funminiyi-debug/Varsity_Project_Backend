@@ -130,7 +130,7 @@ export default class ProductService implements IProductService {
       return { ...result, feedbacks: feeds }
     })
 
-    return await feedbacks
+    return feedbacks
   }
 
   // search for product
