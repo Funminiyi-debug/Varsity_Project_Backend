@@ -13,7 +13,7 @@ import categoryModule from './routes/category.route'
 import productModule from './routes/product.route'
 import authModule from './routes/auth.route'
 import userModule from './routes/user.route'
-// import commentModule from "./routes/comment.route";
+import commentModule from './routes/comment.route'
 import subcategoryModule from './routes/subcategory.route'
 import postModule from './routes/post.route'
 import feedbackMoodule from './routes/feedback.route'
@@ -91,7 +91,7 @@ app.use('/api/subcategories', subcategoryModule)
 app.use('/api/users', userModule)
 app.use('/api/posts', postModule)
 app.use('/api/feedbacks', feedbackMoodule)
-// app.use("/api/comments", commentModule);
+app.use('/api/comments', commentModule)
 //io.on("connection", require("./routes/socket"));
 
 server.listen(port, () => {
