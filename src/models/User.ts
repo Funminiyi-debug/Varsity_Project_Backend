@@ -27,7 +27,7 @@ const UserShema = new mongoose.Schema(
       type: String,
       required: true,
       default: function () {
-        return `${this.lastName}_${this.firstName}`;
+        return `${this.firstName}_${this.lastName}`;
       },
     },
     email: {
@@ -75,6 +75,14 @@ const UserShema = new mongoose.Schema(
         ref: "Product",
       },
     ],
+    businessName: {
+      type: String,
+    },
+    whatsappNo: {
+      type: String,
+    },
+    website: { type: String },
+    aboutCompany: { type: String },
   },
   { timestamps: true }
 );
