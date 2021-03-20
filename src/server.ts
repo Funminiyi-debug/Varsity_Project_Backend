@@ -22,7 +22,17 @@ import authMiddleware from './middlewares/auth'
 import runConnection from "./sockets/index"
 const app: Application = express()
 const server = http.createServer(app)
-const io = require('socket.io')(server)
+ const io = require("socket.io")(server, {
+  cors: {
+    origin: "http://127.0.0.1:5500",
+    methods: "*",
+    allowedHeaders: [
+      "Access-Control-Allow-Origin",
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept",
+    ],
+  },
+});
 const port = process.env.PORT || 3001
 // PASSPORT CONFIG
 passportConfig(passport)
@@ -93,9 +103,8 @@ app.use("/api/users", userModule);
 app.use("/api/posts", postModule);
 app.use("/api/feedbacks", feedbackMoodule);
 app.use("/api/comments", commentModule);
-io.on("connection", (socket) => {
-  socket.on("message", runConnection);
-});
+
+runConnection(io)
 
 server.listen(port, () => {
   console.log(`subscriber connected to ${port}`)
