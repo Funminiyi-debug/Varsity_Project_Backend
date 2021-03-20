@@ -8,6 +8,11 @@ import { UserService, MessageService } from "../services"
 import Types from "../types"
 const userService = container.get<UserService>(Types.IUserService);
 const messageService = container.get<MessageService>(Types.IMessageService);
+// helper to disconnect user
+const errorHappened = (socket:Socket, error:SocketError) => { 
+  socket.emit(SocketEvents.Disconnected, error)
+}
+
 
 // helper to verify user
 const verifyUser =  (socket, token ):any => { 
@@ -15,7 +20,7 @@ const verifyUser =  (socket, token ):any => {
     helper.verify(token, async (err, decoded) => {
         if (err) { 
           console.log(err)
-          socket.emit(SocketEvents.Disconnected, { statusCode: 401, message: "User is unauthorized" } as SocketError)
+          errorHappened(socket,{ statusCode: 401, message: "User is unauthorized" })
           socket.disconnect(true)
         } 
 
@@ -40,8 +45,7 @@ const runConnection = (io: Server) => {
          if(saved) { 
            io.sockets.emit(SocketEvents.ReceiveMessage, response)
          }else { 
-
-           socket.emit(SocketEvents.Disconnected, { statusCode: 500, message: "Unable to save message" } as SocketError)
+           errorHappened(socket,{ statusCode: 500, message: "Unable to save message" })
           }
       })
     })
