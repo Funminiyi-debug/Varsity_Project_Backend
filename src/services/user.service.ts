@@ -17,6 +17,7 @@ import UnauthorizedException from '../exceptions/UnauthorizedException'
 import SavedAds from '../models/SavedAds'
 import Types from '../types'
 import Product from '../models/Product'
+import { Chat } from '../interfaces/SocketInterfaces'
 
 @injectable()
 export default class UserService implements IUserService {
@@ -111,6 +112,8 @@ export default class UserService implements IUserService {
       throw error
     }
   }
+
+
 
   //user profiles @dami
   private async getUserProfileDetails(userid) {

@@ -11,6 +11,7 @@ import {
   CommentService,
   LikeService,
   PostService,
+  MessageService,
 } from "./services";
 import {
   IUserService,
@@ -23,6 +24,7 @@ import {
   ICommentService,
   IPostService,
   ILikeService,
+  IMessageService,
 } from "./services/interfaces";
 
 const container = new Container();
@@ -40,4 +42,5 @@ container
   .to(NotificationService);
 container.bind<IPostService>(Types.IPostService).to(PostService);
 container.bind<ILikeService>(Types.ILikeService).to(LikeService);
+container.bind<IMessageService>(Types.IMessageService).to(MessageService);
 export { container };

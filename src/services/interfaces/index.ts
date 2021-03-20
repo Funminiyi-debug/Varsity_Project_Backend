@@ -9,3 +9,4 @@ export { default as IFieldService } from "./ifield.service";
 export { default as ICommentService } from "./icomment.service";
 export { default as ILikeService } from "./ilike.service";
 export { default as IPostService } from "./ipost.service";
+export { default as IMessageService } from "./imessage.service";

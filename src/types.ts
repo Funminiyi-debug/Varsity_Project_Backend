@@ -10,6 +10,7 @@ const Types = {
   ILikeService: Symbol("ILikeService"),
   IPostService: Symbol("IPostService"),
   IServiceService: Symbol("IServiceService"),
+  IMessageService: Symbol("IMessageService"),
 };
 
 export default Types;

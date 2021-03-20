@@ -2,6 +2,7 @@ import { Document } from "mongoose";
 import VerificationStatus from "../../enums/VerificationStatus";
 // import VerificationStatus from "../../enums/VerificationStatus";
 import { IUser } from "../../interfaces/entities";
+import { Chat } from "../../interfaces/SocketInterfaces";
 
 export default interface IUserService {
   getUserByCondition(query: IUser): Promise<Document<IUser>[]>;
