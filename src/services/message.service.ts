@@ -10,11 +10,18 @@ import Room from "../models/Room";
 
 @injectable()
 export default class MessageService implements IMessageService {
-    saveMessage = async (message: Chat):Promise<boolean> => { 
-     if(message.user == undefined) { 
-       return false;
-     }
-// const status = Room.findById()
-     return true;
+    saveMessage = async (response: Chat):Promise<boolean> => { 
+      try {
+        
+        if(response.user == undefined) { 
+          return false;
+        }
+        const message = { message: response.message, sender: response.user._id}
+        const status = await Room.findByIdAndUpdate(response.room, { $push: { chats: message}})
+        return true;
+      } catch (error) {
+        console.log(error) 
+        return false;
+      }
   }
 }

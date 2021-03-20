@@ -32,15 +32,17 @@ const runConnection = (io: Server) => {
     const user = await verifyUser(socket, response.token)
         io.sockets.emit(SocketEvents.UserJoined, user)
       });  
-      
-      
+            
       socket.on(SocketEvents.SendMessage, async (response: Chat) => { 
             const user = await verifyUser(socket, response.token)
-response.user = user;
-const saved  = await messageService.saveMessage(response)
+      response.user = user;
+      const saved  = await messageService.saveMessage(response)
          if(saved) { 
            io.sockets.emit(SocketEvents.ReceiveMessage, response)
-         }
+         }else { 
+
+           socket.emit(SocketEvents.Disconnected, { statusCode: 500, message: "Unable to save message" } as SocketError)
+          }
       })
     })
   }
