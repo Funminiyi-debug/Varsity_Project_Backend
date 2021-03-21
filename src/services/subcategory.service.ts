@@ -14,6 +14,7 @@ export default class SubcategoryService implements ISubcategoryService {
   constructor(
     @inject(Types.ICategoryService) private categoryService: ICategoryService
   ) {}
+
   // get all subcategories
   async getSubcategories(): Promise<Document<any>[]> {
     try {
