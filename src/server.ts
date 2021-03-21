@@ -19,20 +19,20 @@ import postModule from './routes/post.route'
 import feedbackMoodule from './routes/feedback.route'
 import redisMiddleware from './middlewares/redis'
 import authMiddleware from './middlewares/auth'
-import runConnection from "./sockets/index"
+import runConnection from './sockets/index'
 const app: Application = express()
 const server = http.createServer(app)
- const io = require("socket.io")(server, {
+const io = require('socket.io')(server, {
   cors: {
-    origin: "http://127.0.0.1:5500",
-    methods: "*",
+    origin: 'http://127.0.0.1:5500',
+    methods: '*',
     allowedHeaders: [
-      "Access-Control-Allow-Origin",
-      "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept",
+      'Access-Control-Allow-Origin',
+      'Access-Control-Allow-Headers',
+      'Origin, X-Requested-With, Content-Type, Accept',
     ],
   },
-});
+})
 const port = process.env.PORT || 3001
 // PASSPORT CONFIG
 passportConfig(passport)
@@ -95,14 +95,15 @@ app.use(function (req, res, next) {
 })
 app.use(redisMiddleware)
 
-app.use("/api/auth", authModule);
-app.use("/api/categories", categoryModule);
-app.use("/api/products", productModule);
-app.use("/api/subcategories", subcategoryModule);
-app.use("/api/users", userModule);
-app.use("/api/posts", postModule);
-app.use("/api/feedbacks", feedbackMoodule);
-app.use("/api/comments", commentModule);
+app.use('/api/auth', authModule)
+app.use('/api/categories', categoryModule)
+app.use('/api/products', productModule)
+app.use('/api/subcategories', subcategoryModule)
+app.use('/api/users', userModule)
+app.use('/api/posts', postModule)
+app.use('/api/feedbacks', feedbackMoodule)
+app.use('/api/comments', commentModule)
+// app.use("/",)
 
 runConnection(io)
 

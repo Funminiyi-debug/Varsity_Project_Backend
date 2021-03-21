@@ -1,33 +1,39 @@
 export interface DataResponse {
-  statusCode: number;
-  data?: any;
-  message?: string;
+  statusCode: number
+  data?: any
+  message?: string
 }
 
 export interface AuthResponse {
-  statusCode: number;
-  token: string;
-  message?: string;
+  statusCode: number
+  token: string
+  message?: string
 }
 
 export interface SmsRequest {
-  phoneNumber: string;
+  phoneNumber: string
+}
+
+export interface EmailRequest {
+  sender: string
+  message: string
+  subject: string
 }
 
 export interface SmsCodeRequest {
-  phoneCode: string;
+  phoneCode: string
 }
 
 export interface Username {
-  username: string;
+  username: string
 }
 
 export interface Name {
-  first: string;
-  last?: string;
+  first: string
+  last?: string
 }
 
 export interface UserCreationRequest {
-  id: string;
-  verificationStatus: any;
+  id: string
+  verificationStatus: any
 }

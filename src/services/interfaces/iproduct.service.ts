@@ -6,11 +6,13 @@ import { Express } from 'express'
 export default interface IProductService {
   getProducts(): Promise<Document<any>[]>
 
-  getProduct(id: string): Promise<Document<any>[]>
+  getProduct(id: string)
 
   getProductsByCondition(query: IFilter): Promise<Document<any>[]>
 
   getProductFeedbacks(userid: string)
+
+  getProductsByUser(userid: string): Promise<Document<any>[]>
 
   createProduct(
     entity: IProduct,

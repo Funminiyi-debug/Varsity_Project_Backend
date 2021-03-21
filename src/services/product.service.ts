@@ -97,6 +97,7 @@ export default class ProductService implements IProductService {
       },
     })
   }
+
   async getProducts(): Promise<Document<any>[]> {
     return await Product.find({})
       .populate('author', { userName: 1, email: 1 })
@@ -110,8 +111,8 @@ export default class ProductService implements IProductService {
   }
 
   // get product
-  async getProduct(id: string): Promise<Document<any>[]> {
-    return await Product.find({})
+  async getProduct(id: string) {
+    return await Product.find({ _id: id })
       .populate('author', { userName: 1, email: 1 })
       .populate('subcategory')
       // .populate({ path: "images", select: "mimetype" })
@@ -131,6 +132,17 @@ export default class ProductService implements IProductService {
     })
 
     return feedbacks
+  }
+
+  async getProductsByUser(userid: string): Promise<Document<any>[]> {
+    return await Product.find({ author: userid })
+      .populate('author', { userName: 1, email: 1 })
+      // .populate('subcategory')
+      .populate({ path: 'images', select: 'mimetype' })
+      // .populate('category')
+      .populate('feedbacks')
+
+    // return await this.appfileService.getAllAppFiles();
   }
 
   // search for product

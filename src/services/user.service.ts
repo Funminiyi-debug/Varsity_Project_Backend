@@ -17,6 +17,7 @@ import UnauthorizedException from '../exceptions/UnauthorizedException'
 import SavedAds from '../models/SavedAds'
 import Types from '../types'
 import Product from '../models/Product'
+import { Chat } from '../interfaces/SocketInterfaces'
 
 @injectable()
 export default class UserService implements IUserService {
@@ -122,15 +123,18 @@ export default class UserService implements IUserService {
     const userFeedbacks = await this.feedbackService.getFeedbacksSentByUser(
       userid,
     )
-    const allOtherFeedbacks = await this.feedbackService.getFeedbacksReceivedByUser(
-      userid,
-    )
+
+    const userProducts = await this.productService.getProductsByUser(userid)
+    // const allOtherFeedbacks = await this.feedbackService.getFeedbacksReceivedByUser(
+    //   userid,
+    // )
 
     const receivedFeedbacks = await this.productService.getProductFeedbacks(
       userid,
     )
 
     return {
+      userProducts,
       userPosts,
       userLikesOnPost,
       usersCommentsOnPost,

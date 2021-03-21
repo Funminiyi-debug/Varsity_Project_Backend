@@ -21,10 +21,8 @@ import ErrorResponseModel from "../interfaces/ErrorResponseModel";
 import { inject, injectable } from "inversify";
 import Types from "../types";
 import { IUserService } from "../services/interfaces";
-import VStatus from "../enums/VerificationStatus";
 import handleAppExceptions from "../utils/handleAppExceptions";
 import { IUser, IVerify } from "../interfaces/entities";
-import SavedAds from "../models/SavedAds";
 
 // interface VerifyStatusRequest {
 //   id: string;

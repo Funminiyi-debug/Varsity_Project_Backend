@@ -1,11 +1,11 @@
-import mongoose from "mongoose";
-import Post from "./Post";
-import Comment from "./Comment";
-import AppFile from "./AppFile";
-import Product from "./Product";
-import Feedback from "./Feedback";
-import VerificationStatus from "../enums/VerificationStatus";
-import { number } from "joi";
+import mongoose from 'mongoose'
+import Post from './Post'
+import Comment from './Comment'
+import AppFile from './AppFile'
+import Product from './Product'
+import Feedback from './Feedback'
+import VerificationStatus from '../enums/VerificationStatus'
+import { number } from 'joi'
 
 const UserShema = new mongoose.Schema(
   {
@@ -27,7 +27,7 @@ const UserShema = new mongoose.Schema(
       type: String,
       required: true,
       default: function () {
-        return `${this.firstName}_${this.lastName}`;
+        return `${this.firstName}_${this.lastName}`
       },
     },
     email: {
@@ -59,6 +59,10 @@ const UserShema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    allowEmailNotification: {
+      type: Number,
+      default: false,
+    },
     verificationStatus: {
       type: String,
       required: true,
@@ -72,7 +76,7 @@ const UserShema = new mongoose.Schema(
     savedAds: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Product",
+        ref: 'Product',
       },
     ],
     businessName: {
@@ -84,16 +88,16 @@ const UserShema = new mongoose.Schema(
     website: { type: String },
     aboutCompany: { type: String },
   },
-  { timestamps: true }
-);
+  { timestamps: true },
+)
 
-UserShema.pre("remove", function (next) {
-  Comment.remove({ postid: this._id }).exec();
-  Post.remove({ author: this._id }).exec();
-  AppFile.remove({ postid: this._id }).exec();
-  Product.remove({ author: this._id }).exec();
-  Feedback.remove({ author: this._id }).exec();
-  next();
-});
+UserShema.pre('remove', function (next) {
+  Comment.remove({ postid: this._id }).exec()
+  Post.remove({ author: this._id }).exec()
+  AppFile.remove({ postid: this._id }).exec()
+  Product.remove({ author: this._id }).exec()
+  Feedback.remove({ author: this._id }).exec()
+  next()
+})
 
-export default mongoose.model("User", UserShema);
+export default mongoose.model('User', UserShema)
