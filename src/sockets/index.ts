@@ -102,6 +102,8 @@ const runConnection = (io: Server) => {
           );
 
           if (createdRoom != null) {
+            // frontend is supposoed to add the receiver to the new room and populate it with the message from the sender
+            //he can then emit the SendMessage event
             io.sockets.emit(SocketEvents.NotifyStartConversation, createdRoom);
           } else {
             errorHappened(socket, {

@@ -11,6 +11,7 @@ export interface Chat {
   message: string;
   token: string /* serves as sender */;
   room: string;
+  //   for service
   user?: any;
 }
 
