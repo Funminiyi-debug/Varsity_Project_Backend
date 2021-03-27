@@ -8,8 +8,7 @@
     "test:coverage": "jest --coverage -c ./jest.unit.json",
     "dev": "concurrently \"npm run devStart\" \"nodemon -x tsoa spec\"",
     "prebuild": "npm run swagger",    
-    "start": "tsc && node dist/server.js",
-
+    "build": "tsc --project ./src && npm run swagger",
     "devStart": "nodemon --watch src/**/*.ts --ignore src/populatedb/* --exec ts-node ./src/server.ts",
     "swagger": "tsoa spec"
   },
