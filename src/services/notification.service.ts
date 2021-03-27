@@ -7,17 +7,18 @@ import { INotification } from "../interfaces/entities";
 
 @injectable()
 export default class NotificationService implements INotificationService {
-  async getNotifications(): Promise<Document<any>[]> {
+  async getNotifications(userid: string): Promise<Document<any>[]> {
     try {
-      return await Notification.find({});
+      // const allNotifications = await Notification.find();
+      return await Notification.find({ user: userid });
     } catch (error) {
       console.log(error);
       throw ServerErrorException(error);
     }
   }
-  async getNotification(id: string): Promise<Document<any>[]> {
+  async getNotification(id: string, userid: string): Promise<Document<any>[]> {
     try {
-      return await Notification.find({ _id: id });
+      return await Notification.find({ _id: id, user: userid });
     } catch (error) {
       console.log(error);
       throw ServerErrorException(error);
@@ -44,9 +45,9 @@ export default class NotificationService implements INotificationService {
     }
   }
 
-  async deleteNotification(id: string): Promise<Document<any>> {
+  async deleteNotification(id: string, userid: string): Promise<Document<any>> {
     try {
-      return await Notification.findByIdAndDelete(id);
+      return await Notification.findOneAndDelete({ _id: id, user: userid });
     } catch (error) {
       throw ServerErrorException(error);
     }

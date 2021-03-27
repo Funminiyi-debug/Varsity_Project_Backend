@@ -5,6 +5,10 @@ import TokenContent from "../interfaces/TokenContent";
 import express from "express";
 import { Console } from "console";
 import User from "../models/User";
+import { container } from "../containerDI";
+import { UserService } from "../services";
+import Types from "../types";
+const userService = container.get<UserService>(Types.IUserService);
 
 export default {
   ensureAuth: (req, res, next) => {
@@ -106,7 +110,7 @@ export default {
     p.then(async (decoded: TokenContent) => {
       const user = await User.findById(decoded._id);
       if (!user) {
-        return res.status(404).json({ message: "User does not exist" });
+        return res.status(401).json({ message: "User does not exist" });
       }
       res.locals.userid = decoded._id;
       res.locals.email = decoded.email;

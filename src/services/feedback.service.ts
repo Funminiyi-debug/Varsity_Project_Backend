@@ -27,8 +27,7 @@ export default class FeedbackService implements IFeedbackService {
     @inject(Types.IProductService) private productService: IProductService,
     @inject(Types.IEmailService) private emailservice: IEmailService,
     @inject(Types.INotificationService)
-    private notificationService: INotificationService,
-    @inject(Types.IUserService) private userService: IUserService
+    private notificationService: INotificationService
   ) {}
 
   async likeFeedback(
@@ -50,14 +49,17 @@ export default class FeedbackService implements IFeedbackService {
       return await feedback.save();
     }
     // ================
-    const currentUser = await this.userService.getUser(userid);
+    const currentUser: any = await this.getUser(userid);
     const currentProduct = await this.productService.getProduct(
       feedback.product
     );
     const receiverMail = currentProduct.author.email;
     const message = `${currentUser.firstName} liked your post ${currentProduct.title}`;
     await this.emailservice.sendmail(message, receiverMail);
-    await this.notificationService.createNotification({ message });
+    await this.notificationService.createNotification({
+      message,
+      user: currentProduct.author._id,
+    });
     // if (exists) throw new ConflictException("User has already liked feedback");
     // =====================
     feedback.likes = [...feedback.likes, like];
@@ -147,16 +149,20 @@ export default class FeedbackService implements IFeedbackService {
       );
 
       //=========================================================================
-      const currentUser = await this.userService.getUser(entity.author);
+      const currentUser: any = await this.getUser(entity.author);
       const currentProduct = await this.productService.getProduct(
         entity.productid
       );
       const receiverMail = currentProduct.author.email;
-      const message = `${currentUser.firstName} left a feedback on your post ${currentProduct.title}
+      const message = `
+      ${currentUser.firstName} left a feedback on your post ${currentProduct.title}
         "${request.message}"
       `;
       await this.emailservice.sendmail(message, receiverMail);
-      await this.notificationService.createNotification({ message });
+      await this.notificationService.createNotification({
+        message,
+        user: currentProduct.author._id,
+      });
       //=========================================================================
 
       return feedback;
@@ -189,6 +195,14 @@ export default class FeedbackService implements IFeedbackService {
     } catch (error) {
       console.log(error);
       throw new ServerErrorException(error);
+    }
+  }
+
+  private async getUser(userid: string) {
+    try {
+      return await User.findById(userid);
+    } catch (error) {
+      throw ServerErrorException(error);
     }
   }
 }
