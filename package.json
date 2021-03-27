@@ -7,7 +7,7 @@
     "test": "jest --watchAll --verbose -c ./jest.unit.json",
     "test:coverage": "jest --coverage -c ./jest.unit.json",
     "dev": "concurrently \"npm run devStart\" \"nodemon -x tsoa spec\"",
-    "start": "tsc && node dist/server.js",
+    "start": "tsc && tsoa spec && node dist/server.js",
     "prebuild": "npm run swagger",
     "devStart": "nodemon --watch src/**/*.ts --ignore src/populatedb/* --exec ts-node ./src/server.ts",
     "swagger": "tsoa spec"
