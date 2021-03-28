@@ -129,6 +129,12 @@ export default class FeedbackService implements IFeedbackService {
       }
 
       entity.author = user.userid;
+
+      // verify product
+      const productExists = await this.productService.getProduct(
+        request.productid
+      );
+      if (!productExists) throw new NotFoundException("Product does not exist");
       entity.product = request.productid;
 
       const feedback = await (await Feedback.create(entity))
