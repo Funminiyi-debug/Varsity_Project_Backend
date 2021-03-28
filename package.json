@@ -11,7 +11,7 @@
     "build": "tsc --project ./ && npm run swagger",
     "devStart": "nodemon --watch src/**/*.ts --ignore src/populatedb/* --exec ts-node ./src/server.ts",
     "swagger": "tsoa spec",   
-     "start": "node dist/server.js"
+     "start": "node dist/src/server.js"
 
   },
   "dependencies": {
