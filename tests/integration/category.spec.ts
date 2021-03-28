@@ -32,15 +32,15 @@ describe("Category Routes - /api/categories", () => {
       expect(res.status).toBe(401);
     });
 
-    it("GET Should return all categories", async () => {
-      const res = await request(server)
-        .get("/api/categories")
-        .set("Authorization", `Bearer ${token}`);
+    // it("GET Should return all categories", async () => {
+    //   const res = await request(server)
+    //     .get("/api/categories")
+    //     .set("Authorization", `Bearer ${token}`);
 
-      expect(res.status).toBe(200);
+    //   expect(res.status).toBe(200);
 
-      //   console.log(await Category.find({}));
-    });
+    //   //   console.log(await Category.find({}));
+    // });
 
     it("GET Should return Books category", async () => {
       const res = await request(server)

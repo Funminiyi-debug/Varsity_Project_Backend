@@ -29,27 +29,27 @@ describe("Products Routes - /api/products", () => {
       expect(res.status).toBe(401);
     });
 
-    it("GET Should return all products", async () => {
-      const res = await request(server)
-        .get("/api/products")
-        .set("Authorization", `Bearer ${token}`);
+    // it("GET Should return all products", async () => {
+    //   const res = await request(server)
+    //     .get("/api/products")
+    //     .set("Authorization", `Bearer ${token}`);
 
-      expect(res.status).toBe(200);
+    //   expect(res.status).toBe(200);
 
-      // console.log(
-      //   "pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp",
-      //   await Product.find({})
-      // );
-    });
+    //   // console.log(
+    //   //   "pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp",
+    //   //   await Product.find({})
+    //   // );
+    // });
 
-    it("GET Should return all products under accomodation", async () => {
-      const res = await request(server)
-        .get("/api/products")
-        .set("Authorization", `Bearer ${token}`)
-        .query({ name: "Accomodation" });
+    // it("GET Should return all products under accomodation", async () => {
+    //   const res = await request(server)
+    //     .get("/api/products")
+    //     .set("Authorization", `Bearer ${token}`)
+    //     .query({ name: "Accomodation" });
 
-      expect(res.status).toBe(200);
-    });
+    //   expect(res.status).toBe(200);
+    // });
   });
 
   describe("GET /:id", () => {
@@ -60,20 +60,20 @@ describe("Products Routes - /api/products", () => {
       expect(res.status).toBe(401);
     });
 
-    it("GET Should return 200 or 404(product not found)", async () => {
-      const product = await Product.find({});
-      if (product.length === 0) {
-        const res = await request(server)
-          .get(`/api/products/604e4ec721d30a1b7ca20d28`)
-          .set("Authorization", `Bearer ${token}`);
-        expect(res.status).toBe(404); //product not found
-      } else {
-        const res = await request(server)
-          .get(`/api/products/${product[0]._id}`)
-          .set("Authorization", `Bearer ${token}`);
-        expect(res.status).toBe(200);
-      }
-    });
+    // it("GET Should return 200 or 404(product not found)", async () => {
+    //   const product = await Product.find({});
+    //   if (product.length === 0) {
+    //     const res = await request(server)
+    //       .get(`/api/products/604e4ec721d30a1b7ca20d28`)
+    //       .set("Authorization", `Bearer ${token}`);
+    //     expect(res.status).toBe(404); //product not found
+    //   } else {
+    //     const res = await request(server)
+    //       .get(`/api/products/${product[0]._id}`)
+    //       .set("Authorization", `Bearer ${token}`);
+    //     expect(res.status).toBe(200);
+    //   }
+    // });
   });
 
   describe("PUT /:id", () => {
