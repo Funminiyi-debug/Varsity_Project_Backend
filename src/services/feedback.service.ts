@@ -174,7 +174,7 @@ export default class FeedbackService implements IFeedbackService {
       return feedback;
     } catch (error) {
       console.log(error);
-      throw new ServerErrorException(error);
+      throw error;
     }
   }
 
