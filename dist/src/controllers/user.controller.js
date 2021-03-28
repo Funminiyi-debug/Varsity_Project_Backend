@@ -15,7 +15,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const dummydata = require("../../dummydata")();
 const tsoa_1 = require("tsoa");
 const inversify_1 = require("inversify");
 const types_1 = __importDefault(require("../types"));
@@ -41,7 +40,6 @@ let UsersController = class UsersController extends tsoa_1.Controller {
     }
     async getUser(id) {
         try {
-            const user = dummydata.filter((result) => result.userId == id);
             return {
                 statusCode: 200,
                 data: await this.user.getUser(id),
