@@ -2,6 +2,7 @@
   "exclude": ["**/*.spec.ts"],
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig.json to read more about this file */
+    // "start": "tsc && node dist/server.js",
 
     /* Basic Options */
     // "incremental": true,                   /* Enable incremental compilation */

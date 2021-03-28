@@ -1,5 +1,5 @@
-import { Document } from 'mongoose'
+import { Document } from "mongoose";
 
 export default interface IEmailService {
-  sendmail(message, senderid, productid)
+  sendmail(message: string, receiverMail: string): void;
 }
