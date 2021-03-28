@@ -1,3 +1,4 @@
+//@ts-nocheck
 if (!Array.prototype.flat) {
   Array.prototype.flat = function (maxDepth, currentDepth) {
     "use strict";
