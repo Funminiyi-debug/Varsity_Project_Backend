@@ -8,11 +8,21 @@ const Comment_1 = __importDefault(require("./Comment"));
 const AppFile_1 = __importDefault(require("./AppFile"));
 const modelValidators_1 = require("./modelValidators");
 const PostType_1 = __importDefault(require("../enums/PostType"));
-const OptionsSchema = new mongoose_1.default.Schema({
+const Schema = mongoose_1.default.Schema;
+const OptionsSchema = new Schema({
     name: { type: String, required: true },
     votes: { type: Number, default: 0 },
+    voters: [
+        {
+            type: Schema.Types.ObjectId,
+            /*required: true,*/ ref: "User",
+        },
+    ],
 });
-const PostSchema = new mongoose_1.default.Schema({
+const LikeSchema = new Schema({
+    liker: { type: Schema.Types.ObjectId, required: true, ref: "User" },
+});
+const PostSchema = new Schema({
     // post type
     title: {
         type: String,
@@ -21,19 +31,12 @@ const PostSchema = new mongoose_1.default.Schema({
         },
         validate: modelValidators_1.optionalWithLength(3, 300),
     },
-    body: {
-        type: String,
-        required: function () {
-            return this.postType == PostType_1.default.Regular;
-        },
-        validate: modelValidators_1.optionalWithLength(3, 300),
-    },
     // end of post type
-    author: { type: mongoose_1.default.Schema.Types.ObjectId, ref: "User" },
-    likes: { type: Number, default: 0 },
-    comments: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: "Comment" }],
+    author: { type: Schema.Types.ObjectId, ref: "User" },
+    likes: [LikeSchema],
+    comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
     shares: { type: Number, default: 0 },
-    images: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: "AppFile" }],
+    images: [{ type: Schema.Types.ObjectId, ref: "AppFile" }],
     // for polls
     postType: {
         type: String,
@@ -52,7 +55,7 @@ const PostSchema = new mongoose_1.default.Schema({
     pollExpiryDate: {
         type: Date,
         required: function () {
-            return this.postType == PostType_1.default.Regular;
+            return this.postType == PostType_1.default.Poll;
         },
     },
 }, {
@@ -60,6 +63,9 @@ const PostSchema = new mongoose_1.default.Schema({
 });
 PostSchema.virtual("noOfComments").get(function () {
     return this.comments.length;
+});
+PostSchema.virtual("noOfLikes").get(function () {
+    return this.likes.length;
 });
 // cascade delete
 PostSchema.pre("remove", function (next) {

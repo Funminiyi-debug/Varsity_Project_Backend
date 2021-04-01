@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var VerificationStatus;
-(function (VerificationStatus) {
-    VerificationStatus["Verified"] = "Verified";
-    VerificationStatus["NotVerified"] = "NotVerified";
-    VerificationStatus["Restricted"] = "Restricted";
-})(VerificationStatus || (VerificationStatus = {}));
-exports.default = VerificationStatus;
+var VStatus;
+(function (VStatus) {
+    VStatus["Verified"] = "Verified";
+    VStatus["NotVerified"] = "NotVerified";
+    VStatus["Restricted"] = "Restricted";
+})(VStatus || (VStatus = {}));
+exports.default = VStatus;
 //# sourceMappingURL=VerificationStatus.js.map

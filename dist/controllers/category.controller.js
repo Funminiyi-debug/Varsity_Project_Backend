@@ -8,74 +8,178 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
 };
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const inversify_1 = require("inversify");
 const tsoa_1 = require("tsoa");
-const CategoryService_1 = __importDefault(require("../services/CategoryService"));
-let CategoriesController = class CategoriesController extends tsoa_1.Controller {
+const types_1 = __importDefault(require("../types"));
+let CategoriesController = 
+// @controller("/categories")
+class CategoriesController extends tsoa_1.Controller {
     constructor(cs) {
         super();
         this.cs = cs;
+        this.response = {
+            statusCode: 500,
+            data: [],
+        };
     }
-    getCategories() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const results = yield this.cs.getCategories();
-            const response = {
-                statusCode: 200,
+    /**
+     * Get all categories
+     *
+     */
+    async getCategories() {
+        const results = await this.cs.getCategories();
+        this.response = {
+            statusCode: 200,
+            data: results,
+        };
+        return this.response;
+    }
+    async getCategory(id) {
+        const results = await this.cs.getCategory(id);
+        if (results.length > 0) {
+            this.response.statusCode = 200;
+            this.response.data = results;
+        }
+        else {
+            this.response.statusCode = 404;
+            this.response.message = "Category not found";
+        }
+        return this.response;
+    }
+    async createCategory(category) {
+        console.log("from user", category);
+        try {
+            if (!category.name || !category.categoryType) {
+                return {
+                    statusCode: 400,
+                    message: "Please fill all fields",
+                };
+            }
+            const results = await this.cs.createCategory(category);
+            if (results == null) {
+                this.response = {
+                    statusCode: 409,
+                    message: "Category already exists",
+                };
+                return this.response;
+            }
+            this.response = {
+                statusCode: 201,
                 data: results,
             };
-            return response;
-        });
-    }
-    getCategory(id) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const results = yield this.cs.getCategory(id);
-            const response = {
+        }
+        catch (error) {
+            console.log(error);
+            this.response = {
                 statusCode: 500,
-                data: [],
+                message: error.message,
             };
-            if (results.length > 0) {
-                response.statusCode = 200;
-                response.data = results;
+        }
+        return this.response;
+    }
+    async updateCategory(id, category) {
+        try {
+            const results = await this.cs.updateCategory(id, category);
+            if (results == null) {
+                this.response = {
+                    statusCode: 404,
+                    message: "Category not found",
+                };
+                return this.response;
             }
-            else {
-                response.statusCode = 404;
-                response.data = null;
-            }
-            return response;
-        });
+            this.response = {
+                statusCode: 204,
+            };
+        }
+        catch (error) {
+            console.log(error);
+            this.response = {
+                statusCode: 500,
+                message: error.message,
+            };
+        }
+        return this.response;
+    }
+    async deleteCategory(id) {
+        try {
+            await this.cs.deleteCategory(id);
+            this.response = {
+                statusCode: 204,
+            };
+            return this.response;
+        }
+        catch (error) {
+            return {
+                statusCode: 500,
+                message: "Cannot delete Caategory",
+            };
+        }
     }
 };
 __decorate([
-    tsoa_1.Get("/"),
+    tsoa_1.Get("/")
+    // @httpGet("/")
+    ,
     tsoa_1.SuccessResponse("200", "OK"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], CategoriesController.prototype, "getCategories", null);
 __decorate([
-    tsoa_1.Get("{id}"),
+    tsoa_1.Get("{id}")
+    // @httpGet("{id}")
+    ,
     tsoa_1.SuccessResponse("200", "OK"),
     tsoa_1.Response("404", "Not Found"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], CategoriesController.prototype, "getCategory", null);
+__decorate([
+    tsoa_1.Post("/"),
+    tsoa_1.SuccessResponse("201", "Created"),
+    tsoa_1.Response("400", "Bad Data"),
+    tsoa_1.Response("409", "Category already exists"),
+    __param(0, tsoa_1.Body()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], CategoriesController.prototype, "createCategory", null);
+__decorate([
+    tsoa_1.Put("{id}"),
+    tsoa_1.SuccessResponse("204", "Updated"),
+    tsoa_1.Response("400", "Bad Data"),
+    tsoa_1.Response("404", "Not Found"),
+    __param(0, tsoa_1.Path()),
+    __param(1, tsoa_1.Body()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], CategoriesController.prototype, "updateCategory", null);
+__decorate([
+    tsoa_1.Delete("{id}"),
+    tsoa_1.SuccessResponse("204", "Deleted"),
+    tsoa_1.Response("400", "Bad Data"),
+    tsoa_1.Response("404", "Not Found"),
+    __param(0, tsoa_1.Path()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], CategoriesController.prototype, "deleteCategory", null);
 CategoriesController = __decorate([
     tsoa_1.Route("/categories"),
-    tsoa_1.Tags("Category"),
-    __metadata("design:paramtypes", [CategoryService_1.default])
+    tsoa_1.Tags("Category")
+    // @controller("/categories")
+    ,
+    __param(0, inversify_1.inject(types_1.default.ICategoryService)),
+    __metadata("design:paramtypes", [Object])
 ], CategoriesController);
 exports.default = CategoriesController;
 //# sourceMappingURL=category.controller.js.map

@@ -7,6 +7,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const Schema = mongoose_1.default.Schema;
 const NotificationSchema = new Schema({
     message: { type: String, required: true },
+    user: { type: Schema.Types.ObjectId, required: true },
 }, { timestamps: true });
 const Notification = mongoose_1.default.model("Notification", NotificationSchema);
 exports.default = Notification;
