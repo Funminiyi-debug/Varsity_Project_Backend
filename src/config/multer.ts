@@ -1,4 +1,5 @@
 const path = require("path");
+const fs = require("fs");
 
 const checkFileType = (file, cb) => {
   const filetypes = /jpeg|jpg|png|/;
@@ -16,7 +17,19 @@ import multer from "multer";
 // multer setup
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "./src/uploads");
+    var dir = "";
+    if (process.env.MONGO_ENV == "development") {
+      dir = path.resolve(__dirname, "./src/uploads");
+      console.log(dir);
+    } else {
+      dir = path.resolve(__dirname, "../uploads");
+      console.log(dir);
+    }
+
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir);
+    }
+    cb(null, dir);
   },
   filename: (req, file, cb) => {
     cb(

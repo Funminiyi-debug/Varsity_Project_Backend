@@ -1,3 +1,4 @@
+//@ts-nocheck
 if (!Array.prototype.flat) {
   // @ts-ignore
   Array.prototype.flat = function (maxDepth, currentDepth) {

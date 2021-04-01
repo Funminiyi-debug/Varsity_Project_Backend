@@ -1,4 +1,4 @@
-import redisClient from "../config/redis";
+// import redisClient from "../config/redis";
 import express from "express";
 const cache = (req: express.Request, res, next) => {
   // let key = req.originalUrl;

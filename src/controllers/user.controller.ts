@@ -1,5 +1,3 @@
-const dummydata = require("../../dummydata")();
-
 import {
   Get,
   Put,
@@ -55,7 +53,6 @@ export default class UsersController extends Controller {
   @Response<ErrorResponseModel>("400", "Bad Data")
   public async getUser(id: string): Promise<DataResponse> {
     try {
-      const user = dummydata.filter((result: any) => result.userId == id);
       return {
         statusCode: 200,
         data: await this.user.getUser(id), //await this.user.getUser(id),

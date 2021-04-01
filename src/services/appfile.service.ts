@@ -35,6 +35,11 @@ export default class AppFileService implements IAppFileService {
 
   async addAppFile(entity: Express.Multer.File): Promise<Document<any>> {
     try {
+      // var dir = path.resolve(__dirname, "../../uploads");
+
+      // if (!fs.existsSync(dir)) {
+      //   fs.mkdirSync(dir);
+      // }
       const image = {
         name: `image_${entity.originalname}`,
         data: fs.readFileSync(path.resolve(__dirname, "../../", entity.path)),
