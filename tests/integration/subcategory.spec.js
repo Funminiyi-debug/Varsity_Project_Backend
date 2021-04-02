@@ -33,24 +33,24 @@ describe("Sub-Category Routes - /api/subcategories", () => {
       expect(res.status).toBe(401);
     });
 
-    it("GET Should return all subcategories", async () => {
-      const res = await request(server)
-        .get("/api/subcategories")
-        .set("Authorization", `Bearer ${token}`);
+    // it("GET Should return all subcategories", async () => {
+    //   const res = await request(server)
+    //     .get("/api/subcategories")
+    //     .set("Authorization", `Bearer ${token}`);
 
-      expect(res.status).toBe(200);
+    //   expect(res.status).toBe(200);
 
-      //   console.log(await Category.find({}));
-    });
+    //   //   console.log(await Category.find({}));
+    // });
 
-    it("GET Should return Books subcategories", async () => {
-      const res = await request(server)
-        .get("/api/subcategories")
-        .set("Authorization", `Bearer ${token}`)
-        .query({ name: "Novels" });
+    // it("GET Should return Books subcategories", async () => {
+    //   const res = await request(server)
+    //     .get("/api/subcategories")
+    //     .set("Authorization", `Bearer ${token}`)
+    //     .query({ name: "Novels" });
 
-      expect(res.status).toBe(200);
-    });
+    //   expect(res.status).toBe(200);
+    // });
   });
 
   describe("GET /:id", () => {

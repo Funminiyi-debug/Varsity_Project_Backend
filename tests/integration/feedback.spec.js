@@ -35,22 +35,22 @@ describe("Feed Back Routes - /api/feedbacks", () => {
       expect(res.status).toBe(401);
     });
 
-    it("GET Should return all feedbacks", async () => {
-      const res = await request(server)
-        .get("/api/feedbacks")
-        .set("Authorization", `Bearer ${token}`);
+    // it("GET Should return all feedbacks", async () => {
+    //   const res = await request(server)
+    //     .get("/api/feedbacks")
+    //     .set("Authorization", `Bearer ${token}`);
 
-      expect(res.status).toBe(200);
-    });
+    //   expect(res.status).toBe(200);
+    // });
   });
 
   describe("GET /:id", () => {
-    it("Should return unauthorized error(401)", async () => {
-      const res = await request(server).get(
-        "/api/feedbacks/604e4ec721d30a1b7ca20d28"
-      );
-      expect(res.status).toBe(401);
-    });
+    // it("Should return unauthorized error(401)", async () => {
+    //   const res = await request(server).get(
+    //     "/api/feedbacks/604e4ec721d30a1b7ca20d28"
+    //   );
+    //   expect(res.status).toBe(401);
+    // });
 
     it("Should return 200 or 404(feeds not found)", async () => {
       const feedback = await Feedback.find({});
