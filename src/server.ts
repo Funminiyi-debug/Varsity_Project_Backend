@@ -24,6 +24,7 @@ import runConnection from "./sockets/index";
 import mongoose from "mongoose"
 const app: Application = express();
 const server = http.createServer(app);
+mongoose.set('useCreateIndex', true);
 const io = require("socket.io")(server, {
   cors: {
     origin: "http://127.0.0.1:5500",
@@ -76,7 +77,6 @@ app.use(
 );
 
 // app.use(express.static("public"));
-mongoose.set('useCreateIndex', true);
 
 app.use(
   "/docs",
