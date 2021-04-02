@@ -4,14 +4,14 @@
   "description": "versity api",
   "main": "dist/server.js",
   "scripts": {
-    "start": "tsc && node dist/server.js",
+    "start": "node dist/server.js",
     "test": "jest --watchAll --verbose -c ./jest.unit.json",
     "test:coverage": "jest --coverage -c ./jest.unit.json",
     "dev": "concurrently \"npm run devStart\" \"nodemon -x tsoa spec\"",
-    "prebuild": "npm run swagger",    
+    "prebuild": "npm run swagger",
     "build": "tsc --project ./",
     "devStart": "nodemon --watch src/**/*.ts --ignore src/populatedb/* --exec ts-node ./src/server.ts",
-    "swagger": "tsoa spec" 
+    "swagger": "tsoa spec"
   },
   "dependencies": {
     "@decorators/di": "^1.0.2",
