@@ -21,6 +21,7 @@ import feedbackMoodule from "./routes/feedback.route";
 import redisMiddleware from "./middlewares/redis";
 import authMiddleware from "./middlewares/auth";
 import runConnection from "./sockets/index";
+import mongoose from "mongoose"
 const app: Application = express();
 const server = http.createServer(app);
 const io = require("socket.io")(server, {
@@ -75,6 +76,7 @@ app.use(
 );
 
 // app.use(express.static("public"));
+mongoose.set('useCreateIndex', true);
 
 app.use(
   "/docs",
