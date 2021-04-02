@@ -55,5 +55,7 @@ ProductSchema.pre("remove", async function () {
   Feedback.remove({ product: this._id }).exec();
 });
 
+ProductSchema.index({ "$**": "text" });
+
 const Product = mongoose.model("Product", ProductSchema);
 export default Product;

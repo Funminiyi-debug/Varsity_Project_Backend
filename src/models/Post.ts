@@ -82,6 +82,8 @@ PostSchema.pre("remove", function (next) {
   next();
 });
 
+PostSchema.index({ "$**": "text" });
+
 const Post = mongoose.model("Post", PostSchema);
 
 export default Post;
