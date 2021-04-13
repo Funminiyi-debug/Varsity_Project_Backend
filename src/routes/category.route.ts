@@ -11,6 +11,7 @@ import ICategory from "../interfaces/entities/ICategory";
 import validatorMiddleware from "../middlewares/schemaValidator";
 import { categorySchema, identifierSchema } from "../validators";
 import Category from "../models/Category";
+import adminOnly from "../middlewares/adminOnly";
 
 const router = express.Router();
 const categoryService = container.get<CategoryService>(Types.ICategoryService);
@@ -38,6 +39,7 @@ router.get("/:id", async (req: Request, res: Response) => {
 
 router.post(
   "/",
+  adminOnly,
   // validatorMiddleware(identifierSchema, categorySchema),
   async (req: Request, res: Response) => {
     const response: DataResponse = await categoryController.createCategory(
@@ -51,6 +53,7 @@ router.post(
 
 router.put(
   "/:id",
+  adminOnly,
   validatorMiddleware(identifierSchema, categorySchema),
   async (req: Request, res: Response) => {
     const response: DataResponse = await categoryController.updateCategory(
@@ -64,7 +67,7 @@ router.put(
   }
 );
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", adminOnly, async (req, res) => {
   // const items = await Category.find();
   // const response = items.map(async (item) => {
   //   try {

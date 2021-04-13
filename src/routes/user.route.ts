@@ -10,13 +10,14 @@ import validatorMiddleware from "../middlewares/schemaValidator";
 import { userSchema, identifierSchema } from "../validators";
 import adminUpdateUserSchema from "../validators/adminUpdateUser.validator";
 import { flushCache, refreshCache } from "../utils/cache-data";
+import adminOnly from "../middlewares/adminOnly";
 
 const router = express.Router();
 const userService = container.get<UserService>(Types.IUserService);
 const Users = new UserController(userService);
 
 //geting all users
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", adminOnly, async (req: Request, res: Response) => {
   const response: DataResponse = await Users.getAllUsers();
   return handleResponse(res, response);
 });
@@ -46,7 +47,7 @@ router.put("/:id", async (req: Request, res: Response) => {
   return handleResponse(res, data);
 });
 
-router.delete("/:id", async (req: Request, res: Response) => {
+router.delete("/:id", adminOnly, async (req: Request, res: Response) => {
   const response = await Users.deleteUser(req.params.id);
 
   flushCache();
@@ -58,6 +59,24 @@ router.post("/save-ad", async (req: Request, res: Response) => {
     res.locals.userid,
     req.body
   );
+
+  return handleResponse(res, response);
+});
+
+router.post("/make-admin", adminOnly, async (req: Request, res: Response) => {
+  const response: DataResponse = await Users.addAdmin(req.body);
+
+  return handleResponse(res, response);
+});
+
+router.post("/remove-admin", adminOnly, async (req: Request, res: Response) => {
+  const response: DataResponse = await Users.removeAdmin(req.body);
+
+  return handleResponse(res, response);
+});
+
+router.get("/all-admin", adminOnly, async (req: Request, res: Response) => {
+  const response: DataResponse = await Users.getAdmins();
 
   return handleResponse(res, response);
 });

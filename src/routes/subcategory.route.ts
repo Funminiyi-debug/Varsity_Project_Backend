@@ -9,6 +9,7 @@ import { SubcategoryService } from "../services";
 import validatorMiddleware from "../middlewares/schemaValidator";
 import { identifierSchema, subcategorySchema } from "../validators";
 import SubCategory from "../models/SubCategory";
+import adminOnly from "../middlewares/adminOnly";
 
 const router = express.Router();
 const subcategoryService = container.get<SubcategoryService>(
@@ -32,6 +33,7 @@ router.get("/:id", async (req: Request, res: Response) => {
 
 router.post(
   "/",
+  adminOnly,
   validatorMiddleware(identifierSchema, subcategorySchema),
   async (req: Request, res: Response) => {
     const response: DataResponse = await subcategoryController.createSubcategory(
@@ -44,6 +46,7 @@ router.post(
 
 router.put(
   "/:id",
+  adminOnly,
   validatorMiddleware(identifierSchema, subcategorySchema),
   async (req: Request, res: Response) => {
     const response: DataResponse = await subcategoryController.updateSubcategory(
@@ -55,7 +58,7 @@ router.put(
   }
 );
 
-router.delete("/:id", async (req: Request, res: Response) => {
+router.delete("/:id", adminOnly, async (req: Request, res: Response) => {
   const response: DataResponse = await subcategoryController.deleteSubCategory(
     req.params.id
   );
@@ -63,7 +66,7 @@ router.delete("/:id", async (req: Request, res: Response) => {
   return handleResponse(res, response);
 });
 
-router.delete("/", async (req, res) => {
+router.delete("/", adminOnly, async (req, res) => {
   const deleted = await SubCategory.deleteMany();
   return res.status(200).json({ message: "deleted", deleted });
 });

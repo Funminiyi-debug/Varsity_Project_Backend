@@ -159,6 +159,50 @@ export default class UsersController extends Controller {
         statusCode: 200,
         data: data,
       };
+      return {
+        statusCode: 200,
+        data: data,
+      };
+    } catch (error) {
+      return handleAppExceptions(error);
+    }
+  }
+
+  @Post("add-admin")
+  @SuccessResponse("200", "Success")
+  public async addAdmin(@Body() userid: string) {
+    try {
+      const data = await this.user.makeAdmin(userid);
+      return {
+        statusCode: 200,
+        data: data,
+      };
+    } catch (error) {
+      return handleAppExceptions(error);
+    }
+  }
+  @Post("remove-admin")
+  @SuccessResponse("200", "Success")
+  public async removeAdmin(@Body() userid: string) {
+    try {
+      const data = await this.user.removeAdmin(userid);
+      return {
+        statusCode: 200,
+        data: data,
+      };
+    } catch (error) {
+      return handleAppExceptions(error);
+    }
+  }
+  @Get("all-admin")
+  @SuccessResponse("200", "Success")
+  public async getAdmins() {
+    try {
+      const data = await this.user.getAdmin();
+      return {
+        statusCode: 200,
+        data: data,
+      };
     } catch (error) {
       return handleAppExceptions(error);
     }

@@ -1,5 +1,5 @@
-import { Container } from 'inversify'
-import Types from './types'
+import { Container } from "inversify";
+import Types from "./types";
 import {
   CategoryService,
   ProductService,
@@ -12,7 +12,7 @@ import {
   LikeService,
   PostService,
   MessageService,
-} from './services'
+} from "./services";
 import {
   IUserService,
   IProductService,
@@ -25,25 +25,28 @@ import {
   IPostService,
   ILikeService,
   IMessageService,
-} from './services/interfaces'
-import IEmailService from './services/interfaces/iemail.service'
-import EmailService from './services/email.service'
+  IDashboardService,
+} from "./services/interfaces";
+import IEmailService from "./services/interfaces/iemail.service";
+import EmailService from "./services/email.service";
+import DashboardService from "./services/dashboard.service";
 
-const container = new Container()
-container.bind<ICategoryService>(Types.ICategoryService).to(CategoryService)
-container.bind<IProductService>(Types.IProductService).to(ProductService)
-container.bind<IUserService>(Types.IUserService).to(UserService)
+const container = new Container();
+container.bind<ICategoryService>(Types.ICategoryService).to(CategoryService);
+container.bind<IProductService>(Types.IProductService).to(ProductService);
+container.bind<IUserService>(Types.IUserService).to(UserService);
 container
   .bind<ISubcategoryService>(Types.ISubcategoryService)
-  .to(SubcategoryService)
-container.bind<ICommentService>(Types.ICommentService).to(CommentService)
-container.bind<IEmailService>(Types.IEmailService).to(EmailService)
-container.bind<IAppFileService>(Types.IAppFileService).to(AppFileService)
-container.bind<IFeedbackService>(Types.IFeedbackService).to(FeedbackService)
+  .to(SubcategoryService);
+container.bind<ICommentService>(Types.ICommentService).to(CommentService);
+container.bind<IEmailService>(Types.IEmailService).to(EmailService);
+container.bind<IAppFileService>(Types.IAppFileService).to(AppFileService);
+container.bind<IFeedbackService>(Types.IFeedbackService).to(FeedbackService);
 container
   .bind<INotificationService>(Types.INotificationService)
-  .to(NotificationService)
-container.bind<IPostService>(Types.IPostService).to(PostService)
-container.bind<ILikeService>(Types.ILikeService).to(LikeService)
-container.bind<IMessageService>(Types.IMessageService).to(MessageService)
-export { container }
+  .to(NotificationService);
+container.bind<IPostService>(Types.IPostService).to(PostService);
+container.bind<ILikeService>(Types.ILikeService).to(LikeService);
+container.bind<IMessageService>(Types.IMessageService).to(MessageService);
+container.bind<IDashboardService>(Types.IDashboardService).to(DashboardService);
+export { container };

@@ -13,4 +13,7 @@ export default interface IUserService {
   getUser(id: string);
   deleteUser(id: string): Promise<Document<any>>;
   saveAd(item: any, userid: string): Promise<Document<any>>;
+  makeAdmin(userid): Promise<boolean>;
+  removeAdmin(userid): Promise<boolean>;
+  getAdmin();
 }
