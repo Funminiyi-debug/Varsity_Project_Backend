@@ -67,6 +67,10 @@ export default {
       "/api/auth/facebook",
       "/api/auth/google/callback",
       "/api/auth/facebook/callback",
+      "/api/categories",
+      "/api/products",
+      "/api/subcategories",
+      "/api/posts",
       "/docs",
     ];
     const approved = approvedRoutesWithoutAuth.find((routes) =>
