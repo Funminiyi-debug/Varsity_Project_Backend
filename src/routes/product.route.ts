@@ -11,6 +11,7 @@ import { identifierSchema, productSchema } from "../validators";
 import { formatProductSchema } from "../middlewares/product.middleware";
 import { ProductServiceFilter } from "../middlewares/filter.middleware";
 import { cacheData, refreshCache, flushCache } from "../utils/cache-data";
+import auth from "../middlewares/auth";
 const router = express.Router();
 const productService = container.get<ProductService>(Types.IProductService);
 const productController = new ProductsController(productService);
@@ -34,6 +35,7 @@ router.get("/:id", async (req: Request, res: Response) => {
 router.post(
   "/",
   [
+    auth.authenticate,
     upload.array("images", 4),
     formatProductSchema,
     validatorMiddleware(identifierSchema, productSchema),
@@ -53,6 +55,8 @@ router.post(
 
 router.put(
   "/:id",
+  auth.authenticate,
+
   upload.array("images", 4),
   formatProductSchema,
   validatorMiddleware(identifierSchema, productSchema),
@@ -70,6 +74,8 @@ router.put(
 
 router.delete(
   "/:id",
+  auth.authenticate,
+
   validatorMiddleware(identifierSchema, productSchema),
   async (req: Request, res: Response) => {
     const response: DataResponse = await productController.deleteProduct(

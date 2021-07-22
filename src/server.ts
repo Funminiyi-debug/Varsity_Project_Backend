@@ -89,7 +89,7 @@ app.use(
   })
 );
 // REDIS
-app.use(authMiddleware.authMiddleware);
+// app.use(authMiddleware.authMiddleware);
 
 app.use(function (req, res, next) {
   for (var key in req.query) {

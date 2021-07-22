@@ -9,6 +9,7 @@ import { identifierSchema, feedbackSchema } from "../validators";
 import { NotificationService } from "../services";
 import { cacheData, flushCache, refreshCache } from "../utils/cache-data";
 import NotificationController from "../controllers/notification.controller";
+import auth from "../middlewares/auth";
 
 const router = express.Router();
 const notificationService = container.get<NotificationService>(
@@ -16,7 +17,7 @@ const notificationService = container.get<NotificationService>(
 );
 const notificationController = new NotificationController(notificationService);
 
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", auth.authenticate, async (req: Request, res: Response) => {
   const response: DataResponse = await notificationController.getNotifications(
     res
   );
@@ -24,7 +25,7 @@ router.get("/", async (req: Request, res: Response) => {
   return handleResponse(res, response);
 });
 
-router.get("/:id", async (req: Request, res: Response) => {
+router.get("/:id", auth.authenticate, async (req: Request, res: Response) => {
   const response: DataResponse = await notificationController.getNotification(
     req.params.id,
     res
@@ -35,6 +36,8 @@ router.get("/:id", async (req: Request, res: Response) => {
 
 router.delete(
   "/:id",
+  auth.authenticate,
+
   validatorMiddleware(identifierSchema, feedbackSchema),
   async (req: Request, res: Response) => {
     const response: DataResponse = await notificationController.deleteFeedback(

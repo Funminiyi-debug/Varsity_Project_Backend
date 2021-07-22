@@ -29,7 +29,7 @@ router.post(
 
 router.post(
   "/sendsms",
-  middleWare.authMiddleware,
+  middleWare.authenticate,
   passport.authenticate("sendSms", { failureRedirect: "/auth/failed" }),
   async function (req: any, res: Response) {
     //let response = await authController.sendSms(req.user);
@@ -57,7 +57,7 @@ router.post(
 
 router.post(
   "/validatesmscode",
-  middleWare.authMiddleware,
+  middleWare.authenticate,
   passport.authenticate("validateSmsCode", { failureRedirect: "/auth/failed" }),
   async function (req: any, res: Response) {
     const { data, validationError, error } = req.user;
@@ -84,7 +84,7 @@ router.post(
 
 router.post(
   "/username",
-  middleWare.authMiddleware,
+  middleWare.authenticate,
   passport.authenticate("usernameAuth", { failureRedirect: "/auth/failed" }),
   async function (req: any, res: Response) {
     const { data, validationError, error } = req.user;
@@ -139,7 +139,7 @@ router.get(
 // @route   GET /auth/welcome
 router.get(
   "/welcome",
-  [middleWare.authMiddleware, middleWare.ensureAuth],
+  [middleWare.authenticate, middleWare.ensureAuth],
   (req, res) => {
     res.send(`welcome ${req.session.user.userName}`);
   }

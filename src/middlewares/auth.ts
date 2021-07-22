@@ -8,6 +8,7 @@ import User from "../models/User";
 import { container } from "../containerDI";
 import { UserService } from "../services";
 import Types from "../types";
+import UserRole from "../enums/UserRole";
 const userService = container.get<UserService>(Types.IUserService);
 
 export default {
@@ -61,26 +62,26 @@ export default {
     }
     next();
   },
-  authMiddleware: (req, res, next) => {
-    const approvedRoutesWithoutAuth = [
-      "/api/auth/google",
-      "/api/auth/facebook",
-      "/api/auth/google/callback",
-      "/api/auth/facebook/callback",
-      "/api/categories",
-      "/api/products",
-      "/api/subcategories",
-      "/api/posts",
-      "/docs",
-    ];
-    const approved = approvedRoutesWithoutAuth.find((routes) =>
-      req.originalUrl.startsWith(routes)
-    );
-    res.locals.url = req.originalUrl;
-    if (approved != undefined) {
-      next();
-      return;
-    }
+  authenticate: (req, res, next) => {
+    // const approvedRoutesWithoutAuth = [
+    //   "/api/auth/google",
+    //   "/api/auth/facebook",
+    //   "/api/auth/google/callback",
+    //   "/api/auth/facebook/callback",
+    //   "/api/categories",
+    //   "/api/products",
+    //   "/api/subcategories",
+    //   "/api/posts",
+    //   "/docs",
+    // ];
+    // const approved = approvedRoutesWithoutAuth.find((routes) =>
+    //   req.originalUrl.startsWith(routes)
+    // );
+    // res.locals.url = req.originalUrl;
+    // if (approved != undefined) {
+    //   next();
+    //   return;
+    // }
 
     const authHeader = req.headers.authorization;
     let token: any;
@@ -118,7 +119,25 @@ export default {
       }
       res.locals.userid = decoded._id;
       res.locals.email = decoded.email;
+      req.user = user;
       next();
     }).catch(onError);
+  },
+  admin: (req, res, next) => {
+    if (req.user.userRole == UserRole.ADMIN) {
+      return next();
+    }
+    return res
+      .status(403)
+      .json({ message: "You do not have the rights to this resource" });
+  },
+
+  superadmin: (req, res, next) => {
+    if (req.user.userRole == UserRole.SUPERADMIN) {
+      return next();
+    }
+    return res
+      .status(403)
+      .json({ message: "You do not have the rights to this resource" });
   },
 };

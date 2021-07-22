@@ -9,6 +9,7 @@ import validatorMiddleware from "../middlewares/schemaValidator";
 import { identifierSchema, postSchema } from "../validators";
 import { CommentService } from "../services";
 import { cacheData } from "../utils/cache-data";
+import auth from "../middlewares/auth";
 
 const router = express.Router();
 const commentService = container.get<CommentService>(Types.ICommentService);
@@ -31,6 +32,7 @@ router.get("/:id", async (req: Request, res: Response) => {
 
 router.post(
   "/",
+  auth.authenticate,
   [upload.array("images", 4)],
   async (req: Request, res: Response) => {
     // product.author = res.locals.user;
@@ -46,7 +48,7 @@ router.post(
 );
 
 // update all posts
-router.put("/:id", async (req: Request, res: Response) => {
+router.put("/:id", auth.authenticate, async (req: Request, res: Response) => {
   const response: DataResponse = await commentController.updateComment(
     req.params.id,
     req.body,
@@ -59,6 +61,8 @@ router.put("/:id", async (req: Request, res: Response) => {
 // delete post
 router.delete(
   "/:id",
+  auth.authenticate,
+
   validatorMiddleware(identifierSchema, postSchema),
   async (req: Request, res: Response) => {
     const response: DataResponse = await commentController.deleteComment(
@@ -70,22 +74,30 @@ router.delete(
 );
 
 // like  post
-router.patch("/like-comment/:id", async (req: Request, res: Response) => {
-  const response: DataResponse = await commentController.likeComment(
-    req.params.id,
-    res.locals.userid
-  );
+router.patch(
+  "/like-comment/:id",
+  auth.authenticate,
+  async (req: Request, res: Response) => {
+    const response: DataResponse = await commentController.likeComment(
+      req.params.id,
+      res.locals.userid
+    );
 
-  return handleResponse(res, response);
-});
+    return handleResponse(res, response);
+  }
+);
 
-// like  post
-router.patch("/share-comment/:id", async (req: Request, res: Response) => {
-  const response: DataResponse = await commentController.shareComment(
-    req.params.id
-  );
+// share  post
+router.patch(
+  "/share-comment/:id",
+  auth.authenticate,
+  async (req: Request, res: Response) => {
+    const response: DataResponse = await commentController.shareComment(
+      req.params.id
+    );
 
-  return handleResponse(res, response);
-});
+    return handleResponse(res, response);
+  }
+);
 
 export default router;

@@ -11,16 +11,22 @@ import { userSchema, identifierSchema } from "../validators";
 import adminUpdateUserSchema from "../validators/adminUpdateUser.validator";
 import { flushCache, refreshCache } from "../utils/cache-data";
 import adminOnly from "../middlewares/adminOnly";
+import auth from "../middlewares/auth";
 
 const router = express.Router();
 const userService = container.get<UserService>(Types.IUserService);
 const Users = new UserController(userService);
 
 //geting all users
-router.get("/", adminOnly, async (req: Request, res: Response) => {
-  const response: DataResponse = await Users.getAllUsers();
-  return handleResponse(res, response);
-});
+router.get(
+  "/",
+  auth.authenticate,
+  adminOnly,
+  async (req: Request, res: Response) => {
+    const response: DataResponse = await Users.getAllUsers();
+    return handleResponse(res, response);
+  }
+);
 
 //geting single user
 router.get("/:id", async (req: Request, res: Response) => {
@@ -30,6 +36,8 @@ router.get("/:id", async (req: Request, res: Response) => {
 
 router.put(
   "/update/:id",
+  auth.authenticate,
+
   validatorMiddleware(identifierSchema, adminUpdateUserSchema),
   async (req: Request, res: Response) => {
     const data = await Users.updateVerificationStatus(req.params.id, req.body);
@@ -37,7 +45,7 @@ router.put(
   }
 );
 
-router.put("/:id", async (req: Request, res: Response) => {
+router.put("/:id", auth.authenticate, async (req: Request, res: Response) => {
   const { error } = userSchema.validate(req.body);
 
   if (error) {
@@ -47,37 +55,61 @@ router.put("/:id", async (req: Request, res: Response) => {
   return handleResponse(res, data);
 });
 
-router.delete("/:id", adminOnly, async (req: Request, res: Response) => {
-  const response = await Users.deleteUser(req.params.id);
+router.delete(
+  "/:id",
+  auth.authenticate,
+  adminOnly,
+  async (req: Request, res: Response) => {
+    const response = await Users.deleteUser(req.params.id);
 
-  flushCache();
-  return handleResponse(res, response);
-});
+    flushCache();
+    return handleResponse(res, response);
+  }
+);
 
-router.post("/save-ad", async (req: Request, res: Response) => {
-  const response: DataResponse = await Users.savedAd(
-    res.locals.userid,
-    req.body
-  );
+router.post(
+  "/save-ad",
+  auth.authenticate,
+  async (req: Request, res: Response) => {
+    const response: DataResponse = await Users.savedAd(
+      res.locals.userid,
+      req.body
+    );
 
-  return handleResponse(res, response);
-});
+    return handleResponse(res, response);
+  }
+);
 
-router.post("/make-admin", adminOnly, async (req: Request, res: Response) => {
-  const response: DataResponse = await Users.addAdmin(req.body);
+router.post(
+  "/make-admin",
+  auth.authenticate,
+  auth.superadmin,
+  async (req: Request, res: Response) => {
+    const response: DataResponse = await Users.addAdmin(req.body);
 
-  return handleResponse(res, response);
-});
+    return handleResponse(res, response);
+  }
+);
 
-router.post("/remove-admin", adminOnly, async (req: Request, res: Response) => {
-  const response: DataResponse = await Users.removeAdmin(req.body);
+router.post(
+  "/remove-admin",
+  auth.authenticate,
+  auth.superadmin,
+  async (req: Request, res: Response) => {
+    const response: DataResponse = await Users.removeAdmin(req.body);
 
-  return handleResponse(res, response);
-});
+    return handleResponse(res, response);
+  }
+);
 
-router.get("/all-admin", adminOnly, async (req: Request, res: Response) => {
-  const response: DataResponse = await Users.getAdmins();
+router.get(
+  "/all-admin",
+  auth.authenticate,
+  auth.superadmin,
+  async (req: Request, res: Response) => {
+    const response: DataResponse = await Users.getAdmins();
 
-  return handleResponse(res, response);
-});
+    return handleResponse(res, response);
+  }
+);
 export default router;
