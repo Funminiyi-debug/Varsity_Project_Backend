@@ -10,6 +10,7 @@ function requiredIf(model, type) {
 
 const CategorySchema = new mongoose.Schema({
   name: { type: String, required: true },
+  index: { type: Number, required: true, unique: true },
   subcategory: [
     {
       type: mongoose.Schema.Types.ObjectId,

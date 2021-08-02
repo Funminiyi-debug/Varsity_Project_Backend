@@ -5,8 +5,6 @@ import {
   Route,
   Request,
   Body,
-  Query,
-  Header,
   Path,
   Tags,
   SuccessResponse,

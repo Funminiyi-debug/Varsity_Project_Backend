@@ -43,6 +43,8 @@ passportConfig(passport);
 databaseConnection();
 
 app.use(cors());
+app.options("*", cors()); // enable pre-flight
+
 app.use(express.static("public"));
 app.use(
   express.urlencoded({
