@@ -1,6 +1,6 @@
 enum UserRole {
-  ADMIN,
   USER,
+  ADMIN,
   SUPERADMIN,
 }
 
