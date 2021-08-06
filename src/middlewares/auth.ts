@@ -124,7 +124,10 @@ export default {
     }).catch(onError);
   },
   admin: (req, res, next) => {
-    if (req.user.userRole == UserRole.ADMIN) {
+    if (
+      req.user.userRole == UserRole.ADMIN ||
+      req.user.userRole == UserRole.SUPERADMIN
+    ) {
       return next();
     }
     return res
