@@ -25,7 +25,7 @@ import { ICommentService } from "../services/interfaces";
 import { IComment } from "../interfaces/entities";
 import handleAppExceptions from "../utils/handleAppExceptions";
 
-@Route("/comments")
+@Route("/api/comments")
 @Tags("Comment")
 class CommentController extends Controller {
   constructor(

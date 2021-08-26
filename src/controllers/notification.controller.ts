@@ -21,7 +21,7 @@ import { IFeedbackService, INotificationService } from "../services/interfaces";
 import { IFeed, INotification } from "../interfaces/entities";
 import handleAppExceptions from "../utils/handleAppExceptions";
 
-@Route("/notifications")
+@Route("/api/notifications")
 @Tags("Notification")
 class NotificationController extends Controller {
   constructor(

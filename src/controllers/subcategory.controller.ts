@@ -23,7 +23,7 @@ import { ISubcategoryService } from "../services/interfaces";
 import { ISubcategory } from "../interfaces/entities";
 import handleAppExceptions from "../utils/handleAppExceptions";
 
-@Route("/subcategories")
+@Route("/api/subcategories")
 @Tags("Subcategory")
 class SubcategoryController extends Controller {
   constructor(

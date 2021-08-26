@@ -20,7 +20,7 @@ import express, { response } from "express";
 import ICategory from "../interfaces/entities/ICategory";
 import { Params } from "@decorators/express";
 
-@Route("/dashboard")
+@Route("/api/metrics")
 @Tags("Dashboard")
 class DashboardController extends Controller {
   constructor(@inject(Types.IDashboardService) private ds: IDashboardService) {

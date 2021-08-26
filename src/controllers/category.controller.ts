@@ -20,7 +20,7 @@ import express, { response } from "express";
 import ICategory from "../interfaces/entities/ICategory";
 import { Params } from "@decorators/express";
 
-@Route("/categories")
+@Route("/api/categories")
 @Tags("Category")
 // @controller("/categories")
 class CategoriesController extends Controller {

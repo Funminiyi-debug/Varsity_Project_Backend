@@ -26,7 +26,7 @@ import { IPost } from "../interfaces/entities";
 import handleAppExceptions from "../utils/handleAppExceptions";
 import IPostFilter from "../interfaces/entities/IPostFilter";
 
-@Route("/posts")
+@Route("/api/posts")
 @Tags("Post")
 class PostController extends Controller {
   constructor(@inject(Types.IPostService) private ps: IPostService) {

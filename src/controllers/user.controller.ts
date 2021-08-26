@@ -25,7 +25,7 @@ import { IUser, IVerify } from "../interfaces/entities";
 //   status: VStatus;
 // }
 
-@Route("users")
+@Route("/api/users/")
 @Tags("User")
 export default class UsersController extends Controller {
   constructor(@inject(Types.IUserService) private user: IUserService) {

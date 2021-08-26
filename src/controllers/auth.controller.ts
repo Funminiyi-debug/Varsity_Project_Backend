@@ -25,7 +25,7 @@ import {
 
 import ErrorResponseModel from "../interfaces/ErrorResponseModel";
 
-@Route("/auth")
+@Route("/api/auth")
 @Tags("Authentication")
 export default class AuthController extends Controller {
   @Get("/{method}")

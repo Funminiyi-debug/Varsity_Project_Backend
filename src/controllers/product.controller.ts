@@ -25,7 +25,7 @@ import { IProduct, IFilter } from "../interfaces/entities";
 import handleAppExceptions from "../utils/handleAppExceptions";
 import formatProduct_Service from "../utils/formatProduct_Service";
 
-@Route("/products")
+@Route("/api/products")
 @Tags("Product")
 class ProductsController extends Controller {
   constructor(@inject(Types.IProductService) private ps: IProductService) {
