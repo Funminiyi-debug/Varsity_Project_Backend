@@ -15,7 +15,7 @@ const dashboardService = container.get<DashboardService>(
 const categoryController = new DashboardController(dashboardService);
 
 router.get(
-  "/api/metrics",
+  "/metrics",
   auth.authenticate,
   adminOnly,
   async (req: Request, res: Response) => {
