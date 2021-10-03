@@ -25,6 +25,7 @@ import { IPostService } from "../services/interfaces";
 import { IPost } from "../interfaces/entities";
 import handleAppExceptions from "../utils/handleAppExceptions";
 import IPostFilter from "../interfaces/entities/IPostFilter";
+import { ApproveReq } from "../interfaces/ApproveReq";
 
 @Route("/api/posts")
 @Tags("Post")
@@ -157,6 +158,45 @@ class PostController extends Controller {
     }
   }
 
+  @Put("/report/{postid}")
+  @SuccessResponse("204", "Updated")
+  @Response<ErrorResponseModel>("400", "Bad Data")
+  @Response<ErrorResponseModel>("404", "Not Found")
+  public async reportPost(
+    @Path() postid: string,
+    @Request() res: express.Response
+  ): Promise<DataResponse> {
+    try {
+      const results = await this.ps.reportPost(postid);
+
+      if (results == null) {
+        this.response = {
+          statusCode: 404,
+          message: "Post not found",
+        };
+
+        return this.response;
+      }
+
+      this.response = {
+        statusCode: 204,
+      };
+      return this.response;
+    } catch (error) {
+      if (error.message.search("Cast") != -1) {
+        return {
+          statusCode: 404,
+          message: "Not Found",
+        };
+      }
+
+      return {
+        statusCode: 500,
+        message: "Something happened",
+      };
+    }
+  }
+
   @Delete("{id}")
   @SuccessResponse("204", "Deleted")
   @Response<ErrorResponseModel>("400", "Bad Data")
@@ -228,6 +268,22 @@ class PostController extends Controller {
   ): Promise<DataResponse> {
     try {
       const results = await this.ps.sharePost(postid);
+
+      return { statusCode: 200, data: results };
+    } catch (error) {
+      console.log(error);
+      return handleAppExceptions(error);
+    }
+  }
+  @Post("/approve-post/{postid}")
+  @SuccessResponse("200", "OK")
+  @Response<ErrorResponseModel>("404", "Post not found")
+  public async approvePost(
+    @Path("postid") postid: string,
+    @Body() body: ApproveReq
+  ): Promise<DataResponse> {
+    try {
+      const results = await this.ps.approvePost(postid, body.approvalStatus);
 
       return { statusCode: 200, data: results };
     } catch (error) {

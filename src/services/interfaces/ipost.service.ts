@@ -1,4 +1,5 @@
 import { Document } from "mongoose";
+import PostStatus from "../../enums/PostStatus";
 import { IPost } from "../../interfaces/entities";
 import IPostFilter from "../../interfaces/entities/IPostFilter";
 
@@ -32,4 +33,7 @@ export default interface IPostService {
     userid: string,
     optionid: string
   ): Promise<Document<any>>;
+
+  reportPost(id: string): Promise<Document<any>>;
+  approvePost(id: string, approvalStatus: PostStatus): Promise<Document<any>>;
 }

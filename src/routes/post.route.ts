@@ -122,5 +122,31 @@ router.patch(
     return handleResponse(res, response);
   }
 );
+// like  post
+router.patch(
+  "/report/:postid",
+  auth.authenticate,
+  async (req: Request, res: Response) => {
+    const response: DataResponse = await postController.reportPost(
+      req.params.postid,
+      res
+    );
 
+    return handleResponse(res, response);
+  }
+);
+
+router.post(
+  "/approve-post/:postid",
+  auth.authenticate,
+  auth.admin,
+  async (req: Request, res: Response) => {
+    const response: DataResponse = await postController.approvePost(
+      req.params.postid,
+      req.body.approvalStatus
+    );
+
+    return handleResponse(res, response);
+  }
+);
 export default router;

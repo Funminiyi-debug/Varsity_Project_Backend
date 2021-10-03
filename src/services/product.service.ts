@@ -20,6 +20,8 @@ import {
 import "../utils/flatArray";
 import checkCondition, { checkPriceRange } from "../utils/checkCondition";
 import { isReturnStatement } from "typescript";
+import AdStatus from "../enums/AdStatus";
+import { executionAsyncResource } from "async_hooks";
 interface IProductCreate extends IProduct {
   author: string;
   images: any[];
@@ -36,6 +38,41 @@ export default class ProductService implements IProductService {
     @inject(Types.ICategoryService)
     private categoryService: ICategoryService
   ) {}
+  async reportProduct(id: string): Promise<Document<any>> {
+    try {
+      // return await Post.deleteMany();
+      // const post = (await Post.find({ _id: id }))[0];
+      const post = await Product.findByIdAndUpdate(
+        id,
+        {
+          status: AdStatus.InReview,
+        },
+        { new: true }
+      );
+
+      if (post) return post;
+
+      throw new NotFoundException("ad not found");
+    } catch (error) {
+      throw new ServerErrorException(error);
+    }
+  }
+  async approveProduct(
+    id: string,
+    approvalStatus: AdStatus
+  ): Promise<Document<any>> {
+    const post = (await Product.findById(id)) as any;
+    if (!post) throw new NotFoundException("post not found");
+
+    if (approvalStatus == AdStatus.Active) {
+      post.status = AdStatus.Active;
+    }
+    if (approvalStatus == AdStatus.Declined) {
+      post.status = AdStatus.Declined;
+    }
+
+    return await post.save();
+  }
 
   async searchProduct(searchTerm: string): Promise<Document<any>[]> {
     //  takeCount = takeCount == undefined ? 10 : takeCount;
@@ -53,14 +90,8 @@ export default class ProductService implements IProductService {
     searchTerm = searchTerm.toLowerCase();
 
     function checkConditions(element: any) {
-      const {
-        subcategory,
-        category,
-        author,
-        school,
-        price,
-        otherFields,
-      } = element;
+      const { subcategory, category, author, school, price, otherFields } =
+        element;
       let isProduct = false;
       let isService = false;
       if (element.subcategory != undefined) {
@@ -260,6 +291,7 @@ export default class ProductService implements IProductService {
       images: [],
       subcategory: "",
       category: "",
+      adStatus: AdStatus.InReview,
     };
 
     const isProduct: boolean = product.subcategoryId != undefined;

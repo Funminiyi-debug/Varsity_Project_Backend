@@ -3,6 +3,7 @@ import Comment from "./Comment";
 import AppFile from "./AppFile";
 import { optionalWithLength } from "./modelValidators";
 import PostType from "../enums/PostType";
+import PostStatus from "../enums/PostStatus";
 
 const Schema = mongoose.Schema;
 
@@ -60,6 +61,15 @@ const PostSchema = new Schema(
       required: function () {
         return this.postType == PostType.Poll;
       },
+    },
+    status: {
+      type: String,
+      enum: [
+        PostStatus.Approved,
+        PostStatus.Pending,
+        PostStatus.Rejected,
+        PostStatus.Reported,
+      ],
     },
     // end of poll
   },

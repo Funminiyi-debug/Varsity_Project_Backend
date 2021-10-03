@@ -24,6 +24,8 @@ import { IAppFileService, IProductService } from "../services/interfaces";
 import { IProduct, IFilter } from "../interfaces/entities";
 import handleAppExceptions from "../utils/handleAppExceptions";
 import formatProduct_Service from "../utils/formatProduct_Service";
+import { ApproveReq } from "../interfaces/ApproveReq";
+import AdStatus from "../enums/AdStatus";
 
 @Route("/api/products")
 @Tags("Product")
@@ -166,6 +168,39 @@ class ProductsController extends Controller {
       };
       return this.response;
     } catch (error) {
+      return handleAppExceptions(error);
+    }
+  }
+
+  @Put("/report/{productId}")
+  @SuccessResponse("204", "Updated")
+  @Response<ErrorResponseModel>("400", "Bad Data")
+  @Response<ErrorResponseModel>("404", "Not Found")
+  public async reportProduct(
+    @Path("productId") productId: string
+  ): Promise<DataResponse> {
+    try {
+      const results = await this.ps.reportProduct(productId);
+
+      return { statusCode: 200, data: results };
+    } catch (error) {
+      console.log(error);
+      return handleAppExceptions(error);
+    }
+  }
+  @Post("/approve-ad/{product}")
+  @SuccessResponse("200", "OK")
+  @Response<ErrorResponseModel>("404", "Post not found")
+  public async approveProduct(
+    @Path("product") product: string,
+    @Query() body: AdStatus
+  ): Promise<DataResponse> {
+    try {
+      const results = await this.ps.approveProduct(product, body);
+
+      return { statusCode: 200, data: results };
+    } catch (error) {
+      console.log(error);
       return handleAppExceptions(error);
     }
   }

@@ -89,4 +89,30 @@ router.delete(
   }
 );
 
+router.patch(
+  "/report/:postid",
+  auth.authenticate,
+  async (req: Request, res: Response) => {
+    const response: DataResponse = await productController.reportProduct(
+      req.params.postid
+    );
+
+    return handleResponse(res, response);
+  }
+);
+
+router.post(
+  "/approve-ad/:postid",
+  auth.authenticate,
+  auth.admin,
+  async (req: Request, res: Response) => {
+    const response: DataResponse = await productController.approveProduct(
+      req.params.postid,
+      req.body.approvalStatus
+    );
+
+    return handleResponse(res, response);
+  }
+);
+
 export default router;
