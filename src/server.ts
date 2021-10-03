@@ -14,6 +14,7 @@ import productModule from "./routes/product.route";
 import authModule from "./routes/auth.route";
 import userModule from "./routes/user.route";
 import commentModule from "./routes/comment.route";
+import staticModule from "./routes/static.route";
 import dashboardModule from "./routes/dashboard.route";
 import subcategoryModule from "./routes/subcategory.route";
 import notificationModule from "./routes/notification.route";
@@ -23,6 +24,7 @@ import redisMiddleware from "./middlewares/redis";
 import authMiddleware from "./middlewares/auth";
 import runConnection from "./sockets/index";
 import mongoose from "mongoose";
+
 const app: Application = express();
 const server = http.createServer(app);
 mongoose.set("useCreateIndex", true);
@@ -111,6 +113,7 @@ app.use("/api/feedbacks", feedbackMoodule);
 app.use("/api/comments", commentModule);
 app.use("/api/notifications", notificationModule);
 app.use("/api/dashboard", dashboardModule);
+app.use("/api/static", staticModule);
 // app.use("/",)
 
 runConnection(io);

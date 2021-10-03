@@ -13,6 +13,7 @@ const Types = {
   IMessageService: Symbol("IMessageService"),
   IEmailService: Symbol("IEmailService"),
   IDashboardService: Symbol("IDashboardService"),
+  IStaticService: Symbol("IStaticService"),
 };
 
 export default Types;

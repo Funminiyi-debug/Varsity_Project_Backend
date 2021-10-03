@@ -88,7 +88,7 @@ export default class CategoryService implements ICategoryService {
     try {
       return await (await Category.findById(id)).remove();
     } catch (error) {
-      throw ServerErrorException(error);
+      throw new ServerErrorException(error);
     }
   }
 }
