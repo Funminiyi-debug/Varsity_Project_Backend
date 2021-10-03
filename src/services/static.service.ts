@@ -1,3 +1,4 @@
+import { injectable } from "inversify";
 import { Document } from "mongoose";
 import StaticPageStatus from "../enums/StaticPageStatus";
 import { ICategory } from "../interfaces/entities";
@@ -5,6 +6,7 @@ import IStaticPage from "../interfaces/entities/StaticPage";
 import StaticPage from "../models/Static";
 import IStaticService from "./interfaces/istatic.service";
 
+@injectable()
 export default class StaticService implements IStaticService {
   constructor() {}
   async changeStatus(id: string, status: string): Promise<Document<any>> {

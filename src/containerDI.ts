@@ -30,6 +30,8 @@ import {
 import IEmailService from "./services/interfaces/iemail.service";
 import EmailService from "./services/email.service";
 import DashboardService from "./services/dashboard.service";
+import IStaticService from "./services/interfaces/istatic.service";
+import StaticService from "./services/static.service";
 
 const container = new Container();
 container.bind<ICategoryService>(Types.ICategoryService).to(CategoryService);
@@ -49,4 +51,5 @@ container.bind<IPostService>(Types.IPostService).to(PostService);
 container.bind<ILikeService>(Types.ILikeService).to(LikeService);
 container.bind<IMessageService>(Types.IMessageService).to(MessageService);
 container.bind<IDashboardService>(Types.IDashboardService).to(DashboardService);
+container.bind<IStaticService>(Types.IStaticService).to(StaticService);
 export { container };
