@@ -19,6 +19,9 @@ import Types from "../types";
 import { IUserService } from "../services/interfaces";
 import handleAppExceptions from "../utils/handleAppExceptions";
 import { IUser, IVerify } from "../interfaces/entities";
+import { BasicAuth } from "../interfaces/Auth";
+import { UserService } from "../services";
+import { generateJwtToken } from "../utils/helperFunction";
 
 // interface VerifyStatusRequest {
 //   id: string;
@@ -201,6 +204,44 @@ export default class UsersController extends Controller {
         statusCode: 200,
         data: data,
       };
+    } catch (error) {
+      return handleAppExceptions(error);
+    }
+  }
+
+  @Post("admin-login")
+  @SuccessResponse("201", "Created")
+  @Response<ErrorResponseModel>("422", "Bad Data")
+  public async AdminLogin(@Body() req: BasicAuth) {
+    try {
+      const data = await this.user.adminLogin(req.username, req.password);
+
+      const user = await this.user.getUserByCondition({
+        email: req.username,
+      });
+
+      const token = generateJwtToken(user);
+
+      return { statusCode: 200, data: token };
+    } catch (error) {
+      return handleAppExceptions(error);
+    }
+  }
+
+  @Post("admin-login")
+  @SuccessResponse("201", "Created")
+  @Response<ErrorResponseModel>("422", "Bad Data")
+  public async ResetAdminPassword(@Body() req: BasicAuth) {
+    try {
+      const data = await this.user.adminLogin(req.username, req.password);
+
+      const user = await this.user.getUserByCondition({
+        email: req.username,
+      });
+
+      const token = generateJwtToken(user);
+
+      return { statusCode: 200, data: token };
     } catch (error) {
       return handleAppExceptions(error);
     }

@@ -15,5 +15,11 @@ export default interface IUserService {
   saveAd(item: any, userid: string): Promise<Document<any>>;
   makeAdmin(userid): Promise<boolean>;
   removeAdmin(userid): Promise<boolean>;
+  adminLogin(username: string, password: string): Promise<boolean>;
+  resetAdminLogin(
+    username: string,
+    oldpassword: string,
+    newpassword: string
+  ): Promise<boolean>;
   getAdmin();
 }

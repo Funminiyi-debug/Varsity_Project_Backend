@@ -1,4 +1,5 @@
 import { Document } from "mongoose";
+import bcrypt from "bcrypt";
 import { IUser } from "../interfaces/entities";
 import User from "../models/User";
 import {
@@ -19,6 +20,7 @@ import Types from "../types";
 import Product from "../models/Product";
 import { Chat } from "../interfaces/SocketInterfaces";
 import UserRole from "../enums/UserRole";
+import { hashPassword, comparePassword } from "../utils/password";
 
 @injectable()
 export default class UserService implements IUserService {
@@ -28,6 +30,25 @@ export default class UserService implements IUserService {
     @inject(Types.IFeedbackService) private feedbackService: IFeedbackService,
     @inject(Types.IProductService) private productService: IProductService
   ) {}
+  // resetAdminLogin(username: string, oldpassword: string, newpassword: string): Promise<boolean> {
+
+  //   if()
+  // }
+  async adminLogin(username: string, password: string): Promise<boolean> {
+    const hash = hashPassword(password);
+
+    const user: any = await User.findOne({
+      $or: [{ email: username }, { username: username }],
+    });
+
+    if (!user) throw UnauthorizedException("incorrect username of password");
+
+    const isCorrect = comparePassword(password, user.userPassword);
+    if (!isCorrect)
+      throw UnauthorizedException("incorrect username of password");
+
+    return true;
+  }
   async getUsers() {
     try {
       return await User.find({}).populate("savedAds");

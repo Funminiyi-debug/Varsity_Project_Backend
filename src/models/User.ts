@@ -15,6 +15,9 @@ const UserShema = new mongoose.Schema(
       enum: [UserRole.ADMIN, UserRole.USER],
       default: UserRole.USER,
     },
+    userPassword: {
+      type: String,
+    },
     googleId: {
       type: String,
     },
