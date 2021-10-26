@@ -30,10 +30,14 @@ export default class UserService implements IUserService {
     @inject(Types.IFeedbackService) private feedbackService: IFeedbackService,
     @inject(Types.IProductService) private productService: IProductService
   ) {}
-  // resetAdminLogin(username: string, oldpassword: string, newpassword: string): Promise<boolean> {
+  resetAdminLogin(
+    username: string,
+    oldpassword: string,
+    newpassword: string
+  ): Promise<boolean> {
+    throw new Error("Method not implemented.");
+  }
 
-  //   if()
-  // }
   async adminLogin(username: string, password: string): Promise<boolean> {
     const hash = hashPassword(password);
 
