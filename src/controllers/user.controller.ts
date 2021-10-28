@@ -228,22 +228,22 @@ export default class UsersController extends Controller {
     }
   }
 
-  @Post("admin-login")
-  @SuccessResponse("201", "Created")
-  @Response<ErrorResponseModel>("422", "Bad Data")
-  public async ResetAdminPassword(@Body() req: BasicAuth) {
-    try {
-      const data = await this.user.adminLogin(req.username, req.password);
+  // @Post("reset-password")
+  // @SuccessResponse("201", "Created")
+  // @Response<ErrorResponseModel>("422", "Bad Data")
+  // public async ResetAdminPassword(@Body() req: BasicAuth) {
+  //   try {
+  //     const data = await this.user.adminLogin(req.username, req.password);
 
-      const user = await this.user.getUserByCondition({
-        email: req.username,
-      });
+  //     const user = await this.user.getUserByCondition({
+  //       email: req.username,
+  //     });
 
-      const token = generateJwtToken(user);
+  //     const token = generateJwtToken(user);
 
-      return { statusCode: 200, data: token };
-    } catch (error) {
-      return handleAppExceptions(error);
-    }
-  }
+  //     return { statusCode: 200, data: token };
+  //   } catch (error) {
+  //     return handleAppExceptions(error);
+  //   }
+  // }
 }
