@@ -8,6 +8,8 @@ export default interface IUserService {
   getUserByCondition(query: IUser): Promise<Document<IUser>[]>;
   getByEmail(email: string): Promise<Document<IUser>>;
   getUsers(): Promise<Document<any>[]>;
+  activeUsers(): Promise<any[]>;
+  suspendedUsers(): Promise<any[]>;
   updateUser(id: string, entity: IUser);
   updateVerificationStatus(id: string, status: VerificationStatus);
   getUser(id: string);

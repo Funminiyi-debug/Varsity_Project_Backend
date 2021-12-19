@@ -22,6 +22,8 @@ import { IUser, IVerify } from "../interfaces/entities";
 import { BasicAuth } from "../interfaces/Auth";
 import { UserService } from "../services";
 import { generateJwtToken } from "../utils/helperFunction";
+import { Query } from "@decorators/express";
+import VerificationStatus from "../enums/VerificationStatus";
 
 // interface VerifyStatusRequest {
 //   id: string;
@@ -222,6 +224,22 @@ export default class UsersController extends Controller {
 
       const token = generateJwtToken(user);
 
+      return { statusCode: 200, data: token };
+    } catch (error) {
+      return handleAppExceptions(error);
+    }
+  }
+  @Get("by-status")
+  @SuccessResponse("200", "Success")
+  @Response<ErrorResponseModel>("422", "Bad Data")
+  public async activeUsers(@Query() userStatus: VerificationStatus) {
+    try {
+      let data = [];
+      if (userStatus == VerificationStatus.Verified) {
+        data = await this.user.activeUsers();
+      } else if (userStatus == VerificationStatus.Restricted) {
+        data = await this.user.suspendedUsers();
+      }
       return { statusCode: 200, data: token };
     } catch (error) {
       return handleAppExceptions(error);

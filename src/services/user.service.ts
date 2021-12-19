@@ -1,5 +1,4 @@
 import { Document } from "mongoose";
-import bcrypt from "bcrypt";
 import { IUser } from "../interfaces/entities";
 import User from "../models/User";
 import {
@@ -36,6 +35,26 @@ export default class UserService implements IUserService {
     newpassword: string
   ): Promise<boolean> {
     throw new Error("Method not implemented.");
+  }
+
+  async activeUsers(): Promise<any[]> {
+    try {
+      return await User.find({
+        verificationStatus: VerificationStatus.Verified,
+      });
+    } catch (error) {
+      throw new ServerErrorException(error);
+    }
+  }
+
+  async suspendedUsers(): Promise<any[]> {
+    try {
+      return await User.find({
+        verificationStatus: VerificationStatus.Restricted,
+      });
+    } catch (error) {
+      throw new ServerErrorException(error);
+    }
   }
 
   async adminLogin(username: string, password: string): Promise<boolean> {
