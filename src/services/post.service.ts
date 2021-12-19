@@ -13,7 +13,6 @@ import {
 import PostType from "../enums/PostType";
 import IPostFilter from "../interfaces/entities/IPostFilter";
 import PostSortBy from "../enums/PostSortBy";
-import { Body } from "@decorators/express";
 import PostStatus from "../enums/PostStatus";
 
 @injectable()

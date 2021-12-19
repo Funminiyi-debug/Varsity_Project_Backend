@@ -11,7 +11,9 @@ import {
   Controller,
   Response,
   Delete,
+  Query,
 } from "tsoa";
+
 import { DataResponse, UserCreationRequest } from "../interfaces/DataResponse";
 import ErrorResponseModel from "../interfaces/ErrorResponseModel";
 import { inject, injectable } from "inversify";
@@ -22,7 +24,6 @@ import { IUser, IVerify } from "../interfaces/entities";
 import { BasicAuth } from "../interfaces/Auth";
 import { UserService } from "../services";
 import { generateJwtToken } from "../utils/helperFunction";
-import { Query } from "@decorators/express";
 import VerificationStatus from "../enums/VerificationStatus";
 
 // interface VerifyStatusRequest {
@@ -229,18 +230,23 @@ export default class UsersController extends Controller {
       return handleAppExceptions(error);
     }
   }
-  @Get("by-status")
+  @Get("active")
   @SuccessResponse("200", "Success")
-  @Response<ErrorResponseModel>("422", "Bad Data")
-  public async activeUsers(@Query() userStatus: VerificationStatus) {
+  public async activeUsers() {
     try {
-      let data = [];
-      if (userStatus == VerificationStatus.Verified) {
-        data = await this.user.activeUsers();
-      } else if (userStatus == VerificationStatus.Restricted) {
-        data = await this.user.suspendedUsers();
-      }
-      return { statusCode: 200, data: token };
+      let data = await this.user.activeUsers();
+      return { statusCode: 200, data };
+    } catch (error) {
+      return handleAppExceptions(error);
+    }
+  }
+
+  @Get("suspended")
+  @SuccessResponse("200", "Success")
+  public async suspendedUsers() {
+    try {
+      let data = await this.user.suspendedUsers();
+      return { statusCode: 200, data };
     } catch (error) {
       return handleAppExceptions(error);
     }

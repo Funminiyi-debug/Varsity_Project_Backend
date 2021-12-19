@@ -12,6 +12,7 @@ import adminUpdateUserSchema from "../validators/adminUpdateUser.validator";
 import { flushCache, refreshCache } from "../utils/cache-data";
 import adminOnly from "../middlewares/adminOnly";
 import auth from "../middlewares/auth";
+import VerificationStatus from "../enums/VerificationStatus";
 
 const router = express.Router();
 const userService = container.get<UserService>(Types.IUserService);
@@ -108,6 +109,26 @@ router.get(
   auth.superadmin,
   async (req: Request, res: Response) => {
     const response: DataResponse = await Users.getAdmins();
+
+    return handleResponse(res, response);
+  }
+);
+router.get(
+  "/active",
+  // auth.authenticate,
+  // auth.admin,
+  async (req: Request, res: Response) => {
+    const response: DataResponse = await Users.activeUsers();
+
+    return handleResponse(res, response);
+  }
+);
+router.get(
+  "/suspended",
+  // auth.authenticate,
+  // auth.admin,
+  async (req: Request, res: Response) => {
+    const response: DataResponse = await Users.suspendedUsers();
 
     return handleResponse(res, response);
   }

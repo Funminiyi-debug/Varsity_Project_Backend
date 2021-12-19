@@ -5,7 +5,6 @@ import AppFile from "./AppFile";
 import Product from "./Product";
 import Feedback from "./Feedback";
 import VerificationStatus from "../enums/VerificationStatus";
-import { number } from "joi";
 import UserRole from "../enums/UserRole";
 
 const UserShema = new mongoose.Schema(
