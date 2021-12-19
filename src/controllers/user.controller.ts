@@ -234,7 +234,22 @@ export default class UsersController extends Controller {
   @SuccessResponse("200", "Success")
   public async activeUsers() {
     try {
+      console.log("active posts was called");
       let data = await this.user.activeUsers();
+
+      data = data.map((x) => {
+        return {
+          userRole: x.userRole,
+          follower: x.follower,
+          following: x.following,
+          _id: x._id,
+          firstName: x.firstName,
+          lastName: x.lastName,
+          profilePics: x.profilePics,
+          email: x.email,
+          userName: x.userName,
+        };
+      });
       return { statusCode: 200, data };
     } catch (error) {
       return handleAppExceptions(error);
@@ -246,6 +261,20 @@ export default class UsersController extends Controller {
   public async suspendedUsers() {
     try {
       let data = await this.user.suspendedUsers();
+
+      data = data.map((x) => {
+        return {
+          userRole: x.userRole,
+          follower: x.follower,
+          following: x.following,
+          _id: x._id,
+          firstName: x.firstName,
+          lastName: x.lastName,
+          profilePics: x.profilePics,
+          email: x.email,
+          userName: x.userName,
+        };
+      });
       return { statusCode: 200, data };
     } catch (error) {
       return handleAppExceptions(error);
